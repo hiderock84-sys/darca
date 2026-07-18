@@ -1412,6 +1412,187 @@ body {
   padding-top: 1rem;
 }
 
+/* ---------- Illustration slot (chapter opener band) ---------- */
+.artslot {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin: 1rem 0 1.3rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px dashed var(--green);
+  border-radius: var(--radius);
+  background: var(--green-tint);
+}
+.artslot__tag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  background: var(--green);
+  padding: 0.24rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.artslot__note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--green-deep);
+}
+
+/* =============================================================
+   Appendix: design specification (producer-facing)
+   ============================================================= */
+.spec-head {
+  border-bottom: 2px solid var(--navy);
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.4rem;
+}
+.spec-head__tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--white);
+  background: var(--navy);
+  padding: 0.24rem 0.8rem;
+  border-radius: 999px;
+}
+.spec-head__title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0.7rem 0 0.4rem;
+}
+.spec-head__note {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.spec-block {
+  margin: 1.4rem 0;
+}
+.spec-list {
+  margin: 0.6rem 0 0;
+  padding-left: 1.2rem;
+}
+.spec-list li {
+  font-size: 0.88rem;
+  line-height: 1.85;
+  margin: 0.25rem 0;
+}
+
+/* swatches */
+.swatches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--gray-line);
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+  background: var(--white);
+}
+.swatch__chip {
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+.swatch__meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.swatch__name {
+  font-weight: 800;
+  font-size: 0.86rem;
+  color: var(--navy);
+}
+.swatch__role {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.swatch__code {
+  font-size: 0.7rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.02em;
+}
+
+/* typography spec table */
+.spec-type {
+  border: 1px solid var(--gray-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 0.9rem;
+}
+.spec-type__row {
+  display: grid;
+  grid-template-columns: 8.5rem 6rem 6.5rem 3rem 1fr;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.8rem;
+  align-items: center;
+}
+.spec-type__row:not(:last-child) {
+  border-bottom: 1px solid var(--gray-line);
+}
+.spec-type__row--head {
+  background: var(--gray-50);
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 0.74rem;
+}
+.spec-type__el {
+  font-weight: 700;
+  color: var(--navy);
+}
+.spec-type__note {
+  color: var(--ink-soft);
+}
+
+/* art direction table */
+.spec-art {
+  border: 1px solid var(--gray-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 0.9rem;
+}
+.spec-art__row {
+  display: grid;
+  grid-template-columns: 6.2rem 1.3fr 1.2fr 1.3fr 1.1fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+.spec-art__row:not(:last-child) {
+  border-bottom: 1px solid var(--gray-line);
+}
+.spec-art__row--head {
+  background: var(--navy);
+  color: var(--white);
+  font-weight: 800;
+  font-size: 0.72rem;
+}
+.spec-art__page {
+  font-weight: 700;
+  color: var(--navy);
+}
+.spec-art__row--head .spec-art__page {
+  color: var(--white);
+}
+
 /* =============================================================
    Print
    ============================================================= */
@@ -1479,6 +1660,22 @@ body {
   }
   .toolbar__label {
     display: none;
+  }
+  .swatches {
+    grid-template-columns: 1fr;
+  }
+  .spec-type__row,
+  .spec-art__row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+  .spec-type__row--head,
+  .spec-art__row--head {
+    display: none;
+  }
+  .spec-type__el,
+  .spec-art__page {
+    font-size: 0.86rem;
   }
 }
 @media (max-width: 520px) {

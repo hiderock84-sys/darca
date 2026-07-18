@@ -19,6 +19,8 @@ import {
   ch11,
   promise,
   backCover,
+  spec,
+  chapterArt,
   type Point,
   type Column,
 } from './data/manual'
@@ -149,6 +151,23 @@ function Figure({ note }: { note: string }) {
   )
 }
 
+function IllustrationSlot({ id }: { id: string }) {
+  const art = chapterArt[id]
+  if (!art) return null
+  return (
+    <div className="artslot">
+      <span className="artslot__tag">
+        <Icon name="leaf" className="icon-inline" />
+        イラスト位置
+      </span>
+      <p className="artslot__note">
+        {art.illust}
+        {art.photo ? `\u3000／\u3000写真候補：${art.photo}` : ''}
+      </p>
+    </div>
+  )
+}
+
 /* =============================================================
    Pages
    ============================================================= */
@@ -275,6 +294,7 @@ function Ch1Page() {
     <Sheet runhead={`${ch1.no}\u3000${ch1.title}`} pageNo={5} pageLabel={ch1.no}>
       <ChapterHead no={ch1.no} title={ch1.title} catch={ch1.catch} />
       <Lead lines={ch1.lead} />
+      <IllustrationSlot id="ch1" />
       {ch1.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -303,6 +323,7 @@ function Ch2Page() {
     <Sheet runhead={`${ch2.no}\u3000${ch2.title}`} pageNo={6} pageLabel={ch2.no}>
       <ChapterHead no={ch2.no} title={ch2.title} catch={ch2.catch} />
       <Lead lines={ch2.lead} />
+      <IllustrationSlot id="ch2" />
       {ch2.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -330,6 +351,7 @@ function Ch3Page() {
     <Sheet runhead={`${ch3.no}\u3000${ch3.title}`} pageNo={7} pageLabel={ch3.no}>
       <ChapterHead no={ch3.no} title={ch3.title} catch={ch3.catch} />
       <Lead lines={ch3.lead} />
+      <IllustrationSlot id="ch3" />
       {ch3.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -360,6 +382,7 @@ function Ch4Page() {
     <Sheet runhead={`${ch4.no}\u3000${ch4.title}`} pageNo={8} pageLabel={ch4.no}>
       <ChapterHead no={ch4.no} title={ch4.title} catch={ch4.catch} />
       <Lead lines={ch4.lead} />
+      <IllustrationSlot id="ch4" />
       {ch4.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -528,6 +551,7 @@ function Ch7Page() {
     <Sheet runhead={`${ch7.no}\u3000${ch7.title}`} pageNo={11} pageLabel={ch7.no}>
       <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
       <Lead lines={ch7.lead} />
+      <IllustrationSlot id="ch7" />
 
       <div className="dd-col dd-col--dont" style={{ margin: '1.4rem 0' }}>
         <p className="dd-col__head">
@@ -563,6 +587,7 @@ function Ch8Page() {
     <Sheet runhead={`${ch8.no}\u3000${ch8.title}`} pageNo={12} pageLabel={ch8.no}>
       <ChapterHead no={ch8.no} title={ch8.title} catch={ch8.catch} />
       <Lead lines={ch8.lead} />
+      <IllustrationSlot id="ch8" />
 
       <div className="dd-col dd-col--do" style={{ margin: '1.4rem 0' }}>
         <p className="dd-col__head">
@@ -698,6 +723,7 @@ function Ch11Page() {
     <Sheet runhead={`${ch11.no}\u3000${ch11.title}`} pageNo={18} pageLabel={ch11.no}>
       <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
       <Lead lines={ch11.lead} />
+      <IllustrationSlot id="ch11" />
 
       <div className="benefits">
         {ch11.benefits.map((b) => (
@@ -810,6 +836,152 @@ function BackPage() {
   )
 }
 
+/* ---- Appendix: design specification (producer-facing) ---- */
+function SpecHead() {
+  return (
+    <div className="spec-head">
+      <span className="spec-head__tag">{spec.label}｜APPENDIX</span>
+      <h2 className="spec-head__title">{spec.title}</h2>
+      <p className="spec-head__note">{spec.note}</p>
+    </div>
+  )
+}
+
+function SpecTable({
+  title,
+  caption,
+  rows,
+}: {
+  title: string
+  caption?: string
+  rows: readonly { k: string; v: string }[]
+}) {
+  return (
+    <div className="spec-block">
+      <h3 className="h3">{title}</h3>
+      {caption && <p className="examples__caption">{caption}</p>}
+      <div className="kv">
+        {rows.map((r) => (
+          <div key={r.k} className="kv__row">
+            <div className="kv__k">{r.k}</div>
+            <div className="kv__v">{r.v}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SpecPages() {
+  return (
+    <>
+      {/* Appendix 1: 判型 + 配色 */}
+      <Sheet runhead={spec.label} pageLabel="制作資料">
+        <SpecHead />
+        <SpecTable title={spec.format.title} rows={spec.format.rows} />
+        <div className="spec-block">
+          <h3 className="h3">{spec.palette.title}</h3>
+          <p className="examples__caption">{spec.palette.caption}</p>
+          <div className="swatches">
+            {spec.palette.items.map((c) => (
+              <div key={c.name} className="swatch">
+                <span
+                  className="swatch__chip"
+                  style={{
+                    background: c.hex,
+                    border:
+                      c.hex.toUpperCase() === '#FFFFFF'
+                        ? '1px solid var(--gray-line)'
+                        : 'none',
+                  }}
+                />
+                <div className="swatch__meta">
+                  <span className="swatch__name">{c.name}</span>
+                  <span className="swatch__role">{c.role}</span>
+                  <span className="swatch__code">
+                    {c.hex}
+                    {'\u3000'}
+                    {c.cmyk}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Sheet>
+
+      {/* Appendix 2: タイポグラフィ + 余白 + アイコン */}
+      <Sheet runhead={spec.label} pageLabel="制作資料">
+        <div className="spec-block">
+          <h3 className="h3">{spec.typography.title}</h3>
+          <p className="examples__caption">{spec.typography.caption}</p>
+          <div className="spec-type">
+            <div className="spec-type__row spec-type__row--head">
+              <span>要素</span>
+              <span>サイズ</span>
+              <span>ウェイト</span>
+              <span>行間</span>
+              <span>備考</span>
+            </div>
+            {spec.typography.rows.map((r) => (
+              <div key={r.el} className="spec-type__row">
+                <span className="spec-type__el">{r.el}</span>
+                <span>{r.size}</span>
+                <span>{r.weight}</span>
+                <span>{r.lh}</span>
+                <span className="spec-type__note">{r.note}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <SpecTable title={spec.layout.title} rows={spec.layout.rows} />
+        <div className="spec-block">
+          <h3 className="h3">{spec.iconography.title}</h3>
+          <ul className="spec-list">
+            {spec.iconography.items.map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
+        </div>
+      </Sheet>
+
+      {/* Appendix 3: ページ別アートディレクション + 配慮 */}
+      <Sheet runhead={spec.label} pageLabel="制作資料">
+        <div className="spec-block">
+          <h3 className="h3">{spec.artDirection.title}</h3>
+          <p className="examples__caption">{spec.artDirection.caption}</p>
+          <div className="spec-art">
+            <div className="spec-art__row spec-art__row--head">
+              <span>ページ</span>
+              <span>図解</span>
+              <span>写真</span>
+              <span>イラスト</span>
+              <span>配色</span>
+            </div>
+            {spec.artDirection.rows.map((r) => (
+              <div key={r.page} className="spec-art__row">
+                <span className="spec-art__page">{r.page}</span>
+                <span>{r.figure}</span>
+                <span>{r.photo}</span>
+                <span>{r.illust}</span>
+                <span>{r.color}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="spec-block">
+          <h3 className="h3">{spec.accessibility.title}</h3>
+          <ul className="spec-list">
+            {spec.accessibility.items.map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
+        </div>
+      </Sheet>
+    </>
+  )
+}
+
 /* =============================================================
    App
    ============================================================= */
@@ -848,6 +1020,7 @@ function App() {
         <Ch11Page />
         <PromisePage />
         <BackPage />
+        <SpecPages />
       </div>
     </div>
   )
