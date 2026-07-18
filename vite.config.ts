@@ -3,10 +3,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
-// GitHub Pages では https://<user>.github.io/darca/ で配信するため、
-// 本番ビルド時のみ base をリポジトリ名（/darca/）にする。開発時は '/'。
+// 本番ビルドは相対パス（'./'）にして、GitHub Pages・raw.githack など
+// 配信先のパスに依存せずアセットを解決できるようにする。開発時は '/'。
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/darca/' : '/',
+  base: mode === 'production' ? './' : '/',
   plugins: [react()],
   server: {
     host: true,
