@@ -209,6 +209,38 @@ body {
   margin: 1.6rem 0;
 }
 
+/* ---------- Hero image (chapter opener / editorial band) ---------- */
+.hero {
+  margin: 0 0 1.5rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 34px rgba(13, 27, 52, 0.13);
+  background: var(--gray-50);
+  position: relative;
+}
+.hero img {
+  display: block;
+  width: 100%;
+  height: 196px;
+  object-fit: cover;
+}
+.hero--story img {
+  height: 230px;
+}
+.hero--promise {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(157, 194, 232, 0.25);
+}
+.hero--promise img {
+  height: 210px;
+}
+.hero__cap {
+  font-size: 0.76rem;
+  color: var(--ink-mute);
+  padding: 0.5rem 0.9rem;
+  background: var(--white);
+}
+
 /* ---------- Chapter head ---------- */
 .chapter-head {
   margin-bottom: 1.6rem;
@@ -226,12 +258,12 @@ body {
   border-radius: 999px;
 }
 .chapter-head__title {
-  font-size: 1.9rem;
-  line-height: 1.35;
+  font-size: 2.05rem;
+  line-height: 1.38;
   color: var(--navy);
-  margin: 0.8rem 0 0.6rem;
+  margin: 0.85rem 0 0.6rem;
   font-weight: 800;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 .chapter-head__catch {
   font-size: 1.06rem;
@@ -701,39 +733,6 @@ body {
   font-size: 0.92rem;
 }
 
-/* ---------- Figure / image placeholder ---------- */
-.figure {
-  border: 1.5px dashed var(--blue);
-  background: repeating-linear-gradient(
-    45deg,
-    var(--blue-tint),
-    var(--blue-tint) 12px,
-    #f4f9fe 12px,
-    #f4f9fe 24px
-  );
-  border-radius: var(--radius);
-  padding: 1.2rem;
-  margin: 1.2rem 0;
-  text-align: center;
-  color: var(--blue-deep);
-}
-.figure__tag {
-  display: inline-block;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  background: var(--blue);
-  color: var(--white);
-  padding: 0.2rem 0.7rem;
-  border-radius: 999px;
-  margin-bottom: 0.5rem;
-}
-.figure__note {
-  margin: 0;
-  font-size: 0.82rem;
-  line-height: 1.7;
-}
-
 /* ---------- Examples (before/after) ---------- */
 .examples {
   margin: 1.3rem 0;
@@ -781,15 +780,35 @@ body {
 .sheet--cover {
   padding: 0;
   color: var(--white);
-  background:
-    radial-gradient(120% 90% at 78% 6%, #244a7d 0%, transparent 55%),
-    linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+  background: var(--navy-deep);
+}
+.cover__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.cover__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 18, 36, 0.72) 0%,
+    rgba(9, 18, 36, 0.32) 34%,
+    rgba(9, 18, 36, 0.52) 66%,
+    rgba(9, 18, 36, 0.94) 100%
+  );
 }
 .cover {
+  position: relative;
+  z-index: 2;
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 24mm var(--pad-x) 20mm;
+  padding: 22mm var(--pad-x) 20mm;
 }
 .cover__top {
   display: flex;
@@ -832,36 +851,29 @@ body {
   margin-bottom: 1.6rem;
 }
 .cover__title {
-  font-size: 2.9rem;
-  line-height: 1.5;
+  font-size: 3.1rem;
+  line-height: 1.42;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   margin: 0;
   white-space: pre-line;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
 }
 .cover__accent {
-  width: 64px;
+  width: 68px;
   height: 4px;
   background: var(--green);
   border-radius: 2px;
-  margin: 1.6rem 0;
+  margin: 1.7rem 0;
+  box-shadow: 0 0 20px rgba(47, 158, 107, 0.5);
 }
 .cover__subtitle {
   font-size: 1.02rem;
-  line-height: 1.9;
-  color: #d8e6f3;
-  max-width: 46ch;
+  line-height: 1.95;
+  color: #eaf1f8;
+  max-width: 42ch;
   margin: 0;
-}
-.cover__figure {
-  margin: 2rem 0 0;
-  border: 1px dashed rgba(157, 194, 232, 0.5);
-  border-radius: var(--radius);
-  padding: 0.9rem 1.1rem;
-  color: #9dc2e8;
-  font-size: 0.78rem;
-  line-height: 1.7;
-  background: rgba(255, 255, 255, 0.03);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
 }
 .cover__bottom {
   margin-top: auto;
@@ -1410,37 +1422,6 @@ body {
   color: var(--ink-mute);
   border-top: 1px solid var(--gray-line);
   padding-top: 1rem;
-}
-
-/* ---------- Illustration slot (chapter opener band) ---------- */
-.artslot {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
-  margin: 1rem 0 1.3rem;
-  padding: 0.75rem 1rem;
-  border: 1.5px dashed var(--green);
-  border-radius: var(--radius);
-  background: var(--green-tint);
-}
-.artslot__tag {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--white);
-  background: var(--green);
-  padding: 0.24rem 0.6rem;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-.artslot__note {
-  margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.7;
-  color: var(--green-deep);
 }
 
 /* =============================================================

@@ -20,10 +20,10 @@ import {
   promise,
   backCover,
   spec,
-  chapterArt,
   type Point,
   type Column,
 } from './data/manual'
+import { img } from './assets/manual/images'
 
 /* =============================================================
    Reusable layout primitives
@@ -142,29 +142,20 @@ function ColumnBox({ data, green = false }: { data: Column; green?: boolean }) {
   )
 }
 
-function Figure({ note }: { note: string }) {
+function ChapterHero({
+  src,
+  alt,
+  caption,
+}: {
+  src: string
+  alt: string
+  caption?: string
+}) {
   return (
-    <div className="figure">
-      <span className="figure__tag">図版・写真スペース</span>
-      <p className="figure__note">{note}</p>
-    </div>
-  )
-}
-
-function IllustrationSlot({ id }: { id: string }) {
-  const art = chapterArt[id]
-  if (!art) return null
-  return (
-    <div className="artslot">
-      <span className="artslot__tag">
-        <Icon name="leaf" className="icon-inline" />
-        イラスト位置
-      </span>
-      <p className="artslot__note">
-        {art.illust}
-        {art.photo ? `\u3000／\u3000写真候補：${art.photo}` : ''}
-      </p>
-    </div>
+    <figure className="hero">
+      <img src={src} alt={alt} loading="lazy" />
+      {caption && <figcaption className="hero__cap">{caption}</figcaption>}
+    </figure>
   )
 }
 
@@ -175,6 +166,8 @@ function IllustrationSlot({ id }: { id: string }) {
 function CoverPage() {
   return (
     <Sheet className="sheet--cover">
+      <img className="cover__bg" src={img.coverHero} alt="" aria-hidden="true" />
+      <div className="cover__scrim" />
       <div className="cover">
         <div className="cover__top">
           <div>
@@ -189,10 +182,6 @@ function CoverPage() {
           <h1 className="cover__title">{cover.title}</h1>
           <div className="cover__accent" />
           <p className="cover__subtitle">{cover.subtitle}</p>
-          <div className="cover__figure">
-            ［表紙ビジュアル案：早朝のやわらかな光、あるいは寄り添う二つの手のシルエット。
-            人物の顔は写さず、静けさと希望を感じさせる抽象的なイメージ。中央にタイトルを配置し、余白を大きくとる］
-          </div>
         </div>
 
         <div className="cover__bottom">
@@ -209,6 +198,13 @@ function StoryPage() {
     <Sheet className="sheet--story" runhead="PROLOGUE" pageNo={2} pageLabel="はじめに">
       <p className="story__kicker">{openingStory.chapterLabel}</p>
       <h2 className="story__title">{openingStory.title}</h2>
+      <figure className="hero hero--story">
+        <img
+          src={img.storyNight}
+          alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
+          loading="lazy"
+        />
+      </figure>
       <p className="story__lead">{openingStory.lead}</p>
       <div className="story__body">
         {openingStory.paragraphs.map((p) =>
@@ -226,9 +222,6 @@ function StoryPage() {
           <p key={p}>{p}</p>
         ))}
       </div>
-      <div className="story__figure">
-        <Figure note={openingStory.imageNote.replace(/^［写真位置：|］$/g, '')} />
-      </div>
     </Sheet>
   )
 }
@@ -237,6 +230,10 @@ function PrefacePage() {
   return (
     <Sheet runhead={preface.chapterLabel} pageNo={3} pageLabel="はじめに">
       <ChapterHead no={preface.chapterLabel} title={preface.title} catch="あなたは、悪くありません。" />
+      <ChapterHero
+        src={img.handsSupport}
+        alt="やわらかな光の中で、そっと近づく二つの手。あなたは一人ではないというメッセージ"
+      />
       {preface.paragraphs.map((p) => (
         <p key={p} className="body-p">
           {p}
@@ -293,8 +290,11 @@ function Ch1Page() {
   return (
     <Sheet runhead={`${ch1.no}\u3000${ch1.title}`} pageNo={5} pageLabel={ch1.no}>
       <ChapterHead no={ch1.no} title={ch1.title} catch={ch1.catch} />
+      <ChapterHero
+        src={img.calmThread}
+        alt="からまった糸がやがて一本の線へとほどけていく、混乱から理解へ向かうイメージ"
+      />
       <Lead lines={ch1.lead} />
-      <IllustrationSlot id="ch1" />
       {ch1.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -322,8 +322,11 @@ function Ch2Page() {
   return (
     <Sheet runhead={`${ch2.no}\u3000${ch2.title}`} pageNo={6} pageLabel={ch2.no}>
       <ChapterHead no={ch2.no} title={ch2.title} catch={ch2.catch} />
+      <ChapterHero
+        src={img.seedlingDawn}
+        alt="朝の光の中で芽吹く小さな双葉。家族もまた回復できるという希望のイメージ"
+      />
       <Lead lines={ch2.lead} />
-      <IllustrationSlot id="ch2" />
       {ch2.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -351,7 +354,6 @@ function Ch3Page() {
     <Sheet runhead={`${ch3.no}\u3000${ch3.title}`} pageNo={7} pageLabel={ch3.no}>
       <ChapterHead no={ch3.no} title={ch3.title} catch={ch3.catch} />
       <Lead lines={ch3.lead} />
-      <IllustrationSlot id="ch3" />
       {ch3.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -381,8 +383,11 @@ function Ch4Page() {
   return (
     <Sheet runhead={`${ch4.no}\u3000${ch4.title}`} pageNo={8} pageLabel={ch4.no}>
       <ChapterHead no={ch4.no} title={ch4.title} catch={ch4.catch} />
+      <ChapterHero
+        src={img.pathFork}
+        alt="夜明けの野原で一本の道が二手に分かれ、道標が立つイメージ"
+      />
       <Lead lines={ch4.lead} />
-      <IllustrationSlot id="ch4" />
       {ch4.sections.map((s) => (
         <TextSection key={s.heading} heading={s.heading} body={s.body} />
       ))}
@@ -551,7 +556,6 @@ function Ch7Page() {
     <Sheet runhead={`${ch7.no}\u3000${ch7.title}`} pageNo={11} pageLabel={ch7.no}>
       <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
       <Lead lines={ch7.lead} />
-      <IllustrationSlot id="ch7" />
 
       <div className="dd-col dd-col--dont" style={{ margin: '1.4rem 0' }}>
         <p className="dd-col__head">
@@ -586,8 +590,11 @@ function Ch8Page() {
   return (
     <Sheet runhead={`${ch8.no}\u3000${ch8.title}`} pageNo={12} pageLabel={ch8.no}>
       <ChapterHead no={ch8.no} title={ch8.title} catch={ch8.catch} />
+      <ChapterHero
+        src={img.boundary}
+        alt="夜明けの二つの岸のあいだを流れる穏やかな川。しなやかな境界線のイメージ"
+      />
       <Lead lines={ch8.lead} />
-      <IllustrationSlot id="ch8" />
 
       <div className="dd-col dd-col--do" style={{ margin: '1.4rem 0' }}>
         <p className="dd-col__head">
@@ -722,8 +729,11 @@ function Ch11Page() {
   return (
     <Sheet runhead={`${ch11.no}\u3000${ch11.title}`} pageNo={18} pageLabel={ch11.no}>
       <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
+      <ChapterHero
+        src={img.familyCircle}
+        alt="明るい部屋に円く並べられた椅子。安心してつながれる家族会のイメージ"
+      />
       <Lead lines={ch11.lead} />
-      <IllustrationSlot id="ch11" />
 
       <div className="benefits">
         {ch11.benefits.map((b) => (
@@ -774,6 +784,13 @@ function PromisePage() {
     <Sheet className="sheet--promise" runhead={promise.chapterLabel} pageNo={19} pageLabel="約束">
       <p className="promise__label">{promise.chapterLabel}{'\u3000'}PROMISE</p>
       <h2 className="promise__title">{promise.title}</h2>
+      <figure className="hero hero--promise">
+        <img
+          src={img.walkingTogether}
+          alt="夜明けに向かって並んで歩いていく二人の後ろ姿。ともに歩むイメージ"
+          loading="lazy"
+        />
+      </figure>
       <div className="promise__body">
         {promise.paragraphs.map((p) => (
           <p key={p}>{p}</p>
