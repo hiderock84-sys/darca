@@ -1691,7 +1691,14 @@ body {
 @media print {
   @page {
     size: A4;
+    margin: 10mm 0;
+  }
+  @page fullbleed {
     margin: 0;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   body {
     background: var(--white);
@@ -1700,34 +1707,114 @@ body {
     padding: 0;
   }
   .toolbar,
-  .print-hint {
+  .print-hint,
+  .runhead,
+  .pagenum {
     display: none;
   }
   .booklet {
+    display: block;
     gap: 0;
   }
-  .booklet {
+
+  /* ---- 本文シートは連続フロー（固定高さ・強制改ページを解除） ---- */
+  .sheet {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    padding: 0 15mm;
+    margin: 0;
+    box-shadow: none;
+    overflow: visible;
+    display: block;
+    background: none;
+  }
+  .sheet__body {
     display: block;
   }
-  .sheet {
+  .sheet
+    + .sheet:not(.sheet--cover):not(.sheet--promise):not(.sheet--back) {
+    margin-top: 4mm;
+  }
+  .sheet--story,
+  .sheet--open {
+    background: none;
+  }
+  .sheet--open .sheet__body {
+    display: block;
+  }
+  .chapter-open {
+    padding: 0;
+  }
+
+  /* ---- 分割されると困る塊はページ跨ぎを禁止 ---- */
+  figure,
+  .hero,
+  .point,
+  .column,
+  .case,
+  .qa,
+  .checklist,
+  .cycle,
+  .cycle__step,
+  .flow,
+  .flow__step,
+  .callout,
+  .kv__row,
+  .benefit,
+  .compare,
+  .example-row,
+  .dd-col,
+  .voices,
+  .points,
+  .chapter-head,
+  .toc__row,
+  .preface__pledge,
+  .qa-group__label {
+    break-inside: avoid;
+  }
+  /* 見出しは直後の内容と一緒に */
+  .chapter-head,
+  .h3,
+  .story__title,
+  .story__kicker,
+  .toc__title,
+  .examples__title,
+  .checklist__title,
+  .flow__title,
+  .qa-group__label {
+    break-after: avoid;
+  }
+
+  /* ---- 表紙・約束・裏表紙は独立した全面ページ ---- */
+  .sheet--cover,
+  .sheet--promise,
+  .sheet--back {
+    page: fullbleed;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
     width: 210mm;
     height: 297mm;
-    margin: 0;
     overflow: hidden;
-    box-shadow: none;
-  }
-  .sheet + .sheet {
-    page-break-before: always;
-    break-before: page;
+    margin: 0;
   }
   .sheet--cover,
-  .sheet--promise {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  .sheet--back {
+    padding: 0;
   }
-  * {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  .sheet--promise {
+    padding: var(--pad-y) var(--pad-x);
+  }
+  .sheet--cover {
+    break-before: avoid;
+    break-after: page;
+  }
+  .sheet--promise {
+    break-before: page;
+  }
+  .sheet--back {
+    break-before: page;
   }
 }
 
