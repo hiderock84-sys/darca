@@ -5,7 +5,6 @@ on:
     branches:
       - Hiderock69
       - main
-      - cursor/family-recovery-manual-f9c8
   workflow_dispatch:
 
 permissions:
