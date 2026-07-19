@@ -260,6 +260,12 @@ body {
   height: 138px;
   object-fit: cover;
 }
+.hero--tall img {
+  height: 230px;
+}
+.hero--xtall img {
+  height: 300px;
+}
 .hero--story img {
   height: 172px;
 }

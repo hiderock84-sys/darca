@@ -146,13 +146,16 @@ function ChapterHero({
   src,
   alt,
   caption,
+  size,
 }: {
   src: string
   alt: string
   caption?: string
+  size?: 'tall' | 'xtall'
 }) {
+  const cls = size === 'tall' ? 'hero hero--tall' : size === 'xtall' ? 'hero hero--xtall' : 'hero'
   return (
-    <figure className="hero">
+    <figure className={cls}>
       <img src={src} alt={alt} loading="lazy" />
       {caption && <figcaption className="hero__cap">{caption}</figcaption>}
     </figure>
@@ -228,6 +231,11 @@ function StoryPages() {
             <p key={p}>{p}</p>
           ))}
         </div>
+        <ChapterHero
+          src={img.entranceBack}
+          alt="相模原ダルクの入口に立つご家族の後ろ姿。ここから回復の一歩が始まる"
+          caption="相模原ダルクの玄関で ── どんな夜にも、次の朝はやってきます。ここから、一緒に。"
+        />
       </Sheet>
     </>
   )
@@ -247,6 +255,7 @@ function PrefacePages() {
         <ChapterHero
           src={img.handsSupport}
           alt="やわらかな光の中で、そっと近づく二つの手。あなたは一人ではないというメッセージ"
+          size="tall"
         />
         {first.map((p) => (
           <p key={p} className="body-p">
@@ -265,6 +274,7 @@ function PrefacePages() {
           src={img.facility}
           alt="相模原ダルク デイケアセンターの建物外観。ご家族と本人がともに通う場所"
           caption="相模原ダルク デイケアセンター（相模原市）── ご本人もご家族も、ここから一緒に歩き始められます。"
+          size="tall"
         />
         <div className="preface__pledge">{preface.pledge}</div>
       </Sheet>
@@ -661,6 +671,12 @@ function Ch7Pages() {
           <span>{ch7.reasonNote}</span>
         </div>
         <ColumnBox data={ch7.column} />
+        <ChapterHero
+          src={img.consultHand}
+          alt="相談室で穏やかに話を聴く様子。判断に迷ったら一人で抱え込まないで"
+          caption="迷ったときは、どうか一人で決めないでください。相模原ダルクがご一緒します。"
+          size="xtall"
+        />
       </Sheet>
     </>
   )
@@ -810,6 +826,11 @@ function Ch10Pages() {
               ))}
             </ol>
           </div>
+          <ChapterHero
+            src={img.staffSmile}
+            alt="相談に応じる相模原ダルクのスタッフの穏やかな笑顔"
+            caption="「こんなこと聞いていいのかな」も大歓迎です。どうぞ気軽にご相談ください。"
+          />
         </div>
       </Sheet>
 
@@ -844,8 +865,9 @@ function Ch11Pages() {
       <Sheet runhead={rh} pageLabel={ch11.no}>
         <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
         <ChapterHero
-          src={img.familyCircle}
-          alt="明るい部屋に円く並べられた椅子。安心してつながれる家族会のイメージ"
+          src={img.seminar}
+          alt="相模原ダルクの家族会・家族セミナーの様子（プライバシー保護のため顔は加工済み）"
+          caption="相模原ダルクの家族会（実際の様子）── 同じ思いのご家族と、専門スタッフがともにいます。"
         />
         <Lead lines={ch11.lead} />
         <div className="benefits">
