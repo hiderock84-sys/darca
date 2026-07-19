@@ -26,20 +26,20 @@ import {
 import { img } from './assets/manual/images'
 
 /* =============================================================
-   Reusable layout primitives
+   Page numbering is handled entirely in CSS (counter on .sheet),
+   so no render-time side effects are needed here.
    ============================================================= */
-
 function Sheet({
   className = '',
   runhead,
-  pageNo,
   pageLabel,
+  hideNo = false,
   children,
 }: {
   className?: string
   runhead?: string
-  pageNo?: number
   pageLabel?: string
+  hideNo?: boolean
   children: ReactNode
 }) {
   return (
@@ -51,10 +51,10 @@ function Sheet({
         </div>
       )}
       <div className="sheet__body">{children}</div>
-      {pageNo !== undefined && (
+      {!hideNo && (
         <div className="pagenum">
           <span>{pageLabel}</span>
-          <span className="pagenum__no">— {pageNo} —</span>
+          <span className="pagenum__no" />
         </div>
       )}
     </section>
@@ -142,30 +142,21 @@ function ColumnBox({ data, green = false }: { data: Column; green?: boolean }) {
   )
 }
 
-function ChapterHero({
-  src,
-  alt,
-  caption,
-}: {
-  src: string
-  alt: string
-  caption?: string
-}) {
+function ChapterHero({ src, alt }: { src: string; alt: string }) {
   return (
     <figure className="hero">
       <img src={src} alt={alt} loading="lazy" />
-      {caption && <figcaption className="hero__cap">{caption}</figcaption>}
     </figure>
   )
 }
 
 /* =============================================================
-   Pages
+   Front matter
    ============================================================= */
 
 function CoverPage() {
   return (
-    <Sheet className="sheet--cover">
+    <Sheet className="sheet--cover" hideNo>
       <img className="cover__bg" src={img.coverHero} alt="" aria-hidden="true" />
       <div className="cover__scrim" />
       <div className="cover">
@@ -193,42 +184,49 @@ function CoverPage() {
   )
 }
 
-function StoryPage() {
+function StoryPages() {
+  const paras = openingStory.paragraphs
+  const first = paras.slice(0, 4)
+  const rest = paras.slice(4)
+  const renderPara = (p: string) =>
+    p.startsWith('「') ? (
+      <p key={p} className="story__quote">
+        {p}
+      </p>
+    ) : (
+      <p key={p}>{p}</p>
+    )
   return (
-    <Sheet className="sheet--story" runhead="PROLOGUE" pageNo={2} pageLabel="はじめに">
-      <p className="story__kicker">{openingStory.chapterLabel}</p>
-      <h2 className="story__title">{openingStory.title}</h2>
-      <figure className="hero hero--story">
-        <img
-          src={img.storyNight}
-          alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
-          loading="lazy"
-        />
-      </figure>
-      <p className="story__lead">{openingStory.lead}</p>
-      <div className="story__body">
-        {openingStory.paragraphs.map((p) =>
-          p.startsWith('「') ? (
-            <p key={p} className="story__quote">
-              {p}
-            </p>
-          ) : (
+    <>
+      <Sheet className="sheet--story" runhead="PROLOGUE" pageLabel="導入ストーリー">
+        <p className="story__kicker">{openingStory.chapterLabel}</p>
+        <h2 className="story__title">{openingStory.title}</h2>
+        <figure className="hero hero--story">
+          <img
+            src={img.storyNight}
+            alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
+            loading="lazy"
+          />
+        </figure>
+        <p className="story__lead">{openingStory.lead}</p>
+        <div className="story__body">{first.map(renderPara)}</div>
+      </Sheet>
+
+      <Sheet className="sheet--story" runhead="PROLOGUE" pageLabel="導入ストーリー">
+        <div className="story__body">{rest.map(renderPara)}</div>
+        <div className="story__closing">
+          {openingStory.closing.map((p) => (
             <p key={p}>{p}</p>
-          ),
-        )}
-      </div>
-      <div className="story__closing">
-        {openingStory.closing.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
-      </div>
-    </Sheet>
+          ))}
+        </div>
+      </Sheet>
+    </>
   )
 }
 
 function PrefacePage() {
   return (
-    <Sheet runhead={preface.chapterLabel} pageNo={3} pageLabel="はじめに">
+    <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
       <ChapterHead no={preface.chapterLabel} title={preface.title} catch="あなたは、悪くありません。" />
       <ChapterHero
         src={img.handsSupport}
@@ -246,7 +244,7 @@ function PrefacePage() {
 
 function TocPage() {
   return (
-    <Sheet runhead="目次" pageNo={4} pageLabel="目次">
+    <Sheet runhead="目次" pageLabel="目次">
       <div className="toc__head">
         <p className="toc__sub">{toc.subtitle}</p>
         <h2 className="toc__title">{toc.title}</h2>
@@ -273,7 +271,7 @@ function TocPage() {
         ))}
       </ul>
 
-      <div className="toc__intro" style={{ marginTop: '1rem', marginBottom: 0 }}>
+      <div className="toc__intro" style={{ marginTop: '0.7rem', marginBottom: 0 }}>
         {toc.closing.map((r) => (
           <div key={r.title} className="toc__intro-row">
             <span className="toc__intro-label">{r.label}</span>
@@ -285,279 +283,328 @@ function TocPage() {
   )
 }
 
-/* ---- Chapter 1 ---- */
-function Ch1Page() {
-  return (
-    <Sheet runhead={`${ch1.no}\u3000${ch1.title}`} pageNo={5} pageLabel={ch1.no}>
-      <ChapterHead no={ch1.no} title={ch1.title} catch={ch1.catch} />
-      <ChapterHero
-        src={img.calmThread}
-        alt="からまった糸がやがて一本の線へとほどけていく、混乱から理解へ向かうイメージ"
-      />
-      <Lead lines={ch1.lead} />
-      {ch1.sections.map((s) => (
-        <TextSection key={s.heading} heading={s.heading} body={s.body} />
-      ))}
-      <Points items={ch1.points} />
-      <div className="cycle">
-        <p className="cycle__title">{ch1.cycle.title}</p>
-        <ol className="cycle__steps">
-          {ch1.cycle.steps.map((s, i) => (
-            <li key={s.title} className="cycle__step">
-              <span className="cycle__num">STEP {i + 1}</span>
-              <span className="cycle__step-title">{s.title}</span>
-              <span className="cycle__step-note">{s.note}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="cycle__loop">↻ {ch1.cycle.caption}</p>
-      </div>
-      <ColumnBox data={ch1.column} green />
-    </Sheet>
-  )
-}
+/* =============================================================
+   Chapters (split across A4 sheets so nothing is clipped)
+   ============================================================= */
 
-/* ---- Chapter 2 ---- */
-function Ch2Page() {
+function Ch1Pages() {
+  const rh = `${ch1.no}\u3000${ch1.title}`
   return (
-    <Sheet runhead={`${ch2.no}\u3000${ch2.title}`} pageNo={6} pageLabel={ch2.no}>
-      <ChapterHead no={ch2.no} title={ch2.title} catch={ch2.catch} />
-      <ChapterHero
-        src={img.seedlingDawn}
-        alt="朝の光の中で芽吹く小さな双葉。家族もまた回復できるという希望のイメージ"
-      />
-      <Lead lines={ch2.lead} />
-      {ch2.sections.map((s) => (
-        <TextSection key={s.heading} heading={s.heading} body={s.body} />
-      ))}
-      <div className="checklist">
-        <p className="checklist__title">{ch2.checklist.title}</p>
-        <ul className="checklist__items">
-          {ch2.checklist.items.map((it) => (
-            <li key={it}>
-              <span className="checklist__box" />
-              <span>{it}</span>
-            </li>
-          ))}
-        </ul>
-        <p className="checklist__caption">{ch2.checklist.caption}</p>
-      </div>
-      <Points items={ch2.points} />
-      <ColumnBox data={ch2.column} green />
-    </Sheet>
-  )
-}
-
-/* ---- Chapter 3 ---- */
-function Ch3Page() {
-  return (
-    <Sheet runhead={`${ch3.no}\u3000${ch3.title}`} pageNo={7} pageLabel={ch3.no}>
-      <ChapterHead no={ch3.no} title={ch3.title} catch={ch3.catch} />
-      <Lead lines={ch3.lead} />
-      {ch3.sections.map((s) => (
-        <TextSection key={s.heading} heading={s.heading} body={s.body} />
-      ))}
-      <div className="examples">
-        <p className="examples__title">{ch3.examples.title}</p>
-        <p className="examples__caption">{ch3.examples.caption}</p>
-        {ch3.examples.items.map((e) => (
-          <div key={e.do} className="example-row">
-            <span className="example-row__from">{e.do}</span>
-            <span className="example-row__arrow">→</span>
-            <span className="example-row__to">{e.instead}</span>
-          </div>
+    <>
+      <Sheet runhead={rh} pageLabel={ch1.no}>
+        <ChapterHead no={ch1.no} title={ch1.title} catch={ch1.catch} />
+        <ChapterHero
+          src={img.calmThread}
+          alt="からまった糸がやがて一本の線へとほどけていく、混乱から理解へ向かうイメージ"
+        />
+        <Lead lines={ch1.lead} />
+        {ch1.sections.map((s) => (
+          <TextSection key={s.heading} heading={s.heading} body={s.body} />
         ))}
-      </div>
-      <Points items={ch3.points} />
-      <ColumnBox data={ch3.column} green />
-    </Sheet>
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch1.no}>
+        <Points items={ch1.points} />
+        <div className="cycle">
+          <p className="cycle__title">{ch1.cycle.title}</p>
+          <ol className="cycle__steps">
+            {ch1.cycle.steps.map((s, i) => (
+              <li key={s.title} className="cycle__step">
+                <span className="cycle__num">STEP {i + 1}</span>
+                <span className="cycle__step-title">{s.title}</span>
+                <span className="cycle__step-note">{s.note}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="cycle__loop">↻ {ch1.cycle.caption}</p>
+        </div>
+        <ColumnBox data={ch1.column} green />
+      </Sheet>
+    </>
   )
 }
 
-/* ---- Chapter 4 ---- */
-function Ch4Page() {
+function Ch2Pages() {
+  const rh = `${ch2.no}\u3000${ch2.title}`
+  return (
+    <>
+      <Sheet runhead={rh} pageLabel={ch2.no}>
+        <ChapterHead no={ch2.no} title={ch2.title} catch={ch2.catch} />
+        <ChapterHero
+          src={img.seedlingDawn}
+          alt="朝の光の中で芽吹く小さな双葉。家族もまた回復できるという希望のイメージ"
+        />
+        <Lead lines={ch2.lead} />
+        {ch2.sections.map((s) => (
+          <TextSection key={s.heading} heading={s.heading} body={s.body} />
+        ))}
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch2.no}>
+        <div className="checklist">
+          <p className="checklist__title">{ch2.checklist.title}</p>
+          <ul className="checklist__items">
+            {ch2.checklist.items.map((it) => (
+              <li key={it}>
+                <span className="checklist__box" />
+                <span>{it}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="checklist__caption">{ch2.checklist.caption}</p>
+        </div>
+        <Points items={ch2.points} />
+        <ColumnBox data={ch2.column} green />
+      </Sheet>
+    </>
+  )
+}
+
+function Ch3Pages() {
+  const rh = `${ch3.no}\u3000${ch3.title}`
+  return (
+    <>
+      <Sheet runhead={rh} pageLabel={ch3.no}>
+        <ChapterHead no={ch3.no} title={ch3.title} catch={ch3.catch} />
+        <Lead lines={ch3.lead} />
+        {ch3.sections.map((s) => (
+          <TextSection key={s.heading} heading={s.heading} body={s.body} />
+        ))}
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch3.no}>
+        <div className="examples">
+          <p className="examples__title">{ch3.examples.title}</p>
+          <p className="examples__caption">{ch3.examples.caption}</p>
+          {ch3.examples.items.map((e) => (
+            <div key={e.do} className="example-row">
+              <span className="example-row__from">{e.do}</span>
+              <span className="example-row__arrow">→</span>
+              <span className="example-row__to">{e.instead}</span>
+            </div>
+          ))}
+        </div>
+        <Points items={ch3.points} />
+        <ColumnBox data={ch3.column} green />
+      </Sheet>
+    </>
+  )
+}
+
+function Ch4Pages() {
+  const rh = `${ch4.no}\u3000${ch4.title}`
   const toneClass: Record<string, string> = {
     do: 'compare__col--do',
     dont: 'compare__col--dont',
   }
   return (
-    <Sheet runhead={`${ch4.no}\u3000${ch4.title}`} pageNo={8} pageLabel={ch4.no}>
-      <ChapterHead no={ch4.no} title={ch4.title} catch={ch4.catch} />
-      <ChapterHero
-        src={img.pathFork}
-        alt="夜明けの野原で一本の道が二手に分かれ、道標が立つイメージ"
-      />
-      <Lead lines={ch4.lead} />
-      {ch4.sections.map((s) => (
-        <TextSection key={s.heading} heading={s.heading} body={s.body} />
-      ))}
+    <>
+      <Sheet runhead={rh} pageLabel={ch4.no}>
+        <ChapterHead no={ch4.no} title={ch4.title} catch={ch4.catch} />
+        <ChapterHero
+          src={img.pathFork}
+          alt="夜明けの野原で一本の道が二手に分かれ、道標が立つイメージ"
+        />
+        <Lead lines={ch4.lead} />
+        <TextSection
+          heading={ch4.sections[0].heading}
+          body={ch4.sections[0].body}
+        />
+      </Sheet>
 
-      <div className="examples">
-        <p className="examples__title">{ch4.patterns.title}</p>
-        <p className="examples__caption">{ch4.patterns.caption}</p>
-        <div className="points points--3">
-          {ch4.patterns.items.map((p) => (
-            <div
-              key={p.title}
-              className="point"
-              style={{
-                borderTop: `3px solid ${
-                  p.tone === 'do'
-                    ? 'var(--green)'
-                    : p.tone === 'warn'
-                      ? '#c99a2e'
-                      : 'var(--red)'
-                }`,
-              }}
-            >
-              <p className="point__title">{p.title}</p>
-              <p className="point__body">{p.note}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="compare">
-        <div className={`compare__col ${toneClass[ch4.compare.left.tone]}`}>
-          <p className="compare__title">{ch4.compare.left.title}</p>
-          <ul className="compare__list">
-            {ch4.compare.left.items.map((i) => (
-              <li key={i}>{i}</li>
+      <Sheet runhead={rh} pageLabel={ch4.no}>
+        <TextSection
+          heading={ch4.sections[1].heading}
+          body={ch4.sections[1].body}
+        />
+        <div className="examples">
+          <p className="examples__title">{ch4.patterns.title}</p>
+          <p className="examples__caption">{ch4.patterns.caption}</p>
+          <div className="points points--3">
+            {ch4.patterns.items.map((p) => (
+              <div
+                key={p.title}
+                className="point"
+                style={{
+                  borderTop: `3px solid ${
+                    p.tone === 'do'
+                      ? 'var(--green)'
+                      : p.tone === 'warn'
+                        ? '#c99a2e'
+                        : 'var(--red)'
+                  }`,
+                }}
+              >
+                <p className="point__title">{p.title}</p>
+                <p className="point__body">{p.note}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
-        <div className={`compare__col ${toneClass[ch4.compare.right.tone]}`}>
-          <p className="compare__title">{ch4.compare.right.title}</p>
-          <ul className="compare__list">
-            {ch4.compare.right.items.map((i) => (
-              <li key={i}>{i}</li>
-            ))}
-          </ul>
+        <div className="compare">
+          <div className={`compare__col ${toneClass[ch4.compare.left.tone]}`}>
+            <p className="compare__title">{ch4.compare.left.title}</p>
+            <ul className="compare__list">
+              {ch4.compare.left.items.map((i) => (
+                <li key={i}>{i}</li>
+              ))}
+            </ul>
+          </div>
+          <div className={`compare__col ${toneClass[ch4.compare.right.tone]}`}>
+            <p className="compare__title">{ch4.compare.right.title}</p>
+            <ul className="compare__list">
+              {ch4.compare.right.items.map((i) => (
+                <li key={i}>{i}</li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
+      </Sheet>
 
-      <Points items={ch4.points} />
-      <ColumnBox data={ch4.column} green />
-    </Sheet>
+      <Sheet runhead={rh} pageLabel={ch4.no}>
+        <TextSection
+          heading={ch4.sections[2].heading}
+          body={ch4.sections[2].body}
+        />
+        <Points items={ch4.points} />
+        <ColumnBox data={ch4.column} green />
+      </Sheet>
+    </>
   )
 }
 
-/* ---- Chapter 5 ---- */
-function Ch5Page() {
+function Ch5Pages() {
+  const rh = `${ch5.no}\u3000${ch5.title}`
   return (
-    <Sheet runhead={`${ch5.no}\u3000${ch5.title}`} pageNo={9} pageLabel={ch5.no}>
-      <ChapterHead no={ch5.no} title={ch5.title} catch={ch5.catch} />
-      <Lead lines={ch5.lead} />
-      {ch5.sections.map((s) => (
-        <TextSection key={s.heading} heading={s.heading} body={s.body} />
-      ))}
-
-      <div className="flow">
-        <p className="flow__title">{ch5.flow.title}</p>
-        <ol className="flow__steps">
-          {ch5.flow.steps.map((s, i) => (
-            <li key={s.title} className="flow__step">
-              <span className="flow__num">{i + 1}</span>
-              <span>
-                <span className="flow__step-title">{s.title}</span>
-                <span className="flow__step-note">{s.note}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="flow__caption">{ch5.flow.caption}</p>
-      </div>
-
-      <div className="dodont">
-        <div className="dd-col dd-col--do">
-          <p className="dd-col__head">
-            <Icon name="check" />
-            {ch5.saylist.good.title}
-          </p>
-          <ul className="dd-list">
-            {ch5.saylist.good.items.map((i) => (
-              <li key={i}>
-                <Icon name="check" />
-                <span className="dd-item__title">{i}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="dd-col dd-col--dont">
-          <p className="dd-col__head">
-            <Icon name="cross" />
-            {ch5.saylist.bad.title}
-          </p>
-          <ul className="dd-list">
-            {ch5.saylist.bad.items.map((i) => (
-              <li key={i}>
-                <Icon name="cross" />
-                <span className="dd-item__title">{i}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="callout callout--alert">
-        <Icon name="alert" />
-        <span>
-          <span className="callout__label">{ch5.safety.label}</span>
-          {ch5.safety.body}
-        </span>
-      </div>
-    </Sheet>
-  )
-}
-
-/* ---- Chapter 6 ---- */
-function Ch6Page() {
-  return (
-    <Sheet runhead={`${ch6.no}\u3000${ch6.title}`} pageNo={10} pageLabel={ch6.no}>
-      <ChapterHead no={ch6.no} title={ch6.title} catch={ch6.catch} />
-      <Lead lines={ch6.lead} />
-
-      {ch6.cases.map((c) => (
-        <div key={c.label} className="section-block">
-          <h3 className="h3">
-            {c.label}
-            {'\u3000'}
-            {c.from}
-          </h3>
-          {c.body.map((p) => (
-            <p key={p} className="body-p">
-              {p}
+    <>
+      <Sheet runhead={rh} pageLabel={ch5.no}>
+        <ChapterHead no={ch5.no} title={ch5.title} catch={ch5.catch} />
+        <Lead lines={ch5.lead} />
+        {ch5.sections.map((s) => (
+          <TextSection key={s.heading} heading={s.heading} body={s.body} />
+        ))}
+        <div className="dodont">
+          <div className="dd-col dd-col--do">
+            <p className="dd-col__head">
+              <Icon name="check" />
+              {ch5.saylist.good.title}
             </p>
-          ))}
+            <ul className="dd-list">
+              {ch5.saylist.good.items.map((i) => (
+                <li key={i}>
+                  <Icon name="check" />
+                  <span className="dd-item__title">{i}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="dd-col dd-col--dont">
+            <p className="dd-col__head">
+              <Icon name="cross" />
+              {ch5.saylist.bad.title}
+            </p>
+            <ul className="dd-list">
+              {ch5.saylist.bad.items.map((i) => (
+                <li key={i}>
+                  <Icon name="cross" />
+                  <span className="dd-item__title">{i}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      ))}
+      </Sheet>
 
-      <Points items={ch6.points} />
-
-      <div className="callout callout--alert">
-        <Icon name="alert" />
-        <span>
-          <span className="callout__label">{ch6.impersonation.label}</span>
-          {ch6.impersonation.body}
-        </span>
-      </div>
-
-      <div className="callout">
-        <Icon name="shield" />
-        <span>{ch6.note}</span>
-      </div>
-    </Sheet>
+      <Sheet runhead={rh} pageLabel={ch5.no}>
+        <div className="flow">
+          <p className="flow__title">{ch5.flow.title}</p>
+          <ol className="flow__steps">
+            {ch5.flow.steps.map((s, i) => (
+              <li key={s.title} className="flow__step">
+                <span className="flow__num">{i + 1}</span>
+                <span>
+                  <span className="flow__step-title">{s.title}</span>
+                  <span className="flow__step-note">{s.note}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="flow__caption">{ch5.flow.caption}</p>
+        </div>
+        <div className="callout callout--alert">
+          <Icon name="alert" />
+          <span>
+            <span className="callout__label">{ch5.safety.label}</span>
+            {ch5.safety.body}
+          </span>
+        </div>
+      </Sheet>
+    </>
   )
 }
 
-/* ---- Chapter 7 ---- */
+function Ch6Pages() {
+  const rh = `${ch6.no}\u3000${ch6.title}`
+  return (
+    <>
+      <Sheet runhead={rh} pageLabel={ch6.no}>
+        <ChapterHead no={ch6.no} title={ch6.title} catch={ch6.catch} />
+        <Lead lines={ch6.lead} />
+        {ch6.cases.slice(0, 2).map((c) => (
+          <div key={c.label} className="section-block">
+            <h3 className="h3">
+              {c.label}
+              {'\u3000'}
+              {c.from}
+            </h3>
+            {c.body.map((p) => (
+              <p key={p} className="body-p">
+                {p}
+              </p>
+            ))}
+          </div>
+        ))}
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch6.no}>
+        {ch6.cases.slice(2).map((c) => (
+          <div key={c.label} className="section-block">
+            <h3 className="h3">
+              {c.label}
+              {'\u3000'}
+              {c.from}
+            </h3>
+            {c.body.map((p) => (
+              <p key={p} className="body-p">
+                {p}
+              </p>
+            ))}
+          </div>
+        ))}
+        <Points items={ch6.points} />
+        <div className="callout callout--alert">
+          <Icon name="alert" />
+          <span>
+            <span className="callout__label">{ch6.impersonation.label}</span>
+            {ch6.impersonation.body}
+          </span>
+        </div>
+        <div className="callout">
+          <Icon name="shield" />
+          <span>{ch6.note}</span>
+        </div>
+      </Sheet>
+    </>
+  )
+}
+
 function Ch7Page() {
   return (
-    <Sheet runhead={`${ch7.no}\u3000${ch7.title}`} pageNo={11} pageLabel={ch7.no}>
+    <Sheet runhead={`${ch7.no}\u3000${ch7.title}`} pageLabel={ch7.no}>
       <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
       <Lead lines={ch7.lead} />
 
-      <div className="dd-col dd-col--dont" style={{ margin: '1.4rem 0' }}>
+      <div className="dd-col dd-col--dont" style={{ margin: '0.5rem 0 0.4rem' }}>
         <p className="dd-col__head">
           <Icon name="cross" />
           {ch7.dont.title}
@@ -585,96 +632,96 @@ function Ch7Page() {
   )
 }
 
-/* ---- Chapter 8 ---- */
-function Ch8Page() {
+function Ch8Pages() {
+  const rh = `${ch8.no}\u3000${ch8.title}`
   return (
-    <Sheet runhead={`${ch8.no}\u3000${ch8.title}`} pageNo={12} pageLabel={ch8.no}>
-      <ChapterHead no={ch8.no} title={ch8.title} catch={ch8.catch} />
-      <ChapterHero
-        src={img.boundary}
-        alt="夜明けの二つの岸のあいだを流れる穏やかな川。しなやかな境界線のイメージ"
-      />
-      <Lead lines={ch8.lead} />
+    <>
+      <Sheet runhead={rh} pageLabel={ch8.no}>
+        <ChapterHead no={ch8.no} title={ch8.title} catch={ch8.catch} />
+        <ChapterHero
+          src={img.boundary}
+          alt="夜明けの二つの岸のあいだを流れる穏やかな川。しなやかな境界線のイメージ"
+        />
+        <Lead lines={ch8.lead} />
+        <div className="dd-col dd-col--do" style={{ margin: '0.9rem 0' }}>
+          <p className="dd-col__head">
+            <Icon name="check" />
+            {ch8.do.title}
+          </p>
+          <ul className="dd-list">
+            {ch8.do.items.map((i) => (
+              <li key={i.title}>
+                <Icon name="check" />
+                <span>
+                  <span className="dd-item__title">{i.title}</span>
+                  <span className="dd-item__note">{i.note}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Sheet>
 
-      <div className="dd-col dd-col--do" style={{ margin: '1.4rem 0' }}>
-        <p className="dd-col__head">
-          <Icon name="check" />
-          {ch8.do.title}
-        </p>
-        <ul className="dd-list">
-          {ch8.do.items.map((i) => (
-            <li key={i.title}>
-              <Icon name="check" />
-              <span>
-                <span className="dd-item__title">{i.title}</span>
-                <span className="dd-item__note">{i.note}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <ColumnBox data={ch8.boundary} />
-      <ColumnBox data={ch8.craft} green />
-      <Points items={ch8.points} />
-    </Sheet>
+      <Sheet runhead={rh} pageLabel={ch8.no}>
+        <ColumnBox data={ch8.boundary} />
+        <ColumnBox data={ch8.craft} green />
+        <Points items={ch8.points} />
+      </Sheet>
+    </>
   )
 }
 
-/* ---- Chapter 9 (case studies) ---- */
-function Ch9Page() {
+function Ch9Pages() {
+  const rh = `${ch9.no}\u3000${ch9.title}`
   return (
-    <Sheet runhead={`${ch9.no}\u3000${ch9.title}`} pageNo={13} pageLabel={ch9.no}>
-      <ChapterHead no={ch9.no} title={ch9.title} catch={ch9.catch} />
-      <Lead lines={ch9.lead} />
-      <p className="examples__caption">{ch9.note}</p>
+    <>
+      <Sheet runhead={rh} pageLabel={ch9.no}>
+        <ChapterHead no={ch9.no} title={ch9.title} catch={ch9.catch} />
+        <Lead lines={ch9.lead} />
+        <p className="examples__caption">{ch9.note}</p>
+        <div className="case case--do">
+          <div className="case__head">
+            <span className="case__label">{ch9.recovered.label}</span>
+            <span className="case__person">{ch9.recovered.person}</span>
+          </div>
+          <div className="case__body">
+            {ch9.recovered.story.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+            <p className="case__result">
+              <strong>結果：</strong>
+              {ch9.recovered.result}
+            </p>
+          </div>
+        </div>
+      </Sheet>
 
-      <div className="case case--do">
-        <div className="case__head">
-          <span className="case__label">{ch9.recovered.label}</span>
-          <span className="case__person">{ch9.recovered.person}</span>
+      <Sheet runhead={rh} pageLabel={ch9.no}>
+        <div className="case case--dont">
+          <div className="case__head">
+            <span className="case__label">{ch9.relapsed.label}</span>
+            <span className="case__person">{ch9.relapsed.person}</span>
+          </div>
+          <div className="case__body">
+            {ch9.relapsed.story.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+            <p className="case__result">
+              <strong>結果：</strong>
+              {ch9.relapsed.result}
+            </p>
+          </div>
         </div>
-        <div className="case__body">
-          {ch9.recovered.story.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-          <p className="case__result">
-            <strong>結果：</strong>
-            {ch9.recovered.result}
-          </p>
-        </div>
-      </div>
-
-      <div className="case case--dont">
-        <div className="case__head">
-          <span className="case__label">{ch9.relapsed.label}</span>
-          <span className="case__person">{ch9.relapsed.person}</span>
-        </div>
-        <div className="case__body">
-          {ch9.relapsed.story.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-          <p className="case__result">
-            <strong>結果：</strong>
-            {ch9.relapsed.result}
-          </p>
-        </div>
-      </div>
-
-      <ColumnBox
-        data={{ label: 'MESSAGE', title: ch9.lesson.title, body: [ch9.lesson.body] }}
-        green
-      />
-    </Sheet>
+        <ColumnBox
+          data={{ label: 'MESSAGE', title: ch9.lesson.title, body: [ch9.lesson.body] }}
+          green
+        />
+      </Sheet>
+    </>
   )
 }
 
-/* ---- Chapter 10 (Q&A) ---- */
-function QaGroup({
-  group,
-}: {
-  group: (typeof ch10.groups)[number]
-}) {
+function QaGroup({ group }: { group: (typeof ch10.groups)[number] }) {
   return (
     <div className="qa-group">
       <span className="qa-group__label">{group.label}</span>
@@ -695,23 +742,41 @@ function QaGroup({
 }
 
 function Ch10Pages() {
+  const rh = `${ch10.no}\u3000${ch10.title}`
   return (
     <>
-      <Sheet runhead={`${ch10.no}\u3000${ch10.title}`} pageNo={14} pageLabel={ch10.no}>
-        <ChapterHead no={ch10.no} title={ch10.title} catch={ch10.catch} />
-        <Lead lines={ch10.lead} />
+      <Sheet className="sheet--open" runhead={rh} pageLabel={ch10.no}>
+        <div className="chapter-open">
+          <ChapterHead no={ch10.no} title={ch10.title} catch={ch10.catch} />
+          <Lead lines={ch10.lead} />
+          <div className="qa-index">
+            <p className="qa-index__title">この章でお答えする質問</p>
+            <ol className="qa-index__list">
+              {ch10.groups.map((g, i) => (
+                <li key={g.label}>
+                  <span className="qa-index__no">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="qa-index__label">{g.label}</span>
+                  <span className="qa-index__count">全{g.items.length}問</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch10.no}>
         <QaGroup group={ch10.groups[0]} />
       </Sheet>
 
-      <Sheet runhead={`${ch10.no}\u3000${ch10.title}`} pageNo={15} pageLabel={ch10.no}>
+      <Sheet runhead={rh} pageLabel={ch10.no}>
         <QaGroup group={ch10.groups[1]} />
       </Sheet>
 
-      <Sheet runhead={`${ch10.no}\u3000${ch10.title}`} pageNo={16} pageLabel={ch10.no}>
+      <Sheet runhead={rh} pageLabel={ch10.no}>
         <QaGroup group={ch10.groups[2]} />
       </Sheet>
 
-      <Sheet runhead={`${ch10.no}\u3000${ch10.title}`} pageNo={17} pageLabel={ch10.no}>
+      <Sheet runhead={rh} pageLabel={ch10.no}>
         <QaGroup group={ch10.groups[3]} />
         <div className="callout">
           <Icon name="heart" />
@@ -724,65 +789,76 @@ function Ch10Pages() {
   )
 }
 
-/* ---- Chapter 11 (family meeting) ---- */
-function Ch11Page() {
+function Ch11Pages() {
+  const rh = `${ch11.no}\u3000${ch11.title}`
   return (
-    <Sheet runhead={`${ch11.no}\u3000${ch11.title}`} pageNo={18} pageLabel={ch11.no}>
-      <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
-      <ChapterHero
-        src={img.familyCircle}
-        alt="明るい部屋に円く並べられた椅子。安心してつながれる家族会のイメージ"
-      />
-      <Lead lines={ch11.lead} />
-
-      <div className="benefits">
-        {ch11.benefits.map((b) => (
-          <div key={b.title} className="benefit">
-            <span className="benefit__icon">
-              <Icon name={b.icon as IconName} />
-            </span>
-            <p className="benefit__title">{b.title}</p>
-            <p className="benefit__body">{b.body}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="voices">
-        <p className="voices__title">{ch11.voices.title}</p>
-        <ul className="voices__list">
-          {ch11.voices.items.map((v) => (
-            <li key={v}>{v.replace(/^「|」$/g, '')}</li>
+    <>
+      <Sheet runhead={rh} pageLabel={ch11.no}>
+        <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
+        <ChapterHero
+          src={img.familyCircle}
+          alt="明るい部屋に円く並べられた椅子。安心してつながれる家族会のイメージ"
+        />
+        <Lead lines={ch11.lead} />
+        <div className="benefits">
+          {ch11.benefits.map((b) => (
+            <div key={b.title} className="benefit">
+              <span className="benefit__icon">
+                <Icon name={b.icon as IconName} />
+              </span>
+              <p className="benefit__title">{b.title}</p>
+              <p className="benefit__body">{b.body}</p>
+            </div>
           ))}
-        </ul>
-        <p className="voices__caption">{ch11.voices.caption}</p>
-      </div>
+        </div>
+      </Sheet>
 
-      <div className="kv">
-        {ch11.info.rows.map((r) => (
-          <div key={r.label} className="kv__row">
-            <div className="kv__k">{r.label}</div>
-            <div className="kv__v">{r.value}</div>
-          </div>
-        ))}
-      </div>
-      <div className="callout">
-        <Icon name="chat" />
-        <span>{ch11.info.note}</span>
-      </div>
-
-      <ColumnBox
-        data={{ label: ch11.consult.label, title: ch11.consult.title, body: ch11.consult.body }}
-        green
-      />
-    </Sheet>
+      <Sheet runhead={rh} pageLabel={ch11.no}>
+        <div className="voices">
+          <p className="voices__title">{ch11.voices.title}</p>
+          <ul className="voices__list">
+            {ch11.voices.items.map((v) => (
+              <li key={v}>{v.replace(/^「|」$/g, '')}</li>
+            ))}
+          </ul>
+          <p className="voices__caption">{ch11.voices.caption}</p>
+        </div>
+        <div className="kv">
+          {ch11.info.rows.map((r) => (
+            <div key={r.label} className="kv__row">
+              <div className="kv__k">{r.label}</div>
+              <div className="kv__v">{r.value}</div>
+            </div>
+          ))}
+        </div>
+        <div className="callout">
+          <Icon name="chat" />
+          <span>{ch11.info.note}</span>
+        </div>
+        <ColumnBox
+          data={{
+            label: ch11.consult.label,
+            title: ch11.consult.title,
+            body: ch11.consult.body,
+          }}
+          green
+        />
+      </Sheet>
+    </>
   )
 }
 
-/* ---- Promise ---- */
+/* =============================================================
+   Closing
+   ============================================================= */
+
 function PromisePage() {
   return (
-    <Sheet className="sheet--promise" runhead={promise.chapterLabel} pageNo={19} pageLabel="約束">
-      <p className="promise__label">{promise.chapterLabel}{'\u3000'}PROMISE</p>
+    <Sheet className="sheet--promise" runhead={promise.chapterLabel} pageLabel="約束">
+      <p className="promise__label">
+        {promise.chapterLabel}
+        {'\u3000'}PROMISE
+      </p>
       <h2 className="promise__title">{promise.title}</h2>
       <figure className="hero hero--promise">
         <img
@@ -814,10 +890,9 @@ function PromisePage() {
   )
 }
 
-/* ---- Back cover ---- */
 function BackPage() {
   return (
-    <Sheet className="sheet--back">
+    <Sheet className="sheet--back" hideNo>
       <div className="back">
         <p className="back__lead">{backCover.lead}</p>
 
@@ -853,7 +928,10 @@ function BackPage() {
   )
 }
 
-/* ---- Appendix: design specification (producer-facing) ---- */
+/* =============================================================
+   Appendix: design specification (producer-facing)
+   ============================================================= */
+
 function SpecHead() {
   return (
     <div className="spec-head">
@@ -892,10 +970,12 @@ function SpecTable({
 function SpecPages() {
   return (
     <>
-      {/* Appendix 1: 判型 + 配色 */}
       <Sheet runhead={spec.label} pageLabel="制作資料">
         <SpecHead />
         <SpecTable title={spec.format.title} rows={spec.format.rows} />
+      </Sheet>
+
+      <Sheet runhead={spec.label} pageLabel="制作資料">
         <div className="spec-block">
           <h3 className="h3">{spec.palette.title}</h3>
           <p className="examples__caption">{spec.palette.caption}</p>
@@ -927,7 +1007,6 @@ function SpecPages() {
         </div>
       </Sheet>
 
-      {/* Appendix 2: タイポグラフィ + 余白 + アイコン */}
       <Sheet runhead={spec.label} pageLabel="制作資料">
         <div className="spec-block">
           <h3 className="h3">{spec.typography.title}</h3>
@@ -962,7 +1041,6 @@ function SpecPages() {
         </div>
       </Sheet>
 
-      {/* Appendix 3: ページ別アートディレクション + 配慮 */}
       <Sheet runhead={spec.label} pageLabel="制作資料">
         <div className="spec-block">
           <h3 className="h3">{spec.artDirection.title}</h3>
@@ -1021,20 +1099,20 @@ function App() {
 
       <div className="booklet">
         <CoverPage />
-        <StoryPage />
+        <StoryPages />
         <PrefacePage />
         <TocPage />
-        <Ch1Page />
-        <Ch2Page />
-        <Ch3Page />
-        <Ch4Page />
-        <Ch5Page />
-        <Ch6Page />
+        <Ch1Pages />
+        <Ch2Pages />
+        <Ch3Pages />
+        <Ch4Pages />
+        <Ch5Pages />
+        <Ch6Pages />
         <Ch7Page />
-        <Ch8Page />
-        <Ch9Page />
+        <Ch8Pages />
+        <Ch9Pages />
         <Ch10Pages />
-        <Ch11Page />
+        <Ch11Pages />
         <PromisePage />
         <BackPage />
         <SpecPages />
