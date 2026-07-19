@@ -242,43 +242,20 @@ function StoryPages() {
 }
 
 function PrefacePages() {
-  const first = preface.paragraphs.slice(0, 3)
-  const rest = preface.paragraphs.slice(3)
   return (
-    <>
-      <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
-        <ChapterHead
-          no={preface.chapterLabel}
-          title={preface.title}
-          catch="あなたは、悪くありません。"
-        />
-        <ChapterHero
-          src={img.handsSupport}
-          alt="やわらかな光の中で、そっと近づく二つの手。あなたは一人ではないというメッセージ"
-          size="tall"
-        />
-        {first.map((p) => (
-          <p key={p} className="body-p">
-            {p}
-          </p>
-        ))}
-      </Sheet>
-
-      <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
-        {rest.map((p) => (
-          <p key={p} className="body-p">
-            {p}
-          </p>
-        ))}
-        <ChapterHero
-          src={img.facility}
-          alt="相模原ダルク デイケアセンターの建物外観。ご家族と本人がともに通う場所"
-          caption="相模原ダルク デイケアセンター（相模原市）── ご本人もご家族も、ここから一緒に歩き始められます。"
-          size="tall"
-        />
-        <div className="preface__pledge">{preface.pledge}</div>
-      </Sheet>
-    </>
+    <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
+      <ChapterHead
+        no={preface.chapterLabel}
+        title={preface.title}
+        catch="あなたは、悪くありません。"
+      />
+      {preface.paragraphs.map((p) => (
+        <p key={p} className="body-p">
+          {p}
+        </p>
+      ))}
+      <div className="preface__pledge">{preface.pledge}</div>
+    </Sheet>
   )
 }
 
@@ -804,44 +781,33 @@ function Ch10Pages() {
   const flat: QaItem[] = ch10.groups.flatMap((g) =>
     g.items.map((it, i) => ({ q: it.q, a: it.a, cat: g.label, catStart: i === 0 })),
   )
+  const firstCount = 4
   const perPage = 5
-  const chunks: QaItem[][] = []
-  for (let i = 0; i < flat.length; i += perPage) chunks.push(flat.slice(i, i + perPage))
+  const chunks: QaItem[][] = [flat.slice(0, firstCount)]
+  for (let i = firstCount; i < flat.length; i += perPage)
+    chunks.push(flat.slice(i, i + perPage))
 
   return (
     <>
-      <Sheet className="sheet--open" runhead={rh} pageLabel={ch10.no}>
-        <div className="chapter-open">
-          <ChapterHead no={ch10.no} title={ch10.title} catch={ch10.catch} />
-          <Lead lines={ch10.lead} />
-          <div className="qa-index">
-            <p className="qa-index__title">この章でお答えする質問</p>
-            <ol className="qa-index__list">
-              {ch10.groups.map((g, i) => (
-                <li key={g.label}>
-                  <span className="qa-index__no">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="qa-index__label">{g.label}</span>
-                  <span className="qa-index__count">全{g.items.length}問</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-          <ChapterHero
-            src={img.staffSmile}
-            alt="相談に応じる相模原ダルクのスタッフの穏やかな笑顔"
-            caption="「こんなこと聞いていいのかな」も大歓迎です。どうぞ気軽にご相談ください。"
-          />
-        </div>
-      </Sheet>
-
       {chunks.map((chunk, ci) => (
-        <Sheet key={chunk[0].q} runhead={rh} pageLabel={ch10.no}>
+        <Sheet
+          key={chunk[0].q}
+          className={ci === 0 ? 'sheet--open' : undefined}
+          runhead={rh}
+          pageLabel={ch10.no}
+        >
+          {ci === 0 && (
+            <>
+              <ChapterHead no={ch10.no} title={ch10.title} catch={ch10.catch} />
+              <Lead lines={ch10.lead} />
+            </>
+          )}
           {chunk.map((qa, qi) => (
             <QaBlock
               key={qa.q}
               qa={qa}
               showLabel={qa.catStart || qi === 0}
-              spaced={qi > 0}
+              spaced={qi > 0 || ci === 0}
             />
           ))}
           {ci === chunks.length - 1 && (

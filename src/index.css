@@ -1161,7 +1161,7 @@ body {
 }
 .qa {
   border-bottom: 1px solid var(--gray-line);
-  padding: 0.55rem 0;
+  padding: 0.4rem 0;
 }
 .qa__q {
   display: flex;
@@ -1169,15 +1169,15 @@ body {
   font-weight: 700;
   color: var(--navy);
   font-size: 1.0rem;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 .qa__a {
   display: flex;
   gap: 0.6rem;
   font-size: 0.96rem;
   color: var(--ink-soft);
-  line-height: 1.66;
-  margin-top: 0.3rem;
+  line-height: 1.55;
+  margin-top: 0.2rem;
 }
 .qa__mark {
   flex: none;
