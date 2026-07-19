@@ -1153,6 +1153,9 @@ function SpecPages() {
 
 function App() {
   const handlePrint = () => window.print()
+  // 制作仕様書（デザインガイド）は制作者向けの内部資料。
+  // 家族へ配布する冊子には含めない（true にすると巻末に付加できる）。
+  const showSpecAppendix = false
 
   return (
     <div className="viewer">
@@ -1200,7 +1203,7 @@ function App() {
         <Ch11Pages />
         <PromisePage />
         <BackPage />
-        <SpecPages />
+        {showSpecAppendix && <SpecPages />}
       </div>
     </div>
   )
