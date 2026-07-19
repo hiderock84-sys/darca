@@ -142,10 +142,19 @@ function ColumnBox({ data, green = false }: { data: Column; green?: boolean }) {
   )
 }
 
-function ChapterHero({ src, alt }: { src: string; alt: string }) {
+function ChapterHero({
+  src,
+  alt,
+  caption,
+}: {
+  src: string
+  alt: string
+  caption?: string
+}) {
   return (
     <figure className="hero">
       <img src={src} alt={alt} loading="lazy" />
+      {caption && <figcaption className="hero__cap">{caption}</figcaption>}
     </figure>
   )
 }
@@ -252,6 +261,11 @@ function PrefacePages() {
             {p}
           </p>
         ))}
+        <ChapterHero
+          src={img.facility}
+          alt="相模原ダルク デイケアセンターの建物外観。ご家族と本人がともに通う場所"
+          caption="相模原ダルク デイケアセンター（相模原市）── ご本人もご家族も、ここから一緒に歩き始められます。"
+        />
         <div className="preface__pledge">{preface.pledge}</div>
       </Sheet>
     </>

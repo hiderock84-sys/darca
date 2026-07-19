@@ -9,6 +9,7 @@ import pathFork from './path-fork.webp'
 import boundary from './boundary.webp'
 import familyCircle from './family-circle.webp'
 import walkingTogether from './walking-together.webp'
+import facility from './facility.webp'
 
 export const img = {
   coverHero,
@@ -20,6 +21,7 @@ export const img = {
   boundary,
   familyCircle,
   walkingTogether,
+  facility,
 } as const
 
 export type ImageKey = keyof typeof img
