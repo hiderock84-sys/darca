@@ -167,13 +167,18 @@ body {
   counter-increment: sheet;
   position: relative;
   width: var(--sheet-w);
-  height: var(--sheet-h);
   background: var(--white);
   padding: var(--pad-y) var(--pad-x);
   box-shadow: var(--shadow-sheet);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+/* 表紙・約束・裏表紙は画面でも全面（A4）高さを保つ */
+.sheet--cover,
+.sheet--promise,
+.sheet--back {
+  height: var(--sheet-h);
 }
 .sheet__body {
   flex: 1 1 auto;
