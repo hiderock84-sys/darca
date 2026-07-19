@@ -224,21 +224,37 @@ function StoryPages() {
   )
 }
 
-function PrefacePage() {
+function PrefacePages() {
+  const first = preface.paragraphs.slice(0, 3)
+  const rest = preface.paragraphs.slice(3)
   return (
-    <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
-      <ChapterHead no={preface.chapterLabel} title={preface.title} catch="あなたは、悪くありません。" />
-      <ChapterHero
-        src={img.handsSupport}
-        alt="やわらかな光の中で、そっと近づく二つの手。あなたは一人ではないというメッセージ"
-      />
-      {preface.paragraphs.map((p) => (
-        <p key={p} className="body-p">
-          {p}
-        </p>
-      ))}
-      <div className="preface__pledge">{preface.pledge}</div>
-    </Sheet>
+    <>
+      <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
+        <ChapterHead
+          no={preface.chapterLabel}
+          title={preface.title}
+          catch="あなたは、悪くありません。"
+        />
+        <ChapterHero
+          src={img.handsSupport}
+          alt="やわらかな光の中で、そっと近づく二つの手。あなたは一人ではないというメッセージ"
+        />
+        {first.map((p) => (
+          <p key={p} className="body-p">
+            {p}
+          </p>
+        ))}
+      </Sheet>
+
+      <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
+        {rest.map((p) => (
+          <p key={p} className="body-p">
+            {p}
+          </p>
+        ))}
+        <div className="preface__pledge">{preface.pledge}</div>
+      </Sheet>
+    </>
   )
 }
 
@@ -598,37 +614,41 @@ function Ch6Pages() {
   )
 }
 
-function Ch7Page() {
+function Ch7Pages() {
+  const rh = `${ch7.no}\u3000${ch7.title}`
   return (
-    <Sheet runhead={`${ch7.no}\u3000${ch7.title}`} pageLabel={ch7.no}>
-      <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
-      <Lead lines={ch7.lead} />
+    <>
+      <Sheet runhead={rh} pageLabel={ch7.no}>
+        <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
+        <Lead lines={ch7.lead} />
 
-      <div className="dd-col dd-col--dont" style={{ margin: '0.5rem 0 0.4rem' }}>
-        <p className="dd-col__head">
-          <Icon name="cross" />
-          {ch7.dont.title}
-        </p>
-        <ul className="dd-list">
-          {ch7.dont.items.map((i) => (
-            <li key={i.title}>
-              <Icon name="cross" />
-              <span>
-                <span className="dd-item__title">{i.title}</span>
-                <span className="dd-item__note">{i.note}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="dd-col dd-col--dont" style={{ margin: '0.6rem 0 0' }}>
+          <p className="dd-col__head">
+            <Icon name="cross" />
+            {ch7.dont.title}
+          </p>
+          <ul className="dd-list">
+            {ch7.dont.items.map((i) => (
+              <li key={i.title}>
+                <Icon name="cross" />
+                <span>
+                  <span className="dd-item__title">{i.title}</span>
+                  <span className="dd-item__note">{i.note}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Sheet>
 
-      <div className="callout">
-        <Icon name="heart" />
-        <span>{ch7.reasonNote}</span>
-      </div>
-
-      <ColumnBox data={ch7.column} />
-    </Sheet>
+      <Sheet runhead={rh} pageLabel={ch7.no}>
+        <div className="callout">
+          <Icon name="heart" />
+          <span>{ch7.reasonNote}</span>
+        </div>
+        <ColumnBox data={ch7.column} />
+      </Sheet>
+    </>
   )
 }
 
@@ -721,28 +741,43 @@ function Ch9Pages() {
   )
 }
 
-function QaGroup({ group }: { group: (typeof ch10.groups)[number] }) {
+type QaItem = { q: string; a: string; cat: string; catStart: boolean }
+
+function QaBlock({ qa, showLabel, spaced }: { qa: QaItem; showLabel: boolean; spaced: boolean }) {
   return (
-    <div className="qa-group">
-      <span className="qa-group__label">{group.label}</span>
-      {group.items.map((qa) => (
-        <div key={qa.q} className="qa">
-          <p className="qa__q">
-            <span className="qa__mark qa__mark--q">Q</span>
-            {qa.q}
-          </p>
-          <p className="qa__a">
-            <span className="qa__mark qa__mark--a">A</span>
-            {qa.a}
-          </p>
-        </div>
-      ))}
-    </div>
+    <>
+      {showLabel && (
+        <span
+          className="qa-group__label"
+          style={spaced ? { marginTop: '0.9rem' } : undefined}
+        >
+          {qa.cat}
+          {!qa.catStart ? '（つづき）' : ''}
+        </span>
+      )}
+      <div className="qa">
+        <p className="qa__q">
+          <span className="qa__mark qa__mark--q">Q</span>
+          {qa.q}
+        </p>
+        <p className="qa__a">
+          <span className="qa__mark qa__mark--a">A</span>
+          {qa.a}
+        </p>
+      </div>
+    </>
   )
 }
 
 function Ch10Pages() {
   const rh = `${ch10.no}\u3000${ch10.title}`
+  const flat: QaItem[] = ch10.groups.flatMap((g) =>
+    g.items.map((it, i) => ({ q: it.q, a: it.a, cat: g.label, catStart: i === 0 })),
+  )
+  const perPage = 5
+  const chunks: QaItem[][] = []
+  for (let i = 0; i < flat.length; i += perPage) chunks.push(flat.slice(i, i + perPage))
+
   return (
     <>
       <Sheet className="sheet--open" runhead={rh} pageLabel={ch10.no}>
@@ -764,27 +799,26 @@ function Ch10Pages() {
         </div>
       </Sheet>
 
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[0]} />
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[1]} />
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[2]} />
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[3]} />
-        <div className="callout">
-          <Icon name="heart" />
-          <span>
-            ここに載せきれない疑問も、たくさんあると思います。迷ったときは、どうか一人で決めず、相模原ダルクへご相談ください。
-          </span>
-        </div>
-      </Sheet>
+      {chunks.map((chunk, ci) => (
+        <Sheet key={chunk[0].q} runhead={rh} pageLabel={ch10.no}>
+          {chunk.map((qa, qi) => (
+            <QaBlock
+              key={qa.q}
+              qa={qa}
+              showLabel={qa.catStart || qi === 0}
+              spaced={qi > 0}
+            />
+          ))}
+          {ci === chunks.length - 1 && (
+            <div className="callout">
+              <Icon name="heart" />
+              <span>
+                ここに載せきれない疑問も、たくさんあると思います。迷ったときは、どうか一人で決めず、相模原ダルクへご相談ください。
+              </span>
+            </div>
+          )}
+        </Sheet>
+      ))}
     </>
   )
 }
@@ -1091,16 +1125,31 @@ function App() {
           <span className="toolbar__logo">{org.brand}</span>
           <span className="toolbar__label">家族回復支援実践マニュアル 完全版｜保存版</span>
         </div>
-        <button className="toolbar__print" onClick={handlePrint} type="button">
-          <Icon name="book" className="icon-inline" />
-          印刷 / PDFで保存
-        </button>
+        <div className="toolbar__actions">
+          <a
+            className="toolbar__btn toolbar__btn--primary"
+            href="manual.pdf"
+            download="相模原ダルク_家族回復支援実践マニュアル.pdf"
+          >
+            <Icon name="book" className="icon-inline" />
+            A4冊子PDFをダウンロード
+          </a>
+          <button className="toolbar__btn" onClick={handlePrint} type="button">
+            印刷
+          </button>
+        </div>
       </div>
+
+      <p className="print-hint">
+        きれいに冊子として保存・印刷するには、上の「A4冊子PDFをダウンロード」がおすすめです。ブラウザから印刷する場合は、印刷画面で
+        <strong>用紙サイズ「A4」・余白「なし」・「ヘッダーとフッター」をオフ</strong>
+        に設定してください。
+      </p>
 
       <div className="booklet">
         <CoverPage />
         <StoryPages />
-        <PrefacePage />
+        <PrefacePages />
         <TocPage />
         <Ch1Pages />
         <Ch2Pages />
@@ -1108,7 +1157,7 @@ function App() {
         <Ch4Pages />
         <Ch5Pages />
         <Ch6Pages />
-        <Ch7Page />
+        <Ch7Pages />
         <Ch8Pages />
         <Ch9Pages />
         <Ch10Pages />
