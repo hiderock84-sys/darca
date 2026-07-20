@@ -61,6 +61,28 @@ function Sheet({
   )
 }
 
+// 章ごとのアクセントカラー（特集扉のような差別化・落ち着いた上質トーン）
+const CHAPTER_ACCENTS = [
+  '#d69a5c', // 1 依存症とは
+  '#2f9e6b', // 2 家族の病気
+  '#3a86c4', // 3 イネーブリング
+  '#c9683e', // 4 家へ入れない
+  '#2a9d8f', // 5 帰宅時対応
+  '#6a7fd0', // 6 電話・病院・警察
+  '#c05c7e', // 7 やってはいけない
+  '#4a8fd0', // 8 やるべきこと
+  '#e0a13f', // 9 ケース
+  '#8a6fc0', // 10 Q&A
+  '#2f9e6b', // 11 家族会
+] as const
+
+function chapterAccent(no: string): string | undefined {
+  const n = parseInt(no.replace(/[^0-9]/g, ''), 10)
+  return Number.isFinite(n) && n >= 1
+    ? CHAPTER_ACCENTS[(n - 1) % CHAPTER_ACCENTS.length]
+    : undefined
+}
+
 function ChapterHead({
   no,
   title,
@@ -71,10 +93,16 @@ function ChapterHead({
   catch: string
 }) {
   const num = no.replace(/[^0-9]/g, '')
+  const accent = chapterAccent(no)
   return (
     <header className="chapter-head">
       {num && (
-        <span className="chapter-head__kicker">CHAPTER {num.padStart(2, '0')}</span>
+        <span
+          className="chapter-head__kicker"
+          style={accent ? { color: accent } : undefined}
+        >
+          CHAPTER {num.padStart(2, '0')}
+        </span>
       )}
       <span className="chapter-head__no">
         <Icon name="compass" className="icon-inline" />
@@ -82,7 +110,10 @@ function ChapterHead({
       </span>
       <h2 className="chapter-head__title">{title}</h2>
       <p className="chapter-head__catch">{catchCopy}</p>
-      <div className="chapter-head__rule" />
+      <div
+        className="chapter-head__rule"
+        style={accent ? { background: accent } : undefined}
+      />
     </header>
   )
 }
@@ -160,13 +191,17 @@ function ChapterOpener({
   alt: string
 }) {
   const num = no.replace(/[^0-9]/g, '')
+  const accent = chapterAccent(no)
   return (
     <header className="opener">
       <img className="opener__bg" src={src} alt={alt} />
       <div className="opener__scrim" />
+      {accent && <span className="opener__bar" style={{ background: accent }} />}
       <div className="opener__content">
         {num && (
-          <span className="opener__kicker">CHAPTER {num.padStart(2, '0')}</span>
+          <span className="opener__kicker" style={{ color: accent }}>
+            CHAPTER {num.padStart(2, '0')}
+          </span>
         )}
         <span className="opener__no">
           <Icon name="compass" className="icon-inline" />
@@ -206,7 +241,7 @@ function ChapterHero({
 function CoverPage() {
   return (
     <Sheet className="sheet--cover" hideNo>
-      <img className="cover__bg" src={img.coverHero} alt="" aria-hidden="true" />
+      <img className="cover__bg" src={img.facility} alt="" aria-hidden="true" />
       <div className="cover__scrim" />
       <div className="cover">
         <div className="cover__top">

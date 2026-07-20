@@ -363,6 +363,14 @@ body {
     rgba(13, 27, 52, 0.84) 100%
   );
 }
+.opener__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  z-index: 2;
+}
 .opener__content {
   position: relative;
 }
