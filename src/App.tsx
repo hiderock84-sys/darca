@@ -866,6 +866,11 @@ function Ch11Pages() {
             </div>
           ))}
         </div>
+        <ChapterHero
+          src={img.facility}
+          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
+          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。送迎車もご用意しています。"
+        />
         <div className="callout">
           <Icon name="chat" />
           <span>{ch11.info.note}</span>
@@ -877,6 +882,11 @@ function Ch11Pages() {
             body: ch11.consult.body,
           }}
           green
+        />
+        <ChapterHero
+          src={img.staffSmile}
+          alt="相談を担当する、回復を経験した当事者スタッフの穏やかな笑顔"
+          caption="相談を担当するのは、依存症で苦しみ、回復を果たした当事者スタッフです。"
         />
       </Sheet>
     </>
