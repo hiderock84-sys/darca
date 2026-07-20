@@ -386,6 +386,26 @@ function Ch3Pages() {
         {ch3.sections.map((s) => (
           <TextSection key={s.heading} heading={s.heading} body={s.body} />
         ))}
+        <div className="cycle">
+          <p className="cycle__title">イネーブリングの悪循環</p>
+          <ol className="cycle__steps">
+            {[
+              { t: '問題が起きる', n: '借金・トラブル・約束違反' },
+              { t: '家族が尻ぬぐい', n: '肩代わり・後始末・かばう' },
+              { t: 'その場は収まる', n: '一時的な安心が生まれる' },
+              { t: '本人は困らない', n: '痛みを感じず、行動が変わらない' },
+            ].map((s, i) => (
+              <li key={s.t} className="cycle__step">
+                <span className="cycle__num">STEP {i + 1}</span>
+                <span className="cycle__step-title">{s.t}</span>
+                <span className="cycle__step-note">{s.n}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="cycle__loop">
+            ↻ この輪が回り続ける限り、本人は「困らない」ため、回復に向き合えません。
+          </p>
+        </div>
       </Sheet>
 
       <Sheet runhead={rh} pageLabel={ch3.no}>
@@ -689,6 +709,29 @@ function Ch8Pages() {
       </Sheet>
 
       <Sheet runhead={rh} pageLabel={ch8.no}>
+        <div className="section-block">
+          <p className="h3">境界線 ── 「相手の課題」と「自分の課題」を分ける</p>
+          <div className="compare">
+            <div className="compare__col compare__col--dont">
+              <p className="compare__title">本人の課題（変えられないこと）</p>
+              <ul className="compare__list">
+                <li>薬物・お酒をやめること</li>
+                <li>回復に取り組むこと</li>
+                <li>約束を守ること</li>
+                <li>自分の人生に責任を持つこと</li>
+              </ul>
+            </div>
+            <div className="compare__col compare__col--do">
+              <p className="compare__title">家族の課題（あなたにできること）</p>
+              <ul className="compare__list">
+                <li>自分の心と体を守ること</li>
+                <li>正しい知識を持ち、相談すること</li>
+                <li>つながりの中に身を置くこと</li>
+                <li>回復を信じて、見守ること</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <ColumnBox data={ch8.boundary} />
         <ColumnBox data={ch8.craft} green />
         <Points items={ch8.points} />
