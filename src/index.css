@@ -293,43 +293,103 @@ body {
 
 /* ---------- Chapter head ---------- */
 .chapter-head {
-  margin-bottom: 0.9rem;
-  padding: 0.7rem 0 0.75rem 1rem;
-  border-left: 5px solid var(--blue);
-  background: linear-gradient(
-    90deg,
-    var(--blue-tint) 0%,
-    rgba(234, 243, 251, 0) 82%
-  );
-  border-radius: 0 14px 14px 0;
+  position: relative;
+  margin-bottom: 1rem;
+  padding: 1.3rem 1.4rem;
+  border-radius: 16px;
+  background: linear-gradient(150deg, var(--navy-soft) 0%, var(--navy-deep) 100%);
+  color: #fff;
+  overflow: hidden;
 }
 .chapter-head__no {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
-  color: var(--blue-deep);
-  background: var(--blue-tint);
-  padding: 0.32rem 1rem;
+  letter-spacing: 0.2em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 0.3rem 0.95rem;
   border-radius: 999px;
 }
 .chapter-head__title {
-  font-size: 2.25rem;
-  line-height: 1.28;
-  color: var(--navy);
-  margin: 0.7rem 0 0.55rem;
+  font-size: 2.2rem;
+  line-height: 1.26;
+  color: #fff;
+  margin: 0.65rem 0 0.5rem;
   font-weight: 800;
   letter-spacing: 0.005em;
 }
 .chapter-head__catch {
-  font-size: 1.24rem;
-  color: var(--warm-deep);
+  font-size: 1.2rem;
+  color: #f2e7d6;
   font-weight: 700;
   margin: 0;
-  line-height: 1.65;
+  line-height: 1.6;
   letter-spacing: 0.01em;
+}
+
+/* 章扉（写真背景＋文字重ね・アーバン） */
+.opener {
+  position: relative;
+  min-height: 66mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 1.5rem 1.5rem 1.4rem;
+  margin: 0 0 1.1rem;
+  background: linear-gradient(150deg, var(--navy-soft), var(--navy-deep));
+  color: #fff;
+}
+.opener__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.opener__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 27, 52, 0.26) 0%,
+    rgba(13, 27, 52, 0.5) 52%,
+    rgba(13, 27, 52, 0.84) 100%
+  );
+}
+.opener__content {
+  position: relative;
+}
+.opener__no {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.3rem 0.95rem;
+  border-radius: 999px;
+  margin-bottom: 0.7rem;
+}
+.opener__title {
+  font-size: 2.3rem;
+  line-height: 1.24;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+}
+.opener__catch {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.6;
+  color: #f2e7d6;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
 }
 .chapter-head__rule {
   height: 3px;

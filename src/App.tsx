@@ -142,6 +142,35 @@ function ColumnBox({ data, green = false }: { data: Column; green?: boolean }) {
   )
 }
 
+function ChapterOpener({
+  no,
+  title,
+  catch: catchCopy,
+  src,
+  alt,
+}: {
+  no: string
+  title: string
+  catch: string
+  src: string
+  alt: string
+}) {
+  return (
+    <header className="opener">
+      <img className="opener__bg" src={src} alt={alt} />
+      <div className="opener__scrim" />
+      <div className="opener__content">
+        <span className="opener__no">
+          <Icon name="compass" className="icon-inline" />
+          {no}
+        </span>
+        <h2 className="opener__title">{title}</h2>
+        <p className="opener__catch">{catchCopy}</p>
+      </div>
+    </header>
+  )
+}
+
 function ChapterHero({
   src,
   alt,
@@ -308,8 +337,10 @@ function Ch1Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch1.no}>
-        <ChapterHead no={ch1.no} title={ch1.title} catch={ch1.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch1.no}
+          title={ch1.title}
+          catch={ch1.catch}
           src={img.calmThread}
           alt="からまった糸がやがて一本の線へとほどけていく、混乱から理解へ向かうイメージ"
         />
@@ -345,8 +376,10 @@ function Ch2Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch2.no}>
-        <ChapterHead no={ch2.no} title={ch2.title} catch={ch2.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch2.no}
+          title={ch2.title}
+          catch={ch2.catch}
           src={img.seedlingDawn}
           alt="朝の光の中で芽吹く小さな双葉。家族もまた回復できるという希望のイメージ"
         />
@@ -436,8 +469,10 @@ function Ch4Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch4.no}>
-        <ChapterHead no={ch4.no} title={ch4.title} catch={ch4.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch4.no}
+          title={ch4.title}
+          catch={ch4.catch}
           src={img.pathFork}
           alt="夜明けの野原で一本の道が二手に分かれ、道標が立つイメージ"
         />
@@ -683,8 +718,10 @@ function Ch8Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch8.no}>
-        <ChapterHead no={ch8.no} title={ch8.title} catch={ch8.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch8.no}
+          title={ch8.title}
+          catch={ch8.catch}
           src={img.boundary}
           alt="夜明けの二つの岸のあいだを流れる穏やかな川。しなやかな境界線のイメージ"
         />
@@ -871,11 +908,12 @@ function Ch11Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch11.no}>
-        <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch11.no}
+          title={ch11.title}
+          catch={ch11.catch}
           src={img.seminar}
           alt="相模原ダルクの家族会・家族セミナーの様子（プライバシー保護のため顔は加工済み）"
-          caption="相模原ダルクの家族会（実際の様子）── 同じ思いのご家族と、専門スタッフがともにいます。"
         />
         <Lead lines={ch11.lead} />
         <div className="benefits">
