@@ -676,11 +676,21 @@ export const promise = {
 
 // ---------- 裏表紙 ----------
 export const backCover = {
-  lead: 'まず、一本の電話から。',
-  phoneLabel: 'ご相談・お問い合わせ',
-  hotline: [
-    { label: '相談専用', value: org.phone, note: org.phoneNote },
-  ],
+  lead: '迷ったとき、苦しいときは、迷わずご連絡ください。',
+  headline: '24時間いつでも相談できます。',
+  hotline: { label: '24時間ホットライン（年中無休）', value: '070-1409-4547' },
+  rep: { label: '代表電話（受付時間 9:00〜18:00）', value: '042-707-0391' },
+  support: 'あなたとご家族の命と未来を守るために、私たちが全力でサポートします。',
+  eligibility: {
+    title: 'ご利用できる方へ',
+    lead: '本人のことでお困りのご家族、関係機関の方、どなたでもご相談いただけます。',
+    items: [
+      '秘密は厳守します',
+      '相談は無料です',
+      'ご家族だけの相談も大歓迎です',
+      'まずはお電話ください',
+    ],
+  },
   siteLabel: org.websiteLabel,
   site: org.website,
   closing: 'いつでも、何度でも、ご相談ください。',

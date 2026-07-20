@@ -1523,7 +1523,130 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 26mm var(--pad-x) 20mm;
+  padding: 15mm var(--pad-x) 13mm;
+}
+.back__hotline {
+  background: #fff;
+  border: 1px solid var(--gray-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem 1.6rem;
+}
+.back__hotline-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
+}
+.back__hotline-icon {
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+}
+.back__hotline-lead {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.back__hotline-headline {
+  margin: 0.15rem 0 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: 0.01em;
+}
+.back__numbers {
+  display: grid;
+  gap: 0.9rem;
+}
+.back__num {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.back__num-label {
+  align-self: flex-start;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--navy);
+  padding: 0.28rem 0.9rem;
+  border-radius: 6px;
+}
+.back__num-value {
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  line-height: 1.1;
+}
+.back__num-value--accent {
+  color: var(--red);
+}
+.back__support {
+  margin: 1.1rem 0 0;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.back__eligibility {
+  margin-top: 1.2rem;
+  background: var(--warm-tint);
+  border: 1px solid rgba(184, 122, 60, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 1.3rem 1.5rem;
+}
+.back__eligibility-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--warm-deep);
+}
+.back__eligibility-lead {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.back__eligibility-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+.back__eligibility-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1rem;
+  color: var(--navy);
+  font-weight: 600;
+}
+.back__eligibility-list li svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--warm-deep);
+  flex: none;
+}
+.back__hotline-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.back__site-row {
+  margin-top: 1.2rem;
+  text-align: center;
+}
+.back__site-row .back__site-label {
+  margin-right: 0.5rem;
 }
 .back__lead {
   font-size: 1.5rem;

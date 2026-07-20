@@ -1056,18 +1056,53 @@ function BackPage() {
   return (
     <Sheet className="sheet--back" hideNo>
       <div className="back">
-        <p className="back__lead">{backCover.lead}</p>
+        <div className="back__hotline">
+          <div className="back__hotline-head">
+            <span className="back__hotline-icon">
+              <Icon name="phone" />
+            </span>
+            <div>
+              <p className="back__hotline-lead">{backCover.lead}</p>
+              <p className="back__hotline-headline">{backCover.headline}</p>
+            </div>
+          </div>
 
-        <div className="back__card">
-          <p className="back__phone-label">{backCover.phoneLabel}</p>
-          <a className="back__phone" href={`tel:${org.phone}`}>
-            <Icon name="phone" />
-            {org.phone}
-          </a>
-          <p className="back__phone-note">{org.phoneNote}</p>
-          <p className="back__phone-note">{org.consultFree}</p>
-          <div className="back__divider" />
-          <p className="back__site-label">{backCover.siteLabel}</p>
+          <div className="back__numbers">
+            <div className="back__num">
+              <span className="back__num-label">{backCover.hotline.label}</span>
+              <a
+                className="back__num-value back__num-value--accent"
+                href={`tel:${backCover.hotline.value.replace(/-/g, '')}`}
+              >
+                {backCover.hotline.value}
+              </a>
+            </div>
+            <div className="back__num">
+              <span className="back__num-label">{backCover.rep.label}</span>
+              <a className="back__num-value" href={`tel:${org.phone}`}>
+                {backCover.rep.value}
+              </a>
+            </div>
+          </div>
+
+          <p className="back__support">{backCover.support}</p>
+        </div>
+
+        <div className="back__eligibility">
+          <p className="back__eligibility-title">{backCover.eligibility.title}</p>
+          <p className="back__eligibility-lead">{backCover.eligibility.lead}</p>
+          <ul className="back__eligibility-list">
+            {backCover.eligibility.items.map((i) => (
+              <li key={i}>
+                <Icon name="check" />
+                <span>{i}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="back__site-row">
+          <span className="back__site-label">{backCover.siteLabel}</span>
           <a
             className="back__site"
             href={backCover.site}
@@ -1077,8 +1112,6 @@ function BackPage() {
             {backCover.site}
           </a>
         </div>
-
-        <p className="back__closing">{backCover.closing}</p>
 
         <div className="back__issuer">
           <div className="back__issuer-logo">{backCover.brand}</div>
