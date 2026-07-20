@@ -156,7 +156,7 @@ function ChapterHero({
   const cls = size === 'tall' ? 'hero hero--tall' : size === 'xtall' ? 'hero hero--xtall' : 'hero'
   return (
     <figure className={cls}>
-      <img src={src} alt={alt} loading="lazy" />
+      <img src={src} alt={alt} />
       {caption && <figcaption className="hero__cap">{caption}</figcaption>}
     </figure>
   )
@@ -217,7 +217,6 @@ function StoryPages() {
           <img
             src={img.storyNight}
             alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
-            loading="lazy"
           />
         </figure>
         <p className="story__lead">{openingStory.lead}</p>
@@ -900,7 +899,6 @@ function PromisePage() {
         <img
           src={img.walkingTogether}
           alt="夜明けに向かって並んで歩いていく二人の後ろ姿。ともに歩むイメージ"
-          loading="lazy"
         />
       </figure>
       <div className="promise__body">

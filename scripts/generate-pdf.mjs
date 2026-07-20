@@ -23,7 +23,22 @@ const browser = await puppeteer.launch({
 })
 const page = await browser.newPage()
 await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
-await new Promise((r) => setTimeout(r, 1500))
+// すべての画像が確実に読み込まれるまで待つ（連続フローで下方の画像も含む）
+await page.evaluate(async () => {
+  const imgs = Array.from(document.images)
+  await Promise.all(
+    imgs.map((img) =>
+      img.complete && img.naturalHeight > 0
+        ? Promise.resolve()
+        : new Promise((res) => {
+            img.loading = 'eager'
+            img.addEventListener('load', res, { once: true })
+            img.addEventListener('error', res, { once: true })
+          }),
+    ),
+  )
+})
+await new Promise((r) => setTimeout(r, 800))
 
 await page.pdf({
   path: out,
