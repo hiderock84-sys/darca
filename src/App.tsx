@@ -70,8 +70,12 @@ function ChapterHead({
   title: string
   catch: string
 }) {
+  const num = no.replace(/[^0-9]/g, '')
   return (
     <header className="chapter-head">
+      {num && (
+        <span className="chapter-head__kicker">CHAPTER {num.padStart(2, '0')}</span>
+      )}
       <span className="chapter-head__no">
         <Icon name="compass" className="icon-inline" />
         {no}
@@ -155,11 +159,15 @@ function ChapterOpener({
   src: string
   alt: string
 }) {
+  const num = no.replace(/[^0-9]/g, '')
   return (
     <header className="opener">
       <img className="opener__bg" src={src} alt={alt} />
       <div className="opener__scrim" />
       <div className="opener__content">
+        {num && (
+          <span className="opener__kicker">CHAPTER {num.padStart(2, '0')}</span>
+        )}
         <span className="opener__no">
           <Icon name="compass" className="icon-inline" />
           {no}

@@ -366,6 +366,15 @@ body {
 .opener__content {
   position: relative;
 }
+.opener__kicker,
+.chapter-head__kicker {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  color: var(--warm);
+  margin-bottom: 0.5rem;
+}
 .opener__no {
   display: inline-block;
   font-size: 0.78rem;
