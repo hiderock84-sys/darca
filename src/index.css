@@ -919,10 +919,10 @@ body {
   z-index: 1;
   background: linear-gradient(
     180deg,
-    rgba(9, 18, 36, 0.72) 0%,
-    rgba(9, 18, 36, 0.32) 34%,
-    rgba(9, 18, 36, 0.52) 66%,
-    rgba(9, 18, 36, 0.94) 100%
+    rgba(9, 18, 36, 0.8) 0%,
+    rgba(9, 18, 36, 0.45) 34%,
+    rgba(9, 18, 36, 0.62) 66%,
+    rgba(9, 18, 36, 0.96) 100%
   );
 }
 .cover {
@@ -974,12 +974,13 @@ body {
   margin-bottom: 1.6rem;
 }
 .cover__title {
-  font-size: 3.1rem;
-  line-height: 1.42;
+  font-size: 3.35rem;
+  line-height: 1.24;
   font-weight: 800;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   margin: 0;
   white-space: pre-line;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
 }
 .cover__accent {
