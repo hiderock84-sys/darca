@@ -268,24 +268,21 @@ body {
 .hero img {
   display: block;
   width: 100%;
-  height: 138px;
-  object-fit: cover;
+  height: auto;
 }
-.hero--tall img {
-  height: 230px;
-}
-.hero--xtall img {
-  height: 300px;
-}
+.hero--tall img,
+.hero--xtall img,
 .hero--story img {
-  height: 172px;
+  height: auto;
 }
 .hero--promise {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(157, 194, 232, 0.25);
 }
 .hero--promise img {
-  height: 138px;
+  height: auto;
+  max-height: 150px;
+  object-fit: cover;
 }
 .hero__cap {
   font-size: 0.76rem;
