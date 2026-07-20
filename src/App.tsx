@@ -846,6 +846,19 @@ function Ch11Pages() {
             </div>
           ))}
         </div>
+
+        <div className="section-block">
+          <p className="h3">{ch11.program.title}</p>
+          <div className="points points--3">
+            {ch11.program.items.map((p, i) => (
+              <div key={p.title} className="point">
+                <span className="point__tag">PROGRAM {i + 1}</span>
+                <p className="point__title">{p.title}</p>
+                <p className="point__body">{p.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </Sheet>
 
       <Sheet runhead={rh} pageLabel={ch11.no}>
