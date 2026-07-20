@@ -879,6 +879,30 @@ function Ch11Pages() {
             </div>
           ))}
         </div>
+        <div className="flow">
+          <p className="flow__title">家族会 当日の流れ</p>
+          <ol className="flow__steps">
+            {[
+              { t: '受付・送迎', n: 'JR相模原駅 北口より専用送迎車（12:45発・13:00発）' },
+              { t: '開会（13:30）', n: 'はじめての方も、どうぞ安心してお越しください' },
+              { t: 'エキスパート講演会', n: '医師・専門家から、依存症と回復を学ぶ' },
+              { t: '家族ミーティング', n: '「言いっぱなし・聞きっぱなし」で分かち合う' },
+              { t: '当事者スタッフ面談', n: 'ご家庭の悩みに、回復者スタッフが一緒に向き合う' },
+              { t: '閉会（17:00）', n: 'お帰りも送迎いたします' },
+            ].map((s, i) => (
+              <li key={s.t} className="flow__step">
+                <span className="flow__num">{i + 1}</span>
+                <span>
+                  <span className="flow__step-title">{s.t}</span>
+                  <span className="flow__step-note">{s.n}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="flow__caption">
+            ※ 内容は回により変わることがあります。見学だけの参加も歓迎です。
+          </p>
+        </div>
         <ChapterHero
           src={img.facility}
           alt="家族会の会場となる相模原ダルク デイケアセンターの外観"

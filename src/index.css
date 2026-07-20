@@ -296,7 +296,15 @@ body {
 
 /* ---------- Chapter head ---------- */
 .chapter-head {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
+  padding: 0.7rem 0 0.75rem 1rem;
+  border-left: 5px solid var(--blue);
+  background: linear-gradient(
+    90deg,
+    var(--blue-tint) 0%,
+    rgba(234, 243, 251, 0) 82%
+  );
+  border-radius: 0 14px 14px 0;
 }
 .chapter-head__no {
   display: inline-flex;
