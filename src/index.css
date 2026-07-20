@@ -245,12 +245,14 @@ body {
   margin-bottom: 0;
 }
 .h3 {
-  font-size: 1.24rem;
+  font-size: 1.28rem;
   color: var(--navy);
-  margin: 0 0 0.55rem;
-  padding-left: 0.75rem;
-  border-left: 5px solid var(--blue);
-  line-height: 1.45;
+  margin: 0 0 0.6rem;
+  padding-left: 0.8rem;
+  border-left: 4px solid var(--blue);
+  line-height: 1.42;
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 .section-block {
   margin: 1.05rem 0;
@@ -409,10 +411,11 @@ body {
   grid-template-columns: repeat(3, 1fr);
 }
 .point {
-  background: var(--gray-50);
+  background: #ffffff;
   border: 1px solid var(--gray-line);
   border-radius: var(--radius);
-  padding: 0.8rem 0.9rem;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 4px 16px rgba(20, 30, 50, 0.05);
 }
 .point__tag {
   display: inline-flex;
