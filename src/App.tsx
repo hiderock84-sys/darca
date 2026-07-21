@@ -990,6 +990,9 @@ function Ch11Pages() {
             </div>
           ))}
         </div>
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch11.no}>
         <div className="flow">
           <p className="flow__title">家族会 当日の流れ</p>
           <ol className="flow__steps">
@@ -1014,15 +1017,18 @@ function Ch11Pages() {
             ※ 内容は回により変わることがあります。見学だけの参加も歓迎です。
           </p>
         </div>
+        <div className="callout">
+          <Icon name="chat" />
+          <span>{ch11.info.note}</span>
+        </div>
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch11.no}>
         <ChapterHero
           src={img.facility}
           alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
           caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。JR相模原駅から送迎車もご用意しています。"
         />
-        <div className="callout">
-          <Icon name="chat" />
-          <span>{ch11.info.note}</span>
-        </div>
         <ColumnBox
           data={{
             label: ch11.consult.label,

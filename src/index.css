@@ -1989,7 +1989,7 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 10mm 0;
+    margin: 8mm 0;
   }
   @page fullbleed {
     margin: 0;
@@ -2015,31 +2015,50 @@ body {
     gap: 0;
   }
 
-  /* ---- 本文シートは連続フロー（固定高さ・強制改ページを解除） ---- */
+  /* ---- 本文シートは1枚=1ページの固定高さ。内容を縦に配分し下部余白を埋める ---- */
   .sheet {
     width: auto;
-    height: auto;
+    height: 280mm;
     min-height: 0;
     padding: 0 15mm;
     margin: 0;
     box-shadow: none;
-    overflow: visible;
-    display: block;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     background: none;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .sheet:last-of-type {
+    break-after: auto;
   }
   .sheet__body {
-    display: block;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
-  .sheet
-    + .sheet:not(.sheet--cover):not(.sheet--promise):not(.sheet--back) {
-    margin-top: 4mm;
+  /* 印刷時はブロック間隔をわずかに詰め、1ページ内に確実に収める */
+  .chapter-head {
+    margin-bottom: 0.55rem;
+  }
+  .cycle {
+    margin-top: 0.4rem;
+  }
+  .cycle__step {
+    padding-top: 0.42rem;
+    padding-bottom: 0.42rem;
+  }
+  .column {
+    margin: 0.7rem 0;
+  }
+  .points {
+    margin-top: 0.7rem;
   }
   .sheet--story,
   .sheet--open {
     background: none;
-  }
-  .sheet--open .sheet__body {
-    display: block;
   }
   .chapter-open {
     padding: 0;
