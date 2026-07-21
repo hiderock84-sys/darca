@@ -92,18 +92,9 @@ function ChapterHead({
   title: string
   catch: string
 }) {
-  const num = no.replace(/[^0-9]/g, '')
   const accent = chapterAccent(no)
   return (
     <header className="chapter-head">
-      {num && (
-        <span
-          className="chapter-head__kicker"
-          style={accent ? { color: accent } : undefined}
-        >
-          CHAPTER {num.padStart(2, '0')}
-        </span>
-      )}
       <span className="chapter-head__no">
         <Icon name="compass" className="icon-inline" />
         {no}
@@ -190,7 +181,6 @@ function ChapterOpener({
   src: string
   alt: string
 }) {
-  const num = no.replace(/[^0-9]/g, '')
   const accent = chapterAccent(no)
   return (
     <header className="opener">
@@ -198,11 +188,6 @@ function ChapterOpener({
       <div className="opener__scrim" />
       {accent && <span className="opener__bar" style={{ background: accent }} />}
       <div className="opener__content">
-        {num && (
-          <span className="opener__kicker" style={{ color: accent }}>
-            CHAPTER {num.padStart(2, '0')}
-          </span>
-        )}
         <span className="opener__no">
           <Icon name="compass" className="icon-inline" />
           {no}

@@ -335,7 +335,7 @@ body {
 /* 章扉（写真背景＋文字重ね・アーバン） */
 .opener {
   position: relative;
-  min-height: 66mm;
+  min-height: 74mm;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -358,8 +358,9 @@ body {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(13, 27, 52, 0.26) 0%,
-    rgba(13, 27, 52, 0.5) 52%,
+    rgba(13, 27, 52, 0.1) 0%,
+    rgba(13, 27, 52, 0.2) 42%,
+    rgba(13, 27, 52, 0.56) 64%,
     rgba(13, 27, 52, 0.84) 100%
   );
 }
