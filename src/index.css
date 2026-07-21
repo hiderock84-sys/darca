@@ -1143,14 +1143,14 @@ body {
 }
 .toc__intro-label {
   flex: none;
-  width: 7rem;
+  width: 4.8rem;
   font-size: 0.86rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--blue);
 }
 .toc__intro-title {
-  font-size: 1.04rem;
+  font-size: 1.0rem;
   color: var(--ink);
 }
 .toc__list {
@@ -2048,6 +2048,13 @@ body {
   :root {
     --pad-x: 7mm;
     --pad-y: 8mm;
+  }
+  /* 画面（スマホ）では装飾のランニングヘッダーを隠してすっきり */
+  .runhead {
+    display: none;
+  }
+  .toc__intro-label {
+    width: 4.2rem;
   }
   .sheet {
     width: 100%;
