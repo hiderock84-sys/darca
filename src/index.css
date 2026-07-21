@@ -270,11 +270,14 @@ body {
 .hero img {
   display: block;
   width: 100%;
+  aspect-ratio: 2 / 1;
   height: auto;
+  object-fit: cover;
 }
 .hero--tall img,
 .hero--xtall img,
 .hero--story img {
+  aspect-ratio: 2 / 1;
   height: auto;
 }
 .hero--promise {
@@ -1968,14 +1971,13 @@ body {
     padding: 0;
   }
 
-  /* ---- 分割されると困る塊はページ跨ぎを禁止 ---- */
+  /* ---- 図解・小カードなど「割れると困る最小単位」だけ分割禁止 ----
+     長いリストや箱（column/case/checklist/kv/dd-col/voices/compare/points）は
+     ページ跨ぎを許可し、下部の余白を最小化する ---- */
   figure,
   .hero,
   .point,
-  .column,
-  .case,
   .qa,
-  .checklist,
   .cycle,
   .cycle__step,
   .flow,
@@ -1983,14 +1985,8 @@ body {
   .callout,
   .kv__row,
   .benefit,
-  .compare,
   .example-row,
-  .dd-col,
-  .voices,
-  .points,
   .chapter-head,
-  .toc__row,
-  .preface__pledge,
   .qa-group__label {
     break-inside: avoid;
   }

@@ -1029,11 +1029,6 @@ function Ch11Pages() {
           }}
           green
         />
-        <ChapterHero
-          src={img.staffSmile}
-          alt="相談を担当する、回復を経験した当事者スタッフの穏やかな笑顔"
-          caption="相談を担当するのは、依存症で苦しみ、回復を果たした当事者スタッフです。"
-        />
       </Sheet>
     </>
   )
