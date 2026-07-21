@@ -2041,6 +2041,9 @@ body {
   }
   .sheet--promise {
     break-before: page;
+    background:
+      radial-gradient(110% 80% at 50% 0%, #2a5488 0%, transparent 55%),
+      linear-gradient(170deg, var(--navy) 0%, var(--navy-deep) 100%);
   }
   .sheet--back {
     break-before: page;
