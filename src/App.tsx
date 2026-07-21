@@ -1137,8 +1137,11 @@ function BackPage() {
         </div>
 
         <div className="back__issuer">
-          <div className="back__issuer-logo">{backCover.brand}</div>
-          <p className="back__issuer-name">{backCover.issuer}</p>
+          <img
+            className="back__issuer-logoimg"
+            src={img.logoJa}
+            alt="一般社団法人 相模原ダルク"
+          />
           <p className="back__disclaimer">{backCover.disclaimer}</p>
         </div>
       </div>

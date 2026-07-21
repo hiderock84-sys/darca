@@ -15,6 +15,9 @@ import seminar from './seminar.webp'
 import consultHand from './consult-hand.webp'
 import entranceBack from './entrance-back.webp'
 import staffSmile from './staff-smile.webp'
+// 公式ロゴ（アップロードPDFより）
+import logoJa from './logo_ja.webp'
+import logoEn from './logo_en.webp'
 
 export const img = {
   coverHero,
@@ -31,6 +34,8 @@ export const img = {
   consultHand,
   entranceBack,
   staffSmile,
+  logoJa,
+  logoEn,
 } as const
 
 export type ImageKey = keyof typeof img
