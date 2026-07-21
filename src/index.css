@@ -14,22 +14,22 @@
   --blue-deep: #175a99;
   --blue-tint: #eaf3fb;
   --blue-tint-2: #dcebf8;
-  --gray-50: #f7f6f2; /* 温かみのあるライトグレー */
-  --gray-100: #eeece7;
-  --gray-line: #e3e0d9;
+  --gray-50: #f5f5f7; /* Apple ライトグレー */
+  --gray-100: #ececee;
+  --gray-line: #d2d2d7; /* Apple ディバイダー */
   --green: #2f9e6b; /* アクセントグリーン */
   --green-deep: #237a51;
-  --green-tint: #e8f5ee;
+  --green-tint: #eaf5ef;
   --red: #c0453f;
   --red-tint: #fbecea;
-  /* やさしい温かみのアクセント（陽だまりのような色） */
-  --warm: #d69a5c;
-  --warm-deep: #b87a3c;
-  --warm-tint: #f9f1e6;
-  --paper: #fdfcf9; /* 紙の白（ほんのり暖色） */
-  --ink: #26313c;
-  --ink-soft: #58636f;
-  --ink-mute: #8a8f93;
+  /* アクセント（控えめに使用） */
+  --warm: #c98a4a;
+  --warm-deep: #a86d33;
+  --warm-tint: #f6efe6;
+  --paper: #ffffff; /* 純白（ミニマル） */
+  --ink: #1d1d1f; /* ニアブラック */
+  --ink-soft: #515154;
+  --ink-mute: #86868b;
 
   /* --- Layout tokens --- */
   --sheet-w: 210mm;
@@ -56,7 +56,7 @@
 
 body {
   margin: 0;
-  background: #e7e3dc;
+  background: #e8e8ed;
   color: var(--ink);
 }
 
@@ -245,12 +245,12 @@ body {
   margin-bottom: 0;
 }
 .h3 {
-  font-size: 1.28rem;
-  color: var(--navy);
-  margin: 0 0 0.6rem;
-  padding-left: 0.8rem;
-  border-left: 4px solid var(--blue);
-  line-height: 1.42;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin: 0 0 0.7rem;
+  padding-left: 0;
+  border-left: none;
+  line-height: 1.38;
   font-weight: 800;
   letter-spacing: 0.01em;
 }
@@ -429,11 +429,10 @@ body {
   grid-template-columns: repeat(3, 1fr);
 }
 .point {
-  background: #ffffff;
-  border: 1px solid var(--gray-line);
+  background: var(--gray-50);
+  border: none;
   border-radius: var(--radius);
-  padding: 0.9rem 1rem;
-  box-shadow: 0 4px 16px rgba(20, 30, 50, 0.05);
+  padding: 1rem 1.1rem;
 }
 .point__tag {
   display: inline-flex;
