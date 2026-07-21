@@ -2002,6 +2002,11 @@ body {
   .qa-group__label {
     break-inside: avoid;
   }
+  /* 章ごとにページを改める（章の区切りを明確にし、つながりを整える） */
+  .opener,
+  .chapter-head {
+    break-before: page;
+  }
   /* 見出しは直後の内容と一緒に */
   .chapter-head,
   .h3,
