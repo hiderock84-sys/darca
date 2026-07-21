@@ -230,10 +230,11 @@ function CoverPage() {
       <div className="cover__scrim" />
       <div className="cover">
         <div className="cover__top">
-          <div>
-            <div className="cover__brand-logo">{org.brand}</div>
-            <div className="cover__brand-sub">{org.subtitle}</div>
-          </div>
+          <img
+            className="cover__logo"
+            src={img.logoEnWhite}
+            alt="DARC SAGAMIHARA｜相模原ダルク"
+          />
           <span className="cover__edition">{cover.editionLabel}</span>
         </div>
 

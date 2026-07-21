@@ -961,6 +961,11 @@ body {
   align-items: center;
   justify-content: space-between;
 }
+.cover__logo {
+  width: 168px;
+  height: auto;
+  display: block;
+}
 .cover__brand-logo {
   font-size: 1.5rem;
   font-weight: 800;
