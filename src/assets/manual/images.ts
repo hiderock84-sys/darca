@@ -20,6 +20,8 @@ import logoJa from './logo_ja.webp'
 import logoEn from './logo_en.webp'
 import logoJaWhite from './logo_ja_white.webp'
 import logoEnWhite from './logo_en_white.webp'
+// 公式サイト「ご家族の方へ」へのQRコード
+import qrFamily from './qr-family.svg'
 
 export const img = {
   coverHero,
@@ -40,6 +42,7 @@ export const img = {
   logoEn,
   logoJaWhite,
   logoEnWhite,
+  qrFamily,
 } as const
 
 export type ImageKey = keyof typeof img

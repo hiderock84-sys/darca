@@ -1171,15 +1171,25 @@ function BackPage() {
         </div>
 
         <div className="back__site-row">
-          <span className="back__site-label">{backCover.siteLabel}</span>
-          <a
-            className="back__site"
-            href={backCover.site}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {backCover.site}
-          </a>
+          <img
+            className="back__qr"
+            src={img.qrFamily}
+            alt="公式ホームページ「ご家族の方へ」のQRコード"
+          />
+          <div className="back__site-text">
+            <span className="back__site-label">{backCover.siteLabel}</span>
+            <a
+              className="back__site"
+              href={backCover.site}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {backCover.site}
+            </a>
+            <span className="back__qr-note">
+              スマートフォンで読み取ると、公式サイトへアクセスできます
+            </span>
+          </div>
         </div>
 
         <div className="back__issuer">
