@@ -1,13 +1,15 @@
 :root {
-  --navy-900: #0b1a35;
-  --navy-800: #12244a;
+  --navy-900: #08152c;
+  --navy-800: #0f2246;
   --navy-700: #1b3363;
   --gold: #c8a24a;
   --gold-soft: #e4c877;
-  --cream: #f6f1e7;
+  --gold-deep: #a8863a;
+  --cream: #f7f2e8;
   --cream-2: #efe7d6;
-  --ink: #23303f;
-  --ink-soft: #4a5a6a;
+  --paper: #fffdf8;
+  --ink: #22303f;
+  --ink-soft: #566472;
   --do: #2f7d4f;
   --dont: #b23a3a;
   --white: #ffffff;
@@ -15,11 +17,15 @@
   /* 仕上がり A5（148.5 × 210mm）を1パネル、A4横（297 × 210mm）に2パネル面付け */
   --panel-w: 148.5mm;
   --panel-h: 210mm;
-  --pad: 9mm;
+  --pad: 10mm;
 
-  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+  --sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
     "Noto Sans CJK JP", "Noto Sans JP", system-ui, -apple-system, "Segoe UI",
     sans-serif;
+  --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif CJK JP",
+    "Noto Serif JP", serif;
+
+  font-family: var(--sans);
   color: var(--ink);
 }
 
@@ -36,53 +42,57 @@ body {
 /* ===== 画面プレビュー ===== */
 @media screen {
   body {
-    background: #6b7280;
-    padding: 16px;
+    background: #5b6472;
+    padding: 20px 16px 40px;
   }
   .print-hint {
     max-width: 297mm;
-    margin: 0 auto 16px;
-    padding: 12px 18px;
+    margin: 0 auto 18px;
+    padding: 14px 20px;
     background: var(--white);
-    border-radius: 10px;
+    border-radius: 12px;
     color: var(--ink);
     font-size: 13px;
-    line-height: 1.7;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    line-height: 1.75;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   }
   .print-hint b {
     color: var(--navy-800);
   }
   .print-hint button {
-    margin-top: 8px;
+    margin-top: 10px;
     background: var(--navy-800);
     color: #fff;
     border: 0;
     border-radius: 999px;
-    padding: 8px 18px;
+    padding: 9px 22px;
     font-weight: 700;
     cursor: pointer;
   }
+  .print-hint button:hover {
+    background: var(--navy-700);
+  }
   .sheet {
-    margin: 0 auto 18px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    margin: 0 auto 22px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
     background: #fff;
   }
   .sheet__label {
     max-width: 297mm;
-    margin: 0 auto 6px;
+    margin: 0 auto 7px;
     color: #fff;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
   }
   .fold-line {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 50%;
-    border-left: 1px dashed rgba(0, 0, 0, 0.25);
+    border-left: 1px dashed rgba(255, 255, 255, 0.35);
     pointer-events: none;
+    z-index: 5;
   }
 }
 
@@ -93,9 +103,7 @@ body {
 }
 @media print {
   .print-hint,
-  .sheet__label {
-    display: none !important;
-  }
+  .sheet__label,
   .fold-line {
     display: none !important;
   }
@@ -118,6 +126,7 @@ body {
   overflow: hidden;
 }
 .panel {
+  position: relative;
   width: var(--panel-w);
   height: var(--panel-h);
   padding: var(--pad);
@@ -126,6 +135,10 @@ body {
   flex-direction: column;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+}
+.panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== 共通パーツ ===== */
@@ -136,17 +149,18 @@ body {
 }
 .brand__logo {
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   font-size: 13pt;
 }
 .brand__name {
   font-size: 7pt;
+  letter-spacing: 0.04em;
 }
 .panel--dark .brand__logo {
   color: #fff;
 }
 .panel--dark .brand__name {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .pillars {
@@ -162,19 +176,21 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.5mm;
-  padding: 3mm 1.5mm;
-  border: 0.3mm solid rgba(200, 162, 74, 0.5);
+  gap: 1.6mm;
+  padding: 3.4mm 1.6mm;
+  border: 0.3mm solid rgba(200, 162, 74, 0.55);
   border-radius: 3mm;
+  background: rgba(255, 255, 255, 0.04);
 }
 .pillar__icon {
-  width: 9mm;
-  height: 9mm;
+  width: 9.5mm;
+  height: 9.5mm;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(200, 162, 74, 0.15);
+  background: radial-gradient(rgba(228, 200, 119, 0.28), rgba(200, 162, 74, 0.08));
   color: var(--gold-soft);
+  border: 0.25mm solid rgba(228, 200, 119, 0.5);
 }
 .pillar__icon svg {
   width: 5mm;
@@ -186,122 +202,218 @@ body {
   color: #fff;
 }
 .pillar__note {
-  font-size: 6.5pt;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 6.4pt;
+  color: rgba(255, 255, 255, 0.82);
   line-height: 1.5;
+}
+
+/* ===== 装飾コーナー ===== */
+.corner {
+  position: absolute;
+  width: 14mm;
+  height: 14mm;
+  border: 0.4mm solid rgba(200, 162, 74, 0.6);
+  z-index: 2;
+}
+.corner--tl {
+  top: 5mm;
+  left: 5mm;
+  border-right: 0;
+  border-bottom: 0;
+}
+.corner--br {
+  bottom: 5mm;
+  right: 5mm;
+  border-left: 0;
+  border-top: 0;
 }
 
 /* ===== P1 表紙 ===== */
 .panel--cover {
   color: #fff;
-  background:
-    linear-gradient(180deg, rgba(11, 26, 53, 0.78), rgba(11, 26, 53, 0.95)),
-    radial-gradient(120% 80% at 70% 12%, #24406f 0%, var(--navy-900) 60%);
   text-align: center;
+  background:
+    linear-gradient(180deg, rgba(8, 21, 44, 0.55) 0%, rgba(8, 21, 44, 0.8) 55%, rgba(8, 21, 44, 0.35) 100%),
+    radial-gradient(130% 90% at 65% 8%, #26426f 0%, var(--navy-900) 62%);
+}
+.night-scene {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 52%;
+  z-index: 0;
+  opacity: 0.95;
 }
 .panel--cover .brand {
   justify-content: center;
 }
 .cover__eyebrow {
-  letter-spacing: 0.28em;
+  letter-spacing: 0.32em;
   color: var(--gold-soft);
   font-size: 8.5pt;
-  margin: 6mm 0 2mm;
+  margin: 7mm 0 2.5mm;
+}
+.cover__eyebrow::before,
+.cover__eyebrow::after {
+  content: "";
+  display: inline-block;
+  width: 7mm;
+  height: 0.3mm;
+  background: var(--gold);
+  vertical-align: middle;
+  margin: 0 2.5mm;
 }
 .cover__title {
-  font-size: 27pt;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-family: var(--serif);
+  font-size: 30pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   margin: 0;
-  text-shadow: 0 1mm 4mm rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1mm 5mm rgba(0, 0, 0, 0.4);
 }
 .cover__subtitle {
   color: var(--gold-soft);
-  font-size: 10pt;
-  margin: 2mm 0 5mm;
+  font-size: 10.5pt;
+  margin: 3mm 0 6mm;
+  letter-spacing: 0.02em;
 }
 .cover__lead {
-  font-size: 8.5pt;
-  line-height: 1.85;
-  margin: 0 0 auto;
+  font-size: 8.6pt;
+  line-height: 1.95;
+  margin: 0 4mm auto;
 }
 .cover__lead p {
   margin: 1.4mm 0;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 0.5mm 3mm rgba(0, 0, 0, 0.55);
 }
 .panel--cover .pillars {
   margin-top: 5mm;
 }
 
-/* ===== セクション見出し（本文パネル） ===== */
+/* ===== 本文パネル 見出し ===== */
 .panel--light {
-  background: var(--cream);
+  background:
+    linear-gradient(180deg, var(--paper), var(--cream));
+}
+.p-head {
+  text-align: center;
+  margin-bottom: 4mm;
+}
+.p-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5mm;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold-deep);
+  margin-bottom: 1mm;
+}
+.p-num::before,
+.p-num::after {
+  content: "";
+  width: 6mm;
+  height: 0.3mm;
+  background: var(--gold);
 }
 .p-title {
-  font-size: 15pt;
-  font-weight: 800;
+  font-family: var(--serif);
+  font-size: 16pt;
+  font-weight: 700;
   color: var(--navy-800);
-  margin: 0 0 3mm;
-  padding-bottom: 2mm;
-  border-bottom: 0.6mm solid var(--gold);
-  text-align: center;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+.p-title__underline {
+  display: block;
+  width: 22mm;
+  height: 0.7mm;
+  margin: 2mm auto 0;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 .p-lead {
   font-size: 8.5pt;
   color: var(--ink-soft);
   text-align: center;
-  margin: 0 0 3mm;
+  margin: 2.5mm 0 3mm;
 }
 
 /* ===== P2 夜11時の物語 ===== */
 .story p {
   font-size: 8pt;
-  line-height: 1.7;
+  line-height: 1.75;
   margin: 0 0 2mm;
 }
 .quotes {
+  position: relative;
   list-style: none;
-  padding: 2.5mm 3mm;
-  margin: 2mm 0;
-  background: #fff;
+  padding: 3mm 3.5mm 3mm 7mm;
+  margin: 2.5mm 0;
+  background: var(--paper);
+  border: 0.3mm solid rgba(200, 162, 74, 0.4);
   border-left: 1mm solid var(--gold);
   border-radius: 2mm;
+  box-shadow: 0 1mm 3mm rgba(15, 34, 70, 0.06);
+}
+.quotes::before {
+  content: "\201C";
+  position: absolute;
+  left: 2mm;
+  top: 0.5mm;
+  font-family: var(--serif);
+  font-size: 20pt;
+  color: var(--gold);
+  opacity: 0.6;
 }
 .quotes li {
   font-size: 8pt;
   font-weight: 700;
   color: var(--navy-800);
-  margin: 0.6mm 0;
+  margin: 0.7mm 0;
 }
 .cycle {
-  margin: 2mm 0;
-  padding: 2.5mm 3mm;
-  background: var(--navy-800);
+  margin: 2.5mm 0;
+  padding: 3mm 3mm 2mm;
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
   color: #fff;
-  border-radius: 2mm;
+  border-radius: 2.5mm;
+  box-shadow: 0 1.5mm 4mm rgba(8, 21, 44, 0.25);
 }
 .cycle__title {
-  font-size: 8pt;
+  font-family: var(--serif);
+  font-size: 8.5pt;
   font-weight: 700;
   color: var(--gold-soft);
-  margin: 0 0 1.5mm;
+  margin: 0 0 2mm;
   text-align: center;
+  letter-spacing: 0.06em;
+}
+.cycle__loop {
+  display: block;
+  width: 82%;
+  height: 5mm;
+  margin: 0 auto -1mm;
 }
 .cycle__flow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1mm 1.5mm;
-  font-size: 7pt;
+  gap: 1.2mm;
+  font-size: 6.8pt;
 }
-.cycle__flow span.step {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.8mm 1.8mm;
+.cycle__flow .step {
+  background: rgba(255, 255, 255, 0.12);
+  border: 0.2mm solid rgba(228, 200, 119, 0.35);
+  padding: 1mm 2mm;
   border-radius: 1.5mm;
 }
-.cycle__flow span.arrow {
+.cycle__flow .arrow {
   color: var(--gold-soft);
+  font-weight: 700;
 }
 .mini-cards {
   display: grid;
@@ -309,28 +421,54 @@ body {
   margin-top: auto;
 }
 .mini-card {
-  background: #fff;
+  display: flex;
+  gap: 2.5mm;
+  background: var(--paper);
   border-radius: 2mm;
-  padding: 2.2mm 3mm;
-  border-top: 0.6mm solid var(--navy-700);
+  padding: 2.4mm 3mm;
+  border: 0.25mm solid rgba(15, 34, 70, 0.08);
+  border-left: 0.9mm solid var(--navy-700);
+  box-shadow: 0 1mm 2.5mm rgba(15, 34, 70, 0.05);
+}
+.mini-card__icon {
+  flex: 0 0 auto;
+  width: 7mm;
+  height: 7mm;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(27, 51, 99, 0.08);
+  color: var(--navy-700);
+}
+.mini-card__icon svg {
+  width: 4mm;
+  height: 4mm;
 }
 .mini-card h4 {
-  margin: 0 0 1mm;
+  margin: 0 0 0.8mm;
   font-size: 8.5pt;
   color: var(--navy-800);
 }
 .mini-card p {
   margin: 0;
-  font-size: 7.2pt;
+  font-size: 7.1pt;
   line-height: 1.6;
   color: var(--ink-soft);
 }
 .mini-card--accent {
-  border-top-color: var(--gold);
+  border-left-color: var(--gold);
   background: #fffaf0;
 }
+.mini-card--accent .mini-card__icon {
+  background: rgba(200, 162, 74, 0.16);
+  color: var(--gold-deep);
+}
 .mini-card--soft {
-  border-top-color: var(--do);
+  border-left-color: var(--do);
+}
+.mini-card--soft .mini-card__icon {
+  background: rgba(47, 125, 79, 0.13);
+  color: var(--do);
 }
 
 /* ===== P3 ご家族にお願いしたいこと ===== */
@@ -341,45 +479,59 @@ body {
   margin-bottom: 3mm;
 }
 .dodont__col {
-  background: #fff;
-  border-radius: 2mm;
-  padding: 2.5mm 3mm;
+  background: var(--paper);
+  border-radius: 2.5mm;
+  padding: 0;
+  overflow: hidden;
+  border: 0.25mm solid rgba(15, 34, 70, 0.08);
+  box-shadow: 0 1mm 3mm rgba(15, 34, 70, 0.06);
 }
 .dodont__col h4 {
   display: flex;
   align-items: center;
-  gap: 1.5mm;
-  margin: 0 0 1.5mm;
-  font-size: 9pt;
+  gap: 1.6mm;
+  margin: 0;
+  padding: 1.8mm 2.5mm;
+  font-size: 8.6pt;
+  color: #fff;
+}
+.dodont__col--dont h4 {
+  background: linear-gradient(120deg, #c0453f, var(--dont));
+}
+.dodont__col--do h4 {
+  background: linear-gradient(120deg, #348a58, var(--do));
 }
 .badge {
-  width: 4.5mm;
-  height: 4.5mm;
-  border-radius: 1.2mm;
+  width: 4.6mm;
+  height: 4.6mm;
+  border-radius: 1.3mm;
   display: grid;
   place-items: center;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.9);
   font-weight: 800;
   font-size: 8pt;
 }
 .badge--dont {
-  background: var(--dont);
+  color: var(--dont);
 }
 .badge--do {
-  background: var(--do);
+  color: var(--do);
 }
 .dodont__col ul {
   list-style: none;
-  padding: 0;
+  padding: 2mm 2.5mm 0;
   margin: 0 0 1.5mm;
 }
 .dodont__col li {
   display: flex;
-  gap: 1.2mm;
+  gap: 1.4mm;
   font-size: 7.2pt;
   line-height: 1.5;
-  padding: 0.6mm 0;
-  border-bottom: 0.2mm dashed rgba(11, 26, 53, 0.12);
+  padding: 0.7mm 0;
+  border-bottom: 0.2mm dashed rgba(15, 34, 70, 0.12);
+}
+.dodont__col li:last-child {
+  border-bottom: 0;
 }
 .mark {
   font-weight: 800;
@@ -391,11 +543,14 @@ body {
   color: var(--do);
 }
 .dodont__note {
-  margin: 0;
-  padding: 1.5mm 2mm;
+  margin: 0 2.5mm 2.5mm;
+  padding: 1.6mm 2mm;
   border-radius: 1.5mm;
   font-size: 7pt;
   font-weight: 700;
+  display: flex;
+  gap: 1.4mm;
+  align-items: flex-start;
 }
 .dodont__note--dont {
   background: rgba(178, 58, 58, 0.09);
@@ -407,14 +562,16 @@ body {
 }
 
 .flow {
-  background: #fff;
-  border-radius: 2mm;
-  padding: 2.5mm 3mm;
+  background: var(--paper);
+  border-radius: 2.5mm;
+  padding: 3mm;
   margin-bottom: 3mm;
+  border: 0.25mm solid rgba(15, 34, 70, 0.08);
+  box-shadow: 0 1mm 3mm rgba(15, 34, 70, 0.06);
 }
 .flow h4 {
-  margin: 0 0 2mm;
-  font-size: 8.5pt;
+  margin: 0 0 2.5mm;
+  font-size: 8.6pt;
   color: var(--navy-800);
   text-align: center;
 }
@@ -423,38 +580,41 @@ body {
   padding: 0;
   margin: 0;
   display: flex;
-  gap: 1mm;
+  gap: 1.4mm;
 }
 .flow__step {
   flex: 1;
   position: relative;
-  background: var(--cream);
-  border-radius: 1.5mm;
-  padding: 2mm 1mm;
+  background: linear-gradient(180deg, var(--cream), var(--cream-2));
+  border-radius: 1.8mm;
+  padding: 2.2mm 1mm;
   text-align: center;
 }
 .flow__step:not(:last-child)::after {
-  content: "→";
+  content: "";
   position: absolute;
-  right: -1.4mm;
+  right: -1.5mm;
   top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 1.4mm solid transparent;
+  border-bottom: 1.4mm solid transparent;
+  border-left: 1.8mm solid var(--gold);
   transform: translateY(-50%);
-  color: var(--gold);
-  font-weight: 800;
-  font-size: 7pt;
   z-index: 1;
 }
 .flow__num {
-  width: 5mm;
-  height: 5mm;
-  margin: 0 auto 1mm;
+  width: 5.5mm;
+  height: 5.5mm;
+  margin: 0 auto 1.2mm;
   border-radius: 50%;
-  background: var(--navy-800);
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
   color: #fff;
   display: grid;
   place-items: center;
-  font-size: 7pt;
+  font-size: 7.5pt;
   font-weight: 700;
+  box-shadow: 0 0.5mm 1.5mm rgba(8, 21, 44, 0.3);
 }
 .flow__step b {
   display: block;
@@ -469,16 +629,19 @@ body {
 
 .meeting {
   margin-top: auto;
-  background: var(--navy-800);
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
   color: #fff;
-  border-radius: 2mm;
-  padding: 2.5mm 3mm;
+  border-radius: 2.5mm;
+  padding: 3mm;
+  box-shadow: 0 1.5mm 4mm rgba(8, 21, 44, 0.25);
 }
 .meeting h4 {
-  margin: 0 0 1mm;
-  font-size: 9pt;
+  margin: 0 0 1.5mm;
+  font-family: var(--serif);
+  font-size: 9.5pt;
   color: var(--gold-soft);
   text-align: center;
+  letter-spacing: 0.04em;
 }
 .meeting__benefits {
   list-style: none;
@@ -487,12 +650,12 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.2mm;
+  gap: 1.3mm;
 }
 .meeting__benefits li {
-  font-size: 6.5pt;
-  padding: 0.6mm 2mm;
-  border: 0.2mm solid rgba(200, 162, 74, 0.5);
+  font-size: 6.6pt;
+  padding: 0.7mm 2.2mm;
+  border: 0.2mm solid rgba(228, 200, 119, 0.55);
   border-radius: 999px;
   color: var(--gold-soft);
 }
@@ -517,9 +680,11 @@ body {
 }
 .meeting__url {
   display: block;
-  margin-top: 1.5mm;
+  margin-top: 1.8mm;
+  padding-top: 1.8mm;
+  border-top: 0.2mm solid rgba(255, 255, 255, 0.16);
   text-align: center;
-  font-size: 6.5pt;
+  font-size: 6.6pt;
   color: #fff;
 }
 
@@ -528,33 +693,45 @@ body {
   color: #fff;
   text-align: center;
   background:
-    linear-gradient(180deg, rgba(11, 26, 53, 0.5), rgba(11, 26, 53, 0.9)),
-    linear-gradient(180deg, #f6a94a 0%, #d97a3c 32%, #6b3f6e 66%, var(--navy-900) 100%);
+    linear-gradient(180deg, rgba(8, 21, 44, 0.35) 0%, rgba(8, 21, 44, 0.15) 40%, rgba(8, 21, 44, 0.75) 100%),
+    linear-gradient(180deg, #f6a94a 0%, #e08a45 26%, #7a4a6e 58%, var(--navy-900) 100%);
+}
+.sunrise-road {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 46%;
+  z-index: 0;
+  opacity: 0.95;
 }
 .back__message {
-  font-size: 9pt;
-  line-height: 1.95;
-  margin: 6mm 0 auto;
-  text-shadow: 0 1mm 3mm rgba(0, 0, 0, 0.35);
+  font-family: var(--serif);
+  font-size: 9.5pt;
+  line-height: 2.05;
+  margin: 8mm 0 auto;
+  text-shadow: 0 1mm 4mm rgba(0, 0, 0, 0.45);
 }
 .back__message p {
-  margin: 1.5mm 0;
+  margin: 1.6mm 0;
 }
 .panel--back .pillars {
   margin: 4mm 0;
 }
 .contact {
-  padding: 3mm;
-  background: rgba(11, 26, 53, 0.55);
-  border: 0.3mm solid rgba(200, 162, 74, 0.45);
+  padding: 3.4mm;
+  background: rgba(8, 21, 44, 0.62);
+  border: 0.3mm solid rgba(228, 200, 119, 0.5);
   border-radius: 3mm;
+  box-shadow: 0 2mm 6mm rgba(0, 0, 0, 0.3);
 }
 .contact .brand {
   justify-content: center;
-  margin-bottom: 1.5mm;
+  margin-bottom: 1.8mm;
 }
 .contact__phone {
-  font-size: 20pt;
+  font-size: 21pt;
   font-weight: 800;
   color: #fff;
   text-decoration: none;
@@ -562,7 +739,7 @@ body {
   display: block;
 }
 .contact__note {
-  margin: 1mm 0 2mm;
+  margin: 1mm 0 2.2mm;
   font-size: 7pt;
   color: var(--gold-soft);
 }
@@ -570,7 +747,7 @@ body {
   font-size: 7pt;
   color: #fff;
   text-decoration: none;
-  border-bottom: 0.2mm solid rgba(255, 255, 255, 0.4);
+  border-bottom: 0.2mm solid rgba(255, 255, 255, 0.45);
 }
 .icon-inline {
   width: 1em;

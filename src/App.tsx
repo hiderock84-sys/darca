@@ -1,4 +1,5 @@
 import { Icon, type IconName } from './components/Icons'
+import { NightScene, SunriseRoad, CycleLoop } from './components/Illustrations'
 import {
   org,
   cover,
@@ -20,9 +21,24 @@ function Brand() {
   )
 }
 
+function PanelHead({ num, title }: { num: string; title: string }) {
+  return (
+    <div className="p-head">
+      <span className="p-num">{num}</span>
+      <h2 className="p-title">
+        {title}
+        <span className="p-title__underline" />
+      </h2>
+    </div>
+  )
+}
+
 function CoverPanel() {
   return (
     <div className="panel panel--cover panel--dark">
+      <NightScene className="night-scene" />
+      <span className="corner corner--tl" />
+      <span className="corner corner--br" />
       <Brand />
       <p className="cover__eyebrow">{cover.eyebrow}</p>
       <h1 className="cover__title">{cover.title}</h1>
@@ -46,10 +62,17 @@ function CoverPanel() {
   )
 }
 
+const cardMeta = [
+  { data: cards.addiction, icon: 'brain' as IconName, cls: '' },
+  { data: cards.enabling, icon: 'chain' as IconName, cls: '' },
+  { data: cards.today, icon: 'sunrise' as IconName, cls: 'mini-card--accent' },
+  { data: cards.familySuffer, icon: 'heart' as IconName, cls: 'mini-card--soft' },
+]
+
 function StoryPanel() {
   return (
     <div className="panel panel--light story">
-      <h2 className="p-title">{story.title}</h2>
+      <PanelHead num="P.2" title={story.title} />
       {story.paragraphs.map((p) => (
         <p key={p}>{p}</p>
       ))}
@@ -64,34 +87,29 @@ function StoryPanel() {
 
       <div className="cycle">
         <p className="cycle__title">{cycle.title}</p>
+        <CycleLoop className="cycle__loop" />
         <div className="cycle__flow">
           {cycle.steps.map((s, i) => (
             <span key={s} style={{ display: 'contents' }}>
               <span className="step">{s}</span>
-              {i < cycle.steps.length - 1 && <span className="arrow">→</span>}
+              {i < cycle.steps.length - 1 && <span className="arrow">›</span>}
             </span>
           ))}
-          <span className="arrow">↻</span>
         </div>
       </div>
 
       <div className="mini-cards">
-        <article className="mini-card">
-          <h4>{cards.addiction.title}</h4>
-          <p>{cards.addiction.body}</p>
-        </article>
-        <article className="mini-card">
-          <h4>{cards.enabling.title}</h4>
-          <p>{cards.enabling.body}</p>
-        </article>
-        <article className="mini-card mini-card--accent">
-          <h4>{cards.today.title}</h4>
-          <p>{cards.today.body}</p>
-        </article>
-        <article className="mini-card mini-card--soft">
-          <h4>{cards.familySuffer.title}</h4>
-          <p>{cards.familySuffer.body}</p>
-        </article>
+        {cardMeta.map(({ data, icon, cls }) => (
+          <article key={data.title} className={`mini-card ${cls}`}>
+            <span className="mini-card__icon">
+              <Icon name={icon} />
+            </span>
+            <div>
+              <h4>{data.title}</h4>
+              <p>{data.body}</p>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   )
@@ -100,11 +118,11 @@ function StoryPanel() {
 function RequestPanel() {
   return (
     <div className="panel panel--light">
-      <h2 className="p-title">{familyRequest.title}</h2>
+      <PanelHead num="P.3" title={familyRequest.title} />
       <p className="p-lead">{familyRequest.lead}</p>
 
       <div className="dodont">
-        <article className="dodont__col">
+        <article className="dodont__col dodont__col--dont">
           <h4>
             <span className="badge badge--dont">×</span>
             {familyRequest.dont.title}
@@ -124,7 +142,7 @@ function RequestPanel() {
           </p>
         </article>
 
-        <article className="dodont__col">
+        <article className="dodont__col dodont__col--do">
           <h4>
             <span className="badge badge--do">✓</span>
             {familyRequest.do.title}
@@ -184,6 +202,9 @@ function RequestPanel() {
 function BackPanel() {
   return (
     <div className="panel panel--back panel--dark">
+      <SunriseRoad className="sunrise-road" />
+      <span className="corner corner--tl" />
+      <span className="corner corner--br" />
       <div className="back__message">
         {backCover.message.map((line) => (
           <p key={line}>{line}</p>

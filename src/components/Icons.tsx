@@ -1,4 +1,13 @@
-export type IconName = 'heart' | 'people' | 'hands' | 'phone' | 'globe'
+export type IconName =
+  | 'heart'
+  | 'people'
+  | 'hands'
+  | 'phone'
+  | 'globe'
+  | 'brain'
+  | 'chain'
+  | 'sunrise'
+  | 'home'
 
 type IconProps = {
   name: IconName
@@ -34,9 +43,46 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M12 3c2.5 2.6 4 6 4 9s-1.5 6.4-4 9c-2.5-2.6-4-6-4-9s1.5-6.4 4-9z" />
     </>
   ),
+  brain: (
+    <>
+      <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8V15a3 3 0 0 0 4 2.8" />
+      <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8V15a3 3 0 0 1-4 2.8" />
+      <path d="M12 5v14" />
+    </>
+  ),
+  chain: (
+    <>
+      <path d="M9.5 14.5l5-5" />
+      <path d="M8 13l-2 2a3 3 0 0 0 4.2 4.2l2-2" />
+      <path d="M16 11l2-2a3 3 0 0 0-4.2-4.2l-2 2" />
+    </>
+  ),
+  sunrise: (
+    <>
+      <path d="M12 4v3" />
+      <path d="M5.5 9.5 7 11" />
+      <path d="M18.5 9.5 17 11" />
+      <path d="M3 18h18" />
+      <path d="M7 18a5 5 0 0 1 10 0" />
+    </>
+  ),
+  home: (
+    <>
+      <path d="M4 11l8-6 8 6" />
+      <path d="M6 10v9h12v-9" />
+    </>
+  ),
 }
 
-const strokeIcons: IconName[] = ['people', 'hands', 'globe']
+const strokeIcons: IconName[] = [
+  'people',
+  'hands',
+  'globe',
+  'brain',
+  'chain',
+  'sunrise',
+  'home',
+]
 
 export function Icon({ name, className }: IconProps) {
   const isStroke = strokeIcons.includes(name)
