@@ -338,13 +338,13 @@ body {
 /* 章扉（写真背景＋文字重ね・アーバン） */
 .opener {
   position: relative;
-  min-height: 74mm;
+  min-height: 46mm;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   border-radius: 16px;
   overflow: hidden;
-  padding: 1.5rem 1.5rem 1.4rem;
+  padding: 1.4rem 1.4rem 1.3rem;
   margin: 0 0 1.1rem;
   background: linear-gradient(150deg, var(--navy-soft), var(--navy-deep));
   color: #fff;

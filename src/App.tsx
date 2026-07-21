@@ -1015,8 +1015,8 @@ function Ch11Pages() {
         </div>
         <ChapterHero
           src={img.facility}
-          alt="あたたかな光の差し込む、家族会の会場イメージ"
-          caption="あたたかな場所で、同じ思いのご家族をお迎えします。JR相模原駅から送迎車もご用意しています。"
+          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
+          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。JR相模原駅から送迎車もご用意しています。"
         />
         <div className="callout">
           <Icon name="chat" />
