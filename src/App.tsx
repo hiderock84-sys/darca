@@ -226,7 +226,7 @@ function ChapterHero({
 function CoverPage() {
   return (
     <Sheet className="sheet--cover" hideNo>
-      <img className="cover__bg" src={img.facility} alt="" aria-hidden="true" />
+      <img className="cover__bg" src={img.coverHero} alt="" aria-hidden="true" />
       <div className="cover__scrim" />
       <div className="cover">
         <div className="cover__top">
@@ -1015,8 +1015,8 @@ function Ch11Pages() {
         </div>
         <ChapterHero
           src={img.facility}
-          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
-          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。送迎車もご用意しています。"
+          alt="あたたかな光の差し込む、家族会の会場イメージ"
+          caption="あたたかな場所で、同じ思いのご家族をお迎えします。JR相模原駅から送迎車もご用意しています。"
         />
         <div className="callout">
           <Icon name="chat" />
