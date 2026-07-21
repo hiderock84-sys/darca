@@ -17,6 +17,7 @@ import {
   ch9,
   ch10,
   ch11,
+  walkReason,
   promise,
   backCover,
   spec,
@@ -1039,6 +1040,50 @@ function Ch11Pages() {
    Closing
    ============================================================= */
 
+function WalkReasonPage() {
+  return (
+    <Sheet
+      runhead={`${walkReason.label}\u3000${walkReason.title}`}
+      pageLabel="メッセージ"
+    >
+      <ChapterHead
+        no={walkReason.label}
+        title={walkReason.title}
+        catch={walkReason.headline}
+      />
+      {walkReason.body.map((p) => (
+        <p key={p} className="body-p">
+          {p}
+        </p>
+      ))}
+      <ColumnBox
+        data={{
+          label: walkReason.philosophyLabel,
+          title: walkReason.philosophy,
+          body: [],
+        }}
+        green
+      />
+      {walkReason.body2.map((p) => (
+        <p key={p} className="body-p">
+          {p}
+        </p>
+      ))}
+      <div className="preface__pledge">
+        {walkReason.closing.map((l) => (
+          <span key={l} className="walkreason__closing-line">
+            {l}
+          </span>
+        ))}
+      </div>
+      <p className="walkreason__tag">
+        {walkReason.tagline}
+        <span className="walkreason__tag-sub">{walkReason.taglineSub}</span>
+      </p>
+    </Sheet>
+  )
+}
+
 function PromisePage() {
   return (
     <Sheet className="sheet--promise" runhead={promise.chapterLabel} pageLabel="約束">
@@ -1353,6 +1398,7 @@ function App() {
         <Ch9Pages />
         <Ch10Pages />
         <Ch11Pages />
+        <WalkReasonPage />
         <PromisePage />
         <BackPage />
         {showSpecAppendix && <SpecPages />}

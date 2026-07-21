@@ -1119,6 +1119,26 @@ body {
   font-weight: 700;
   line-height: 1.9;
 }
+.walkreason__closing-line {
+  display: block;
+}
+.walkreason__tag {
+  text-align: center;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 1.5rem 0 0;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+.walkreason__tag-sub {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--warm-deep);
+  letter-spacing: 0.2em;
+  margin-top: 0.6rem;
+}
 
 /* ---- TOC ---- */
 .toc__head {
