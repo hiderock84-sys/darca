@@ -16,6 +16,8 @@
 - `npm run preview` — ビルド成果物のプレビュー
 - `npm run lint` — ESLint
 - `npm test` — Vitest（1 回実行）／`npm run test:watch` で監視
+- `npm run pdf` — 配布用 A4 PDF を生成（内部で `build` → Vite preview 自動起動 → Puppeteer で `dist/manual.pdf` と `public/manual.pdf` を出力）
+- `npm run qr` — 裏表紙の公式サイト QR コード（`src/assets/manual/qr-family.svg`）を再生成
 
 ## コンテンツ構成
 
@@ -31,3 +33,4 @@
 - ESLint 10 は flat config 必須。`eslint-plugin-react-hooks` は `configs.flat.recommended` を使う（`configs['recommended-latest']` は plugins が配列形式で ESLint 10 では読み込めない）。
 - `tsc -b`（`npm run build`）は CSS を import しているため `src/vite-env.d.ts` の `/// <reference types="vite/client" />` が必須。削除すると型解決に失敗しビルドが落ちる。
 - dev サーバは tmux セッション `vite-dev-server` で起動している。動作確認は `curl -s localhost:5173/` で HTTP 200 を確認すればよい。
+- PDF 生成の `puppeteer` と QR 生成の `qrcode` は `devDependencies` に登録済み。`npm install` の postinstall で Puppeteer 用 Chrome（`~/.cache/puppeteer`）も自動取得されるため、手動での `npm i --no-save puppeteer` や `npx puppeteer browsers install` は不要。PDF は `npm run pdf` の 1 コマンドで生成できる（`--no-sandbox` 付きでヘッドレス起動）。
