@@ -61,6 +61,28 @@ function Sheet({
   )
 }
 
+// 章ごとのアクセントカラー（特集扉のような差別化・落ち着いた上質トーン）
+const CHAPTER_ACCENTS = [
+  '#d69a5c', // 1 依存症とは
+  '#2f9e6b', // 2 家族の病気
+  '#3a86c4', // 3 イネーブリング
+  '#c9683e', // 4 家へ入れない
+  '#2a9d8f', // 5 帰宅時対応
+  '#6a7fd0', // 6 電話・病院・警察
+  '#c05c7e', // 7 やってはいけない
+  '#4a8fd0', // 8 やるべきこと
+  '#e0a13f', // 9 ケース
+  '#8a6fc0', // 10 Q&A
+  '#2f9e6b', // 11 家族会
+] as const
+
+function chapterAccent(no: string): string | undefined {
+  const n = parseInt(no.replace(/[^0-9]/g, ''), 10)
+  return Number.isFinite(n) && n >= 1
+    ? CHAPTER_ACCENTS[(n - 1) % CHAPTER_ACCENTS.length]
+    : undefined
+}
+
 function ChapterHead({
   no,
   title,
@@ -70,15 +92,28 @@ function ChapterHead({
   title: string
   catch: string
 }) {
+  const num = no.replace(/[^0-9]/g, '')
+  const accent = chapterAccent(no)
   return (
     <header className="chapter-head">
+      {num && (
+        <span
+          className="chapter-head__kicker"
+          style={accent ? { color: accent } : undefined}
+        >
+          CHAPTER {num.padStart(2, '0')}
+        </span>
+      )}
       <span className="chapter-head__no">
         <Icon name="compass" className="icon-inline" />
         {no}
       </span>
       <h2 className="chapter-head__title">{title}</h2>
       <p className="chapter-head__catch">{catchCopy}</p>
-      <div className="chapter-head__rule" />
+      <div
+        className="chapter-head__rule"
+        style={accent ? { background: accent } : undefined}
+      />
     </header>
   )
 }
@@ -142,10 +177,59 @@ function ColumnBox({ data, green = false }: { data: Column; green?: boolean }) {
   )
 }
 
-function ChapterHero({ src, alt }: { src: string; alt: string }) {
+function ChapterOpener({
+  no,
+  title,
+  catch: catchCopy,
+  src,
+  alt,
+}: {
+  no: string
+  title: string
+  catch: string
+  src: string
+  alt: string
+}) {
+  const num = no.replace(/[^0-9]/g, '')
+  const accent = chapterAccent(no)
   return (
-    <figure className="hero">
-      <img src={src} alt={alt} loading="lazy" />
+    <header className="opener">
+      <img className="opener__bg" src={src} alt={alt} />
+      <div className="opener__scrim" />
+      {accent && <span className="opener__bar" style={{ background: accent }} />}
+      <div className="opener__content">
+        {num && (
+          <span className="opener__kicker" style={{ color: accent }}>
+            CHAPTER {num.padStart(2, '0')}
+          </span>
+        )}
+        <span className="opener__no">
+          <Icon name="compass" className="icon-inline" />
+          {no}
+        </span>
+        <h2 className="opener__title">{title}</h2>
+        <p className="opener__catch">{catchCopy}</p>
+      </div>
+    </header>
+  )
+}
+
+function ChapterHero({
+  src,
+  alt,
+  caption,
+  size,
+}: {
+  src: string
+  alt: string
+  caption?: string
+  size?: 'tall' | 'xtall'
+}) {
+  const cls = size === 'tall' ? 'hero hero--tall' : size === 'xtall' ? 'hero hero--xtall' : 'hero'
+  return (
+    <figure className={cls}>
+      <img src={src} alt={alt} />
+      {caption && <figcaption className="hero__cap">{caption}</figcaption>}
     </figure>
   )
 }
@@ -157,7 +241,7 @@ function ChapterHero({ src, alt }: { src: string; alt: string }) {
 function CoverPage() {
   return (
     <Sheet className="sheet--cover" hideNo>
-      <img className="cover__bg" src={img.coverHero} alt="" aria-hidden="true" />
+      <img className="cover__bg" src={img.facility} alt="" aria-hidden="true" />
       <div className="cover__scrim" />
       <div className="cover">
         <div className="cover__top">
@@ -205,7 +289,6 @@ function StoryPages() {
           <img
             src={img.storyNight}
             alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
-            loading="lazy"
           />
         </figure>
         <p className="story__lead">{openingStory.lead}</p>
@@ -219,18 +302,23 @@ function StoryPages() {
             <p key={p}>{p}</p>
           ))}
         </div>
+        <ChapterHero
+          src={img.entranceBack}
+          alt="相模原ダルクの入口に立つご家族の後ろ姿。ここから回復の一歩が始まる"
+          caption="相模原ダルクの玄関で ── どんな夜にも、次の朝はやってきます。ここから、一緒に。"
+        />
       </Sheet>
     </>
   )
 }
 
-function PrefacePage() {
+function PrefacePages() {
   return (
     <Sheet runhead={preface.chapterLabel} pageLabel="はじめに">
-      <ChapterHead no={preface.chapterLabel} title={preface.title} catch="あなたは、悪くありません。" />
-      <ChapterHero
-        src={img.handsSupport}
-        alt="やわらかな光の中で、そっと近づく二つの手。あなたは一人ではないというメッセージ"
+      <ChapterHead
+        no={preface.chapterLabel}
+        title={preface.title}
+        catch="あなたは、悪くありません。"
       />
       {preface.paragraphs.map((p) => (
         <p key={p} className="body-p">
@@ -292,8 +380,10 @@ function Ch1Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch1.no}>
-        <ChapterHead no={ch1.no} title={ch1.title} catch={ch1.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch1.no}
+          title={ch1.title}
+          catch={ch1.catch}
           src={img.calmThread}
           alt="からまった糸がやがて一本の線へとほどけていく、混乱から理解へ向かうイメージ"
         />
@@ -329,8 +419,10 @@ function Ch2Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch2.no}>
-        <ChapterHead no={ch2.no} title={ch2.title} catch={ch2.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch2.no}
+          title={ch2.title}
+          catch={ch2.catch}
           src={img.seedlingDawn}
           alt="朝の光の中で芽吹く小さな双葉。家族もまた回復できるという希望のイメージ"
         />
@@ -370,6 +462,26 @@ function Ch3Pages() {
         {ch3.sections.map((s) => (
           <TextSection key={s.heading} heading={s.heading} body={s.body} />
         ))}
+        <div className="cycle">
+          <p className="cycle__title">イネーブリングの悪循環</p>
+          <ol className="cycle__steps">
+            {[
+              { t: '問題が起きる', n: '借金・トラブル・約束違反' },
+              { t: '家族が尻ぬぐい', n: '肩代わり・後始末・かばう' },
+              { t: 'その場は収まる', n: '一時的な安心が生まれる' },
+              { t: '本人は困らない', n: '痛みを感じず、行動が変わらない' },
+            ].map((s, i) => (
+              <li key={s.t} className="cycle__step">
+                <span className="cycle__num">STEP {i + 1}</span>
+                <span className="cycle__step-title">{s.t}</span>
+                <span className="cycle__step-note">{s.n}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="cycle__loop">
+            ↻ この輪が回り続ける限り、本人は「困らない」ため、回復に向き合えません。
+          </p>
+        </div>
       </Sheet>
 
       <Sheet runhead={rh} pageLabel={ch3.no}>
@@ -400,8 +512,10 @@ function Ch4Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch4.no}>
-        <ChapterHead no={ch4.no} title={ch4.title} catch={ch4.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch4.no}
+          title={ch4.title}
+          catch={ch4.catch}
           src={img.pathFork}
           alt="夜明けの野原で一本の道が二手に分かれ、道標が立つイメージ"
         />
@@ -598,37 +712,47 @@ function Ch6Pages() {
   )
 }
 
-function Ch7Page() {
+function Ch7Pages() {
+  const rh = `${ch7.no}\u3000${ch7.title}`
   return (
-    <Sheet runhead={`${ch7.no}\u3000${ch7.title}`} pageLabel={ch7.no}>
-      <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
-      <Lead lines={ch7.lead} />
+    <>
+      <Sheet runhead={rh} pageLabel={ch7.no}>
+        <ChapterHead no={ch7.no} title={ch7.title} catch={ch7.catch} />
+        <Lead lines={ch7.lead} />
 
-      <div className="dd-col dd-col--dont" style={{ margin: '0.5rem 0 0.4rem' }}>
-        <p className="dd-col__head">
-          <Icon name="cross" />
-          {ch7.dont.title}
-        </p>
-        <ul className="dd-list">
-          {ch7.dont.items.map((i) => (
-            <li key={i.title}>
-              <Icon name="cross" />
-              <span>
-                <span className="dd-item__title">{i.title}</span>
-                <span className="dd-item__note">{i.note}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="dd-col dd-col--dont" style={{ margin: '0.6rem 0 0' }}>
+          <p className="dd-col__head">
+            <Icon name="cross" />
+            {ch7.dont.title}
+          </p>
+          <ul className="dd-list">
+            {ch7.dont.items.map((i) => (
+              <li key={i.title}>
+                <Icon name="cross" />
+                <span>
+                  <span className="dd-item__title">{i.title}</span>
+                  <span className="dd-item__note">{i.note}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Sheet>
 
-      <div className="callout">
-        <Icon name="heart" />
-        <span>{ch7.reasonNote}</span>
-      </div>
-
-      <ColumnBox data={ch7.column} />
-    </Sheet>
+      <Sheet runhead={rh} pageLabel={ch7.no}>
+        <div className="callout">
+          <Icon name="heart" />
+          <span>{ch7.reasonNote}</span>
+        </div>
+        <ColumnBox data={ch7.column} />
+        <ChapterHero
+          src={img.consultHand}
+          alt="相談室で穏やかに話を聴く様子。判断に迷ったら一人で抱え込まないで"
+          caption="迷ったときは、どうか一人で決めないでください。相模原ダルクがご一緒します。"
+          size="xtall"
+        />
+      </Sheet>
+    </>
   )
 }
 
@@ -637,8 +761,10 @@ function Ch8Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch8.no}>
-        <ChapterHead no={ch8.no} title={ch8.title} catch={ch8.catch} />
-        <ChapterHero
+        <ChapterOpener
+          no={ch8.no}
+          title={ch8.title}
+          catch={ch8.catch}
           src={img.boundary}
           alt="夜明けの二つの岸のあいだを流れる穏やかな川。しなやかな境界線のイメージ"
         />
@@ -663,6 +789,29 @@ function Ch8Pages() {
       </Sheet>
 
       <Sheet runhead={rh} pageLabel={ch8.no}>
+        <div className="section-block">
+          <p className="h3">境界線 ── 「相手の課題」と「自分の課題」を分ける</p>
+          <div className="compare">
+            <div className="compare__col compare__col--dont">
+              <p className="compare__title">本人の課題（変えられないこと）</p>
+              <ul className="compare__list">
+                <li>薬物・お酒をやめること</li>
+                <li>回復に取り組むこと</li>
+                <li>約束を守ること</li>
+                <li>自分の人生に責任を持つこと</li>
+              </ul>
+            </div>
+            <div className="compare__col compare__col--do">
+              <p className="compare__title">家族の課題（あなたにできること）</p>
+              <ul className="compare__list">
+                <li>自分の心と体を守ること</li>
+                <li>正しい知識を持ち、相談すること</li>
+                <li>つながりの中に身を置くこと</li>
+                <li>回復を信じて、見守ること</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <ColumnBox data={ch8.boundary} />
         <ColumnBox data={ch8.craft} green />
         <Points items={ch8.points} />
@@ -721,70 +870,78 @@ function Ch9Pages() {
   )
 }
 
-function QaGroup({ group }: { group: (typeof ch10.groups)[number] }) {
+type QaItem = { q: string; a: string; cat: string; catStart: boolean }
+
+function QaBlock({ qa, showLabel, spaced }: { qa: QaItem; showLabel: boolean; spaced: boolean }) {
   return (
-    <div className="qa-group">
-      <span className="qa-group__label">{group.label}</span>
-      {group.items.map((qa) => (
-        <div key={qa.q} className="qa">
-          <p className="qa__q">
-            <span className="qa__mark qa__mark--q">Q</span>
-            {qa.q}
-          </p>
-          <p className="qa__a">
-            <span className="qa__mark qa__mark--a">A</span>
-            {qa.a}
-          </p>
-        </div>
-      ))}
-    </div>
+    <>
+      {showLabel && (
+        <span
+          className="qa-group__label"
+          style={spaced ? { marginTop: '0.9rem' } : undefined}
+        >
+          {qa.cat}
+          {!qa.catStart ? '（つづき）' : ''}
+        </span>
+      )}
+      <div className="qa">
+        <p className="qa__q">
+          <span className="qa__mark qa__mark--q">Q</span>
+          {qa.q}
+        </p>
+        <p className="qa__a">
+          <span className="qa__mark qa__mark--a">A</span>
+          {qa.a}
+        </p>
+      </div>
+    </>
   )
 }
 
 function Ch10Pages() {
   const rh = `${ch10.no}\u3000${ch10.title}`
+  const flat: QaItem[] = ch10.groups.flatMap((g) =>
+    g.items.map((it, i) => ({ q: it.q, a: it.a, cat: g.label, catStart: i === 0 })),
+  )
+  const firstCount = 4
+  const perPage = 5
+  const chunks: QaItem[][] = [flat.slice(0, firstCount)]
+  for (let i = firstCount; i < flat.length; i += perPage)
+    chunks.push(flat.slice(i, i + perPage))
+
   return (
     <>
-      <Sheet className="sheet--open" runhead={rh} pageLabel={ch10.no}>
-        <div className="chapter-open">
-          <ChapterHead no={ch10.no} title={ch10.title} catch={ch10.catch} />
-          <Lead lines={ch10.lead} />
-          <div className="qa-index">
-            <p className="qa-index__title">この章でお答えする質問</p>
-            <ol className="qa-index__list">
-              {ch10.groups.map((g, i) => (
-                <li key={g.label}>
-                  <span className="qa-index__no">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="qa-index__label">{g.label}</span>
-                  <span className="qa-index__count">全{g.items.length}問</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[0]} />
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[1]} />
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[2]} />
-      </Sheet>
-
-      <Sheet runhead={rh} pageLabel={ch10.no}>
-        <QaGroup group={ch10.groups[3]} />
-        <div className="callout">
-          <Icon name="heart" />
-          <span>
-            ここに載せきれない疑問も、たくさんあると思います。迷ったときは、どうか一人で決めず、相模原ダルクへご相談ください。
-          </span>
-        </div>
-      </Sheet>
+      {chunks.map((chunk, ci) => (
+        <Sheet
+          key={chunk[0].q}
+          className={ci === 0 ? 'sheet--open' : undefined}
+          runhead={rh}
+          pageLabel={ch10.no}
+        >
+          {ci === 0 && (
+            <>
+              <ChapterHead no={ch10.no} title={ch10.title} catch={ch10.catch} />
+              <Lead lines={ch10.lead} />
+            </>
+          )}
+          {chunk.map((qa, qi) => (
+            <QaBlock
+              key={qa.q}
+              qa={qa}
+              showLabel={qa.catStart || qi === 0}
+              spaced={qi > 0 || ci === 0}
+            />
+          ))}
+          {ci === chunks.length - 1 && (
+            <div className="callout">
+              <Icon name="heart" />
+              <span>
+                ここに載せきれない疑問も、たくさんあると思います。迷ったときは、どうか一人で決めず、相模原ダルクへご相談ください。
+              </span>
+            </div>
+          )}
+        </Sheet>
+      ))}
     </>
   )
 }
@@ -794,10 +951,12 @@ function Ch11Pages() {
   return (
     <>
       <Sheet runhead={rh} pageLabel={ch11.no}>
-        <ChapterHead no={ch11.no} title={ch11.title} catch={ch11.catch} />
-        <ChapterHero
-          src={img.familyCircle}
-          alt="明るい部屋に円く並べられた椅子。安心してつながれる家族会のイメージ"
+        <ChapterOpener
+          no={ch11.no}
+          title={ch11.title}
+          catch={ch11.catch}
+          src={img.seminar}
+          alt="相模原ダルクの家族会・家族セミナーの様子（プライバシー保護のため顔は加工済み）"
         />
         <Lead lines={ch11.lead} />
         <div className="benefits">
@@ -810,6 +969,19 @@ function Ch11Pages() {
               <p className="benefit__body">{b.body}</p>
             </div>
           ))}
+        </div>
+
+        <div className="section-block">
+          <p className="h3">{ch11.program.title}</p>
+          <div className="points points--3">
+            {ch11.program.items.map((p, i) => (
+              <div key={p.title} className="point">
+                <span className="point__tag">PROGRAM {i + 1}</span>
+                <p className="point__title">{p.title}</p>
+                <p className="point__body">{p.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </Sheet>
 
@@ -831,6 +1003,35 @@ function Ch11Pages() {
             </div>
           ))}
         </div>
+        <div className="flow">
+          <p className="flow__title">家族会 当日の流れ</p>
+          <ol className="flow__steps">
+            {[
+              { t: '受付・送迎', n: 'JR相模原駅 北口より専用送迎車（12:45発・13:00発）' },
+              { t: '開会（13:30）', n: 'はじめての方も、どうぞ安心してお越しください' },
+              { t: 'エキスパート講演会', n: '医師・専門家から、依存症と回復を学ぶ' },
+              { t: '家族ミーティング', n: '「言いっぱなし・聞きっぱなし」で分かち合う' },
+              { t: '当事者スタッフ面談', n: 'ご家庭の悩みに、回復者スタッフが一緒に向き合う' },
+              { t: '閉会（17:00）', n: 'お帰りも送迎いたします' },
+            ].map((s, i) => (
+              <li key={s.t} className="flow__step">
+                <span className="flow__num">{i + 1}</span>
+                <span>
+                  <span className="flow__step-title">{s.t}</span>
+                  <span className="flow__step-note">{s.n}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="flow__caption">
+            ※ 内容は回により変わることがあります。見学だけの参加も歓迎です。
+          </p>
+        </div>
+        <ChapterHero
+          src={img.facility}
+          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
+          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。送迎車もご用意しています。"
+        />
         <div className="callout">
           <Icon name="chat" />
           <span>{ch11.info.note}</span>
@@ -842,6 +1043,11 @@ function Ch11Pages() {
             body: ch11.consult.body,
           }}
           green
+        />
+        <ChapterHero
+          src={img.staffSmile}
+          alt="相談を担当する、回復を経験した当事者スタッフの穏やかな笑顔"
+          caption="相談を担当するのは、依存症で苦しみ、回復を果たした当事者スタッフです。"
         />
       </Sheet>
     </>
@@ -864,7 +1070,6 @@ function PromisePage() {
         <img
           src={img.walkingTogether}
           alt="夜明けに向かって並んで歩いていく二人の後ろ姿。ともに歩むイメージ"
-          loading="lazy"
         />
       </figure>
       <div className="promise__body">
@@ -894,18 +1099,53 @@ function BackPage() {
   return (
     <Sheet className="sheet--back" hideNo>
       <div className="back">
-        <p className="back__lead">{backCover.lead}</p>
+        <div className="back__hotline">
+          <div className="back__hotline-head">
+            <span className="back__hotline-icon">
+              <Icon name="phone" />
+            </span>
+            <div>
+              <p className="back__hotline-lead">{backCover.lead}</p>
+              <p className="back__hotline-headline">{backCover.headline}</p>
+            </div>
+          </div>
 
-        <div className="back__card">
-          <p className="back__phone-label">{backCover.phoneLabel}</p>
-          <a className="back__phone" href={`tel:${org.phone}`}>
-            <Icon name="phone" />
-            {org.phone}
-          </a>
-          <p className="back__phone-note">{org.phoneNote}</p>
-          <p className="back__phone-note">{org.consultFree}</p>
-          <div className="back__divider" />
-          <p className="back__site-label">{backCover.siteLabel}</p>
+          <div className="back__numbers">
+            <div className="back__num">
+              <span className="back__num-label">{backCover.hotline.label}</span>
+              <a
+                className="back__num-value back__num-value--accent"
+                href={`tel:${backCover.hotline.value.replace(/-/g, '')}`}
+              >
+                {backCover.hotline.value}
+              </a>
+            </div>
+            <div className="back__num">
+              <span className="back__num-label">{backCover.rep.label}</span>
+              <a className="back__num-value" href={`tel:${org.phone}`}>
+                {backCover.rep.value}
+              </a>
+            </div>
+          </div>
+
+          <p className="back__support">{backCover.support}</p>
+        </div>
+
+        <div className="back__eligibility">
+          <p className="back__eligibility-title">{backCover.eligibility.title}</p>
+          <p className="back__eligibility-lead">{backCover.eligibility.lead}</p>
+          <ul className="back__eligibility-list">
+            {backCover.eligibility.items.map((i) => (
+              <li key={i}>
+                <Icon name="check" />
+                <span>{i}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="back__site-row">
+          <span className="back__site-label">{backCover.siteLabel}</span>
           <a
             className="back__site"
             href={backCover.site}
@@ -915,8 +1155,6 @@ function BackPage() {
             {backCover.site}
           </a>
         </div>
-
-        <p className="back__closing">{backCover.closing}</p>
 
         <div className="back__issuer">
           <div className="back__issuer-logo">{backCover.brand}</div>
@@ -1083,6 +1321,9 @@ function SpecPages() {
 
 function App() {
   const handlePrint = () => window.print()
+  // 制作仕様書（デザインガイド）は制作者向けの内部資料。
+  // 家族へ配布する冊子には含めない（true にすると巻末に付加できる）。
+  const showSpecAppendix = false
 
   return (
     <div className="viewer">
@@ -1091,16 +1332,31 @@ function App() {
           <span className="toolbar__logo">{org.brand}</span>
           <span className="toolbar__label">家族回復支援実践マニュアル 完全版｜保存版</span>
         </div>
-        <button className="toolbar__print" onClick={handlePrint} type="button">
-          <Icon name="book" className="icon-inline" />
-          印刷 / PDFで保存
-        </button>
+        <div className="toolbar__actions">
+          <a
+            className="toolbar__btn toolbar__btn--primary"
+            href="manual.pdf"
+            download="相模原ダルク_家族回復支援実践マニュアル.pdf"
+          >
+            <Icon name="book" className="icon-inline" />
+            A4冊子PDFをダウンロード
+          </a>
+          <button className="toolbar__btn" onClick={handlePrint} type="button">
+            印刷
+          </button>
+        </div>
       </div>
+
+      <p className="print-hint">
+        きれいに冊子として保存・印刷するには、上の「A4冊子PDFをダウンロード」がおすすめです。ブラウザから印刷する場合は、印刷画面で
+        <strong>用紙サイズ「A4」・余白「なし」・「ヘッダーとフッター」をオフ</strong>
+        に設定してください。
+      </p>
 
       <div className="booklet">
         <CoverPage />
         <StoryPages />
-        <PrefacePage />
+        <PrefacePages />
         <TocPage />
         <Ch1Pages />
         <Ch2Pages />
@@ -1108,14 +1364,14 @@ function App() {
         <Ch4Pages />
         <Ch5Pages />
         <Ch6Pages />
-        <Ch7Page />
+        <Ch7Pages />
         <Ch8Pages />
         <Ch9Pages />
         <Ch10Pages />
         <Ch11Pages />
         <PromisePage />
         <BackPage />
-        <SpecPages />
+        {showSpecAppendix && <SpecPages />}
       </div>
     </div>
   )
