@@ -13,7 +13,8 @@
     "pdf": "npm run build && node scripts/generate-pdf.mjs && cp dist/manual.pdf dist/manual-a4.pdf && python3 scripts/impose-a3.py dist/manual-a4.pdf dist/manual.pdf && cp dist/manual.pdf public/manual.pdf && cp dist/manual-a4.pdf public/manual-a4.pdf",
     "qr": "node scripts/generate-qr.mjs",
     "docx": "tsx scripts/dump-manual.ts scripts/manual.json && python3 scripts/generate-docx-rich.py scripts/manual.json public/manual.docx",
-    "docx:image": "python3 scripts/generate-docx-full.py public/manual-a4.pdf public/manual-print.docx"
+    "docx:image": "python3 scripts/generate-docx-full.py public/manual-a4.pdf public/manual-print.docx",
+    "pptx": "tsx scripts/dump-manual.ts scripts/manual.json && python3 scripts/generate-pptx.py scripts/manual.json public/manual.pptx"
   },
   "repository": {
     "type": "git",
