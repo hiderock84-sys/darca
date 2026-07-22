@@ -2019,85 +2019,74 @@ body {
      自然に流す。章内の内容は連続フローで上から詰まり、下部の無駄な空白を防ぐ ---- */
   .sheet {
     width: auto;
-    height: 280mm;
+    height: auto;
     min-height: 0;
     padding: 0 15mm;
     margin: 0;
     box-shadow: none;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    overflow: visible;
+    display: block;
     background: none;
-    break-after: page;
-    break-inside: avoid;
+    break-before: auto;
   }
-  .sheet:last-of-type {
-    break-after: auto;
+  /* すべてのシートを連続配置し、ページを隙間なく詰める。
+     章は見出しバンド（扉/章見出し）で明確に区切る。ただし扉が
+     ページ末尾で孤立しないよう分割は禁止する */
+  .opener,
+  .chapter-head {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+  /* 締めの伴走メッセージは独立したページから始めて1枚にまとめる */
+  .sheet--message {
+    break-before: page;
   }
   .sheet__body {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
+    display: block;
   }
-  /* 章末の画像は残り高さいっぱいに広げてページ下部を埋める */
-  .sheet__body > .hero:last-child {
-    flex: 1 1 auto;
-    margin-bottom: 0;
-    min-height: 60mm;
+  /* 印刷時はブロック間隔・余白を詰めて密度を上げる（つめつめ配置）。
+     文字サイズは維持し、余白のみ圧縮して可読性を保つ */
+  .opener {
+    min-height: 58mm;
+    margin-bottom: 0.7rem;
+    padding: 1.1rem 1.3rem 1rem;
   }
-  .sheet__body > .hero:last-child img {
-    height: 100%;
-    aspect-ratio: auto;
-    object-fit: cover;
-  }
-  /* 章末の囲み（コラム/相談窓口/コールアウト）は残り高さに合わせて広げ、
-     内容を上下中央に置いて「締めのパネル」として自然に見せる */
-  .sheet__body > .column:last-child,
-  .sheet__body > .callout:last-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  /* カード群・リスト・図解が最後の場合は、残り高さに合わせて広げ中央に寄せる */
-  .sheet__body > .points:last-child,
-  .sheet__body > .dd-col:last-child,
-  .sheet__body > .checklist:last-child,
-  .sheet__body > .voices:last-child,
-  .sheet__body > .flow:last-child,
-  .sheet__body > .cycle:last-child,
-  .sheet__body > .examples:last-child,
-  .sheet__body > .compare:last-child,
-  .sheet__body > .section-block:last-child {
-    flex: 1 1 auto;
-    align-content: center;
-  }
-  /* 開催情報などの表は、行を均等に広げてゆったり見せる（中身が浮かないように） */
-  .sheet__body > .kv:last-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-  }
-  .sheet__body > .kv:last-child .kv__row {
-    flex: 1 1 auto;
-    align-items: center;
-  }
-  /* 印刷時はブロック間隔をわずかに詰め、1ページ内に確実に収める */
   .chapter-head {
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.6rem;
+    padding: 1rem 1.2rem;
   }
-  .cycle {
-    margin-top: 0.4rem;
+  .lead {
+    margin: 0.6rem 0 0.7rem;
+  }
+  .body-p {
+    margin: 0 0 0.5rem;
+  }
+  .section-block {
+    margin: 0.7rem 0;
+  }
+  .h3 {
+    margin: 0.7rem 0 0.4rem;
+  }
+  .cycle,
+  .flow,
+  .checklist,
+  .examples,
+  .compare,
+  .kv,
+  .voices,
+  .dodont,
+  .dd-col,
+  .benefits,
+  .hero,
+  .callout,
+  .column,
+  .points {
+    margin-top: 0.7rem;
+    margin-bottom: 0.7rem;
   }
   .cycle__step {
     padding-top: 0.42rem;
     padding-bottom: 0.42rem;
-  }
-  .column {
-    margin: 0.7rem 0;
-  }
-  .points {
-    margin-top: 0.7rem;
   }
   .sheet--story,
   .sheet--open {

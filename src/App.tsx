@@ -1024,11 +1024,6 @@ function Ch11Pages() {
       </Sheet>
 
       <Sheet runhead={rh} pageLabel={ch11.no}>
-        <ChapterHero
-          src={img.facility}
-          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
-          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。JR相模原駅から送迎車もご用意しています。"
-        />
         <ColumnBox
           data={{
             label: ch11.consult.label,
@@ -1049,6 +1044,7 @@ function Ch11Pages() {
 function WalkReasonPage() {
   return (
     <Sheet
+      className="sheet--message"
       runhead={`${walkReason.label}\u3000${walkReason.title}`}
       pageLabel="メッセージ"
     >
