@@ -16,7 +16,7 @@
 - `npm run preview` — ビルド成果物のプレビュー
 - `npm run lint` — ESLint
 - `npm test` — Vitest（1 回実行）／`npm run test:watch` で監視
-- `npm run pdf` — 配布用 A4 PDF を生成（内部で `build` → Vite preview 自動起動 → Puppeteer で `dist/manual.pdf` と `public/manual.pdf` を出力）
+- `npm run pdf` — 配布用 PDF を生成。内部で `build` → Vite preview 自動起動 → Puppeteer で A4 版を作成し、`scripts/impose-a3.py`（PyMuPDF）で **A3横（見開き）に2ページずつ組み付け**て `public/manual.pdf`（A3・18見開き）を出力。A4 版は `public/manual-a4.pdf` に保存。※ 組み付けに Python の `pymupdf` が必要（`pip install pymupdf`）。
 - `npm run qr` — 裏表紙の公式サイト QR コード（`src/assets/manual/qr-family.svg`）を再生成
 
 ## コンテンツ構成

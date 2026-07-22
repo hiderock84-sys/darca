@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "pdf": "npm run build && node scripts/generate-pdf.mjs",
+    "pdf": "npm run build && node scripts/generate-pdf.mjs && cp dist/manual.pdf dist/manual-a4.pdf && python3 scripts/impose-a3.py dist/manual-a4.pdf dist/manual.pdf && cp dist/manual.pdf public/manual.pdf && cp dist/manual-a4.pdf public/manual-a4.pdf",
     "qr": "node scripts/generate-qr.mjs"
   },
   "repository": {
