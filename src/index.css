@@ -2057,32 +2057,19 @@ body {
     aspect-ratio: auto;
     object-fit: cover;
   }
-  /* 末尾の囲み・カード・リスト・図・表を残り高さに広げて充填 */
-  .sheet__body > .column:last-child,
-  .sheet__body > .callout:last-child,
-  .sheet__body > .points:last-child,
-  .sheet__body > .dd-col:last-child,
-  .sheet__body > .dodont:last-child,
-  .sheet__body > .checklist:last-child,
-  .sheet__body > .voices:last-child,
-  .sheet__body > .flow:last-child,
-  .sheet__body > .cycle:last-child,
-  .sheet__body > .examples:last-child,
-  .sheet__body > .compare:last-child,
-  .sheet__body > .case:last-child {
-    flex: 1 1 auto;
-    align-content: stretch;
-  }
-  /* 2カラムの対比・比較は列を高さいっぱいに伸ばして下端まで埋める */
-  .sheet__body > .dodont:last-child,
-  .sheet__body > .compare:last-child {
-    align-items: stretch;
-  }
+  /* 末尾の囲み（コラム/相談窓口/コールアウト）は残り高さに広げ、中身を中央に */
   .sheet__body > .column:last-child,
   .sheet__body > .callout:last-child {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+  /* 末尾の2カラム対比・比較・情報表は列/行を高さいっぱいに伸ばして下端まで埋める */
+  .sheet__body > .dodont:last-child,
+  .sheet__body > .compare:last-child {
+    flex: 1 1 auto;
+    align-items: stretch;
   }
   .sheet__body > .kv:last-child {
     flex: 1 1 auto;

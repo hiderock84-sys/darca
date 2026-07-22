@@ -890,7 +890,7 @@ function Ch10Pages() {
   const flat: QaItem[] = ch10.groups.flatMap((g) =>
     g.items.map((it, i) => ({ q: it.q, a: it.a, cat: g.label, catStart: i === 0 })),
   )
-  const firstCount = 4
+  const firstCount = 5
   const perPage = 5
   const chunks: QaItem[][] = [flat.slice(0, firstCount)]
   for (let i = firstCount; i < flat.length; i += perPage)
