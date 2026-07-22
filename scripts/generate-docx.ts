@@ -13,7 +13,6 @@ import {
   Paragraph,
   TextRun,
   HeadingLevel,
-  AlignmentType,
 } from 'docx'
 import * as M from '../src/data/manual'
 
@@ -43,9 +42,6 @@ function title(text: string) {
 }
 function h1(text: string) {
   push(new Paragraph({ text, heading: HeadingLevel.HEADING_1 }))
-}
-function h2(text: string) {
-  push(new Paragraph({ text, heading: HeadingLevel.HEADING_2 }))
 }
 function h3(text: string) {
   push(new Paragraph({ text, heading: HeadingLevel.HEADING_3 }))
@@ -111,7 +107,7 @@ function walk(node: unknown): void {
     }
     // 「やめる例 → 代わりの対応」
     if ('do' in n && 'instead' in n) {
-      bullet(`${String(n.do)}　→　${String(n.instead)}`)
+      bullet(`${String(n.do)}\u3000→\u3000${String(n.instead)}`)
       return
     }
     // 見出し + 本文
@@ -133,7 +129,7 @@ function walk(node: unknown): void {
     // ラベル付きブロック（column / case / info など）
     const head = [n.label, n.title, n.from]
       .filter((x) => isStr(x) && x)
-      .join('　')
+      .join('\u3000')
     if (head) h3(head)
     for (const [k, v] of Object.entries(n)) {
       if (SKIP.has(k)) continue
@@ -160,7 +156,7 @@ para(M.org.name)
 para(M.cover.supply)
 
 // ---- 導入ストーリー ----
-h1(`${M.openingStory.chapterLabel}　${M.openingStory.title}`)
+h1(`${M.openingStory.chapterLabel}\u3000${M.openingStory.title}`)
 quote(M.openingStory.lead)
 M.openingStory.paragraphs.forEach((t) =>
   t.startsWith('「') ? quote(t) : para(t),
@@ -188,7 +184,7 @@ const chapters = [
 
 for (const ch of chapters) {
   const c = ch as unknown as Record<string, unknown>
-  h1(`${String(c.no)}　${String(c.title)}`)
+  h1(`${String(c.no)}\u3000${String(c.title)}`)
   if (isStr(c.catch)) boldPara(c.catch, WARM)
   for (const [k, v] of Object.entries(c)) {
     if (['no', 'id', 'title', 'catch'].includes(k)) continue
@@ -204,7 +200,7 @@ h3(M.walkReason.philosophyLabel)
 para(M.walkReason.philosophy)
 M.walkReason.body2.forEach(para)
 M.walkReason.closing.forEach((l) => boldPara(l, NAVY))
-boldPara(`${M.walkReason.tagline}　${M.walkReason.taglineSub}`, NAVY)
+boldPara(`${M.walkReason.tagline}\u3000${M.walkReason.taglineSub}`, NAVY)
 
 // ---- 約束 ----
 h1(M.promise.title)
