@@ -2017,60 +2017,105 @@ body {
 
   /* ---- 各シート（章・セクション）は新しいページから開始し、内容量に応じて
      自然に流す。章内の内容は連続フローで上から詰まり、下部の無駄な空白を防ぐ ---- */
-  /* 各章は新しいページから開始。内容は上から順に「ギリギリ上詰め」で配置し、
-     章内は連続フローで詰める（引き伸ばしはしない） */
+  /* 1シート＝1ページ（固定A4高さ）。内容を上から詰めたうえで、末尾の要素を
+     残り高さいっぱいに広げ、ページ下部の余白を完全になくす */
   .sheet {
     width: auto;
-    height: auto;
+    height: 281mm;
     min-height: 0;
     padding: 0 11mm;
     margin: 0;
     box-shadow: none;
-    overflow: visible;
-    display: block;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     background: none;
-    break-before: auto;
-  }
-  /* 章・セクションの先頭シート（扉/章見出し/目次見出し）から改ページ。
-     続きのシートは前ページから連続して流れ、上から詰める */
-  .sheet:has(.opener),
-  .sheet:has(.chapter-head),
-  .sheet:has(.toc__head) {
-    break-before: page;
-  }
-  .opener,
-  .chapter-head {
+    break-after: page;
     break-inside: avoid;
-    break-after: avoid;
   }
-  /* 締めの伴走メッセージは独立ページから開始 */
-  .sheet--message {
-    break-before: page;
+  .sheet:last-of-type {
+    break-after: auto;
   }
   .sheet__body {
-    display: block;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    /* 末尾に伸縮要素が無いページ（テキスト中心）は、ブロックを上下に分散して
+       下部の余白をなくす。伸縮する囲み・画像があるページではそちらが優先される */
+    justify-content: space-between;
   }
-  /* 印刷時はブロック間隔・余白を適度に圧縮して密度を上げる（可読性は維持） */
+  /* 末尾の画像は cover で残り高さいっぱいに（隙間なく充填） */
+  .sheet__body > .hero:last-child {
+    flex: 1 1 auto;
+    min-height: 55mm;
+    margin-bottom: 0;
+  }
+  .sheet__body > .hero:last-child img {
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    object-fit: cover;
+  }
+  /* 末尾の囲み・カード・リスト・図・表を残り高さに広げて充填 */
+  .sheet__body > .column:last-child,
+  .sheet__body > .callout:last-child,
+  .sheet__body > .points:last-child,
+  .sheet__body > .dd-col:last-child,
+  .sheet__body > .dodont:last-child,
+  .sheet__body > .checklist:last-child,
+  .sheet__body > .voices:last-child,
+  .sheet__body > .flow:last-child,
+  .sheet__body > .cycle:last-child,
+  .sheet__body > .examples:last-child,
+  .sheet__body > .compare:last-child,
+  .sheet__body > .case:last-child {
+    flex: 1 1 auto;
+    align-content: stretch;
+  }
+  /* 2カラムの対比・比較は列を高さいっぱいに伸ばして下端まで埋める */
+  .sheet__body > .dodont:last-child,
+  .sheet__body > .compare:last-child {
+    align-items: stretch;
+  }
+  .sheet__body > .column:last-child,
+  .sheet__body > .callout:last-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .sheet__body > .kv:last-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sheet__body > .kv:last-child .kv__row {
+    flex: 1 1 auto;
+    align-items: center;
+  }
+  /* 印刷時はブロック間隔・余白・行間を圧縮して密度を最大化（文字サイズは維持） */
   .opener {
-    min-height: 54mm;
-    margin-bottom: 0.6rem;
-    padding: 1rem 1.2rem 0.9rem;
+    min-height: 44mm;
+    margin-bottom: 0.45rem;
+    padding: 0.8rem 1.1rem 0.7rem;
   }
   .chapter-head {
-    margin-bottom: 0.55rem;
-    padding: 0.9rem 1.15rem;
+    margin-bottom: 0.4rem;
+    padding: 0.75rem 1rem;
   }
   .lead {
-    margin: 0.55rem 0 0.6rem;
+    margin: 0.4rem 0 0.45rem;
+    line-height: 1.6;
   }
   .body-p {
-    margin: 0 0 0.48rem;
+    margin: 0 0 0.35rem;
+    line-height: 1.62;
   }
   .section-block {
-    margin: 0.6rem 0;
+    margin: 0.45rem 0;
   }
   .h3 {
-    margin: 0.6rem 0 0.38rem;
+    margin: 0.45rem 0 0.3rem;
   }
   .cycle,
   .flow,
@@ -2086,12 +2131,27 @@ body {
   .callout,
   .column,
   .points {
-    margin-top: 0.6rem;
-    margin-bottom: 0.6rem;
+    margin-top: 0.45rem;
+    margin-bottom: 0.45rem;
   }
   .cycle__step {
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
+    padding-top: 0.32rem;
+    padding-bottom: 0.32rem;
+  }
+  /* リスト項目・囲みの内側も詰める */
+  .checklist__items li,
+  .dd-list li,
+  .compare__list li,
+  .points__body,
+  .body-p + .body-p {
+    line-height: 1.6;
+  }
+  .column,
+  .callout {
+    padding: 0.85rem 1rem;
+  }
+  .point {
+    padding: 0.7rem 0.85rem;
   }
 
   .sheet--story,
