@@ -349,6 +349,10 @@ body {
   background: linear-gradient(150deg, var(--navy-soft), var(--navy-deep));
   color: #fff;
 }
+/* 導入ストーリーの扉は写真を大きく使い、見出しを画像の上に重ねる */
+.opener--story {
+  min-height: 105mm;
+}
 .opener__bg {
   position: absolute;
   inset: 0;
@@ -954,6 +958,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   padding: 22mm var(--pad-x) 20mm;
 }
 .cover__top {
@@ -988,8 +993,7 @@ body {
   border-radius: 999px;
 }
 .cover__center {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0;
 }
 .cover__category {
   display: inline-block;
@@ -1028,7 +1032,7 @@ body {
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
 }
 .cover__bottom {
-  margin-top: auto;
+  margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
   padding-top: 1.2rem;
 }
@@ -2064,6 +2068,15 @@ body {
   .sheet__body {
     display: block;
   }
+  /* 表紙・約束・裏表紙は本文欄を全面高さに広げ、内容を上下いっぱいに配置 */
+  .sheet--cover .sheet__body,
+  .sheet--promise .sheet__body,
+  .sheet--back .sheet__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
   /* 写真バンドは高さを抑え、ページ末での送り（＝直前の余白）を減らす */
   .hero img {
     aspect-ratio: auto;
@@ -2074,6 +2087,9 @@ body {
     min-height: 44mm;
     margin-bottom: 0.45rem;
     padding: 0.8rem 1.1rem 0.7rem;
+  }
+  .opener--story {
+    min-height: 108mm;
   }
   .chapter-head {
     margin-bottom: 0.4rem;

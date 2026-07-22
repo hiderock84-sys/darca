@@ -270,14 +270,18 @@ function StoryPages() {
   return (
     <>
       <Sheet className="sheet--story" runhead="PROLOGUE" pageLabel="導入ストーリー">
-        <p className="story__kicker">{openingStory.chapterLabel}</p>
-        <h2 className="story__title">{openingStory.title}</h2>
-        <figure className="hero hero--story">
+        <header className="opener opener--story">
           <img
+            className="opener__bg"
             src={img.storyNight}
             alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
           />
-        </figure>
+          <div className="opener__scrim" />
+          <div className="opener__content">
+            <span className="opener__no">{openingStory.chapterLabel}</span>
+            <h2 className="opener__title">{openingStory.title}</h2>
+          </div>
+        </header>
         <p className="story__lead">{openingStory.lead}</p>
         <div className="story__body">{first.map(renderPara)}</div>
       </Sheet>
