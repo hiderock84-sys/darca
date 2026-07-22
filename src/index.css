@@ -2017,55 +2017,46 @@ body {
 
   /* ---- 各シート（章・セクション）は新しいページから開始し、内容量に応じて
      自然に流す。章内の内容は連続フローで上から詰まり、下部の無駄な空白を防ぐ ---- */
+  /* 1シート＝1ページ（固定A4高さ）。各ページを区切り（ページ端）ギリギリまで
+     内容で埋める。内容は上から詰め、末尾要素を残り高さいっぱいに広げる */
   .sheet {
     width: auto;
-    height: auto;
+    height: 280mm;
     min-height: 0;
     padding: 0 15mm;
     margin: 0;
     box-shadow: none;
-    overflow: visible;
-    display: block;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     background: none;
-    break-before: auto;
-  }
-  /* すべてのシートを連続配置し、ページを隙間なく詰める。
-     章は見出しバンド（扉/章見出し）で明確に区切る。ただし扉が
-     ページ末尾で孤立しないよう分割は禁止する */
-  .opener,
-  .chapter-head {
+    break-after: page;
     break-inside: avoid;
-    break-after: avoid;
   }
-  /* 締めの伴走メッセージは独立したページから始めて1枚にまとめる */
-  .sheet--message {
-    break-before: page;
+  .sheet:last-of-type {
+    break-after: auto;
   }
-  .sheet__body {
-    display: block;
-  }
-  /* 印刷時はブロック間隔・余白を詰めて密度を上げる（つめつめ配置）。
-     文字サイズは維持し、余白のみ圧縮して可読性を保つ */
+  /* 印刷時はブロック間隔・余白を適度に圧縮して密度を上げる（可読性は維持） */
   .opener {
-    min-height: 58mm;
-    margin-bottom: 0.7rem;
-    padding: 1.1rem 1.3rem 1rem;
+    min-height: 54mm;
+    margin-bottom: 0.6rem;
+    padding: 1rem 1.2rem 0.9rem;
   }
   .chapter-head {
-    margin-bottom: 0.6rem;
-    padding: 1rem 1.2rem;
+    margin-bottom: 0.55rem;
+    padding: 0.9rem 1.15rem;
   }
   .lead {
-    margin: 0.6rem 0 0.7rem;
+    margin: 0.55rem 0 0.6rem;
   }
   .body-p {
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.48rem;
   }
   .section-block {
-    margin: 0.7rem 0;
+    margin: 0.6rem 0;
   }
   .h3 {
-    margin: 0.7rem 0 0.4rem;
+    margin: 0.6rem 0 0.38rem;
   }
   .cycle,
   .flow,
@@ -2081,12 +2072,62 @@ body {
   .callout,
   .column,
   .points {
-    margin-top: 0.7rem;
-    margin-bottom: 0.7rem;
+    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
   }
   .cycle__step {
-    padding-top: 0.42rem;
-    padding-bottom: 0.42rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  /* ---- 各章の最後のブロックを残り高さいっぱいに広げ、ページ端（区切り）
+     ギリギリまで詰める。画像は cover で隙間なく、囲みは中身を中央に置く ---- */
+  .sheet__body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sheet__body > .hero:last-child {
+    flex: 1 1 auto;
+    min-height: 60mm;
+    margin-bottom: 0;
+  }
+  .sheet__body > .hero:last-child img {
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    object-fit: cover;
+  }
+  .sheet__body > .column:last-child,
+  .sheet__body > .callout:last-child,
+  .sheet__body > .points:last-child,
+  .sheet__body > .dd-col:last-child,
+  .sheet__body > .dodont:last-child,
+  .sheet__body > .checklist:last-child,
+  .sheet__body > .voices:last-child,
+  .sheet__body > .flow:last-child,
+  .sheet__body > .cycle:last-child,
+  .sheet__body > .examples:last-child,
+  .sheet__body > .compare:last-child,
+  .sheet__body > .case:last-child,
+  .sheet__body > .section-block:last-child {
+    flex: 1 1 auto;
+    align-content: center;
+  }
+  .sheet__body > .column:last-child,
+  .sheet__body > .callout:last-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .sheet__body > .kv:last-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sheet__body > .kv:last-child .kv__row {
+    flex: 1 1 auto;
+    align-items: center;
   }
   .sheet--story,
   .sheet--open {
