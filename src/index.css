@@ -2080,34 +2080,41 @@ body {
   /* 写真バンドは高さを抑え、ページ末での送り（＝直前の余白）を減らす */
   .hero img {
     aspect-ratio: auto;
-    height: 52mm;
+    height: 46mm;
   }
   /* 印刷時はブロック間隔・余白・行間を圧縮して密度を最大化（文字サイズは維持） */
   .opener {
-    min-height: 44mm;
-    margin-bottom: 0.45rem;
-    padding: 0.8rem 1.1rem 0.7rem;
+    min-height: 40mm;
+    margin-bottom: 0.4rem;
+    padding: 0.7rem 1.1rem 0.6rem;
   }
   .opener--story {
     min-height: 108mm;
   }
   .chapter-head {
     margin-bottom: 0.4rem;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 1rem 0.55rem;
+  }
+  .chapter-head__title {
+    margin: 0.32rem 0 0.3rem;
+    font-size: 2rem;
+  }
+  .chapter-head__rule {
+    margin-top: 0.4rem;
   }
   .lead {
-    margin: 0.4rem 0 0.45rem;
-    line-height: 1.6;
+    margin: 0.35rem 0 0.4rem;
+    line-height: 1.58;
   }
   .body-p {
-    margin: 0 0 0.35rem;
-    line-height: 1.62;
+    margin: 0 0 0.3rem;
+    line-height: 1.58;
   }
   .section-block {
-    margin: 0.45rem 0;
+    margin: 0.4rem 0;
   }
   .h3 {
-    margin: 0.45rem 0 0.3rem;
+    margin: 0.4rem 0 0.28rem;
   }
   .cycle,
   .flow,
@@ -2123,8 +2130,8 @@ body {
   .callout,
   .column,
   .points {
-    margin-top: 0.45rem;
-    margin-bottom: 0.45rem;
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
   }
   .cycle__step {
     padding-top: 0.32rem;
