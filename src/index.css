@@ -1157,6 +1157,34 @@ body {
   margin-top: 0.9rem;
 }
 
+/* 伴走メッセージ（私たちが伴走する理由）の締め：章題以外は枠を外し、
+   通常の本文として強調表示する */
+.sheet--message .preface__pledge {
+  background: none;
+  color: var(--navy);
+  border-radius: 0;
+  padding: 0.8rem 0 0;
+  margin-top: 1.3rem;
+  border-top: 2px solid var(--gray-line);
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.95;
+}
+.sheet--message .walkreason__tag {
+  background: none;
+  color: var(--navy);
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0.5rem 0 0;
+  margin-top: 1rem;
+}
+.sheet--message .walkreason__tag::before {
+  margin-bottom: 0.7rem;
+}
+.sheet--message .walkreason__tag-sub {
+  color: var(--warm-deep, #b06a2c);
+}
+
 /* ---- TOC ---- */
 .toc__head {
   margin-bottom: 1rem;
@@ -2117,9 +2145,16 @@ body {
   .hero,
   .point,
   .qa,
+  .cycle,
   .cycle__step,
+  .flow,
   .flow__step,
-  .kv__row,
+  .kv,
+  .voices,
+  .dodont,
+  .compare,
+  .column,
+  .checklist,
   .benefit,
   .example-row,
   .chapter-head,
