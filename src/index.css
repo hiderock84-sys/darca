@@ -2019,66 +2019,27 @@ body {
      自然に流す。章内の内容は連続フローで上から詰まり、下部の無駄な空白を防ぐ ---- */
   /* 1シート＝1ページ（固定A4高さ）。内容を上から詰めたうえで、末尾の要素を
      残り高さいっぱいに広げ、ページ下部の余白を完全になくす */
+  /* 本文シートは連続フローで流し込む。強制改ページをやめ、内容が各ページを
+     上から下まで自然に満たすようにする（隙間を作らない）。章は見出しバンドで区切る */
   .sheet {
     width: auto;
-    height: 285mm;
+    height: auto;
     min-height: 0;
     padding: 0 7mm;
     margin: 0;
     box-shadow: none;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    overflow: visible;
+    display: block;
     background: none;
-    break-after: page;
-    break-inside: avoid;
-  }
-  .sheet:last-of-type {
-    break-after: auto;
+    break-before: auto;
   }
   .sheet__body {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    /* 末尾に伸縮要素が無いページ（テキスト中心）は、ブロックを上下に分散して
-       下部の余白をなくす。伸縮する囲み・画像があるページではそちらが優先される */
-    justify-content: space-between;
+    display: block;
   }
-  /* 末尾の画像は cover で残り高さいっぱいに（隙間なく充填） */
-  .sheet__body > .hero:last-child {
-    flex: 1 1 auto;
-    min-height: 55mm;
-    margin-bottom: 0;
-  }
-  .sheet__body > .hero:last-child img {
-    height: 100%;
-    max-height: none;
+  /* 写真バンドは高さを抑え、ページ末での送り（＝直前の余白）を減らす */
+  .hero img {
     aspect-ratio: auto;
-    object-fit: cover;
-  }
-  /* 末尾の囲み（コラム/相談窓口/コールアウト）は残り高さに広げ、中身を中央に */
-  .sheet__body > .column:last-child,
-  .sheet__body > .callout:last-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  /* 末尾の2カラム対比・比較・情報表は列/行を高さいっぱいに伸ばして下端まで埋める */
-  .sheet__body > .dodont:last-child,
-  .sheet__body > .compare:last-child {
-    flex: 1 1 auto;
-    align-items: stretch;
-  }
-  .sheet__body > .kv:last-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-  }
-  .sheet__body > .kv:last-child .kv__row {
-    flex: 1 1 auto;
-    align-items: center;
+    height: 52mm;
   }
   /* 印刷時はブロック間隔・余白・行間を圧縮して密度を最大化（文字サイズは維持） */
   .opener {
@@ -2156,11 +2117,8 @@ body {
   .hero,
   .point,
   .qa,
-  .cycle,
   .cycle__step,
-  .flow,
   .flow__step,
-  .callout,
   .kv__row,
   .benefit,
   .example-row,
