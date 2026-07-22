@@ -1989,7 +1989,7 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 8mm 0;
+    margin: 6mm 0;
   }
   @page fullbleed {
     margin: 0;
@@ -2021,9 +2021,9 @@ body {
      残り高さいっぱいに広げ、ページ下部の余白を完全になくす */
   .sheet {
     width: auto;
-    height: 281mm;
+    height: 285mm;
     min-height: 0;
-    padding: 0 11mm;
+    padding: 0 7mm;
     margin: 0;
     box-shadow: none;
     overflow: hidden;
