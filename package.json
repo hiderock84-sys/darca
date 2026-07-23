@@ -16,7 +16,8 @@
     "docx:text": "tsx scripts/generate-docx.ts public/manual-text.docx",
     "docx:image": "python3 scripts/generate-docx-full.py public/manual-a4.pdf public/manual-print.docx",
     "text": "tsx scripts/dump-manual.ts scripts/manual.json && node scripts/generate-text.mjs",
-    "pptx": "tsx scripts/dump-manual.ts scripts/manual.json && python3 scripts/generate-pptx.py scripts/manual.json public/manual.pptx"
+    "pptx": "tsx scripts/dump-manual.ts scripts/manual.json && python3 scripts/generate-pptx.py scripts/manual.json public/manual.pptx a4",
+    "pptx:wide": "tsx scripts/dump-manual.ts scripts/manual.json && python3 scripts/generate-pptx.py scripts/manual.json public/manual-16x9.pptx wide"
   },
   "repository": {
     "type": "git",

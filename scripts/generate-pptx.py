@@ -40,12 +40,27 @@ BG = RGBColor(0xF6, 0xF8, 0xFB)
 
 data = json.load(open(JSON_PATH, encoding="utf-8"))
 
+# 用紙サイズ: 既定は縦A4。第3引数に wide / 16x9 を指定すると横16:9。
+SIZE = (sys.argv[3] if len(sys.argv) > 3 else "a4").lower()
+
 prs = Presentation()
-prs.slide_width = Inches(13.333)
-prs.slide_height = Inches(7.5)
-PW, PH, MG = 338.67, 190.5, 14.0
+if SIZE in ("wide", "16x9", "169", "16:9"):
+    prs.slide_width = Inches(13.333)
+    prs.slide_height = Inches(7.5)
+    PW, PH, MG = 338.67, 190.5, 14.0
+    NCOL = 2
+else:  # A4 縦（ポートレート）
+    prs.slide_width = Mm(210)
+    prs.slide_height = Mm(297)
+    PW, PH, MG = 210.0, 297.0, 16.0
+    NCOL = 1
 CW = PW - 2 * MG
+GAP = 8.0
 BLANK = prs.slide_layouts[6]
+
+
+def col_width():
+    return CW if NCOL == 1 else (CW - GAP) / 2
 
 
 def set_ea(run, name="Yu Gothic"):
@@ -273,8 +288,14 @@ def blocks_of(ch):
     return B
 
 
-def est_lines(b):
-    return max(1, math.ceil(len(b["t"]) / b.get("cpl", 24))) + (1 if b.get("bold") and b["size"] >= 12 else 0)
+def est_lines(b, col_w=None):
+    # 列幅(mm)と文字サイズから、実際の折り返し行数を推定する
+    if col_w is None:
+        col_w = col_width()
+    size = b.get("size", 10.5)
+    cpl = max(8, (col_w - 4) / (size * 0.3528))  # 全角1文字≒サイズpt×0.3528mm
+    extra = 1 if b.get("bold") and size >= 12 else 0
+    return max(1, math.ceil(len(b["t"]) / cpl)) + extra
 
 
 def band(s, no, title):
@@ -291,18 +312,22 @@ def render_blocks_to(tf, blocks):
              sb=b.get("sb", 0), sa=b.get("sa", 4), first=(i == 0))
 
 
-def render_two_col(s, x, y, w, h, blocks):
-    """左右2つのテキストボックスに分けて確実に2段組で配置する。"""
-    gap = 8
+def render_cols(s, x, y, w, h, blocks):
+    """A4(縦)は1段組、横16:9は2段組で本文を流し込む。"""
+    if NCOL == 1:
+        tf = tbox(s, x, y, w, h, anchor=MSO_ANCHOR.MIDDLE)
+        render_blocks_to(tf, blocks)
+        return
+    gap = GAP
     cw = (w - gap) / 2
-    total = sum(est_lines(b) for b in blocks)
+    total = sum(est_lines(b, cw) for b in blocks)
     half = total / 2
     left, right = [], []
     acc = 0
     for b in blocks:
         if acc < half or not left:
             left.append(b)
-            acc += est_lines(b)
+            acc += est_lines(b, cw)
         else:
             right.append(b)
     lt = tbox(s, x, y, cw, h, anchor=MSO_ANCHOR.MIDDLE)
@@ -316,15 +341,17 @@ def chapter_slides(no, title, catch, imgname):
     """写真ヘッダー付き1枚目＋（必要なら）続き。2段組で本文を流す。"""
     ch = chdict[no]
     blocks = blocks_of(ch)
-    total = sum(est_lines(b) for b in blocks)
+    cw = col_width()
+    total = sum(est_lines(b, cw) for b in blocks)
     HEADER = 52  # 1枚目の写真ヘッダー高さ
-    cap_first = 40  # ヘッダーありスライドの2段合計行数目安
-    cap_cont = 58   # ヘッダーなしスライド
+    LH = 6.2     # 1行あたりの高さ目安(mm)
+    cap_first = int((PH - MG - (HEADER + 5)) / LH) * NCOL
+    cap_cont = int((PH - MG - 25) / LH) * NCOL
     # スライド数を決める
     n = 1
     while True:
         cap_total = cap_first + (n - 1) * cap_cont
-        if total <= cap_total or n >= 4:
+        if total <= cap_total or n >= 6:
             break
         n += 1
     # 均等配分
@@ -336,7 +363,7 @@ def chapter_slides(no, title, catch, imgname):
             chunks.append([])
             acc = 0
         chunks[-1].append(b)
-        acc += est_lines(b)
+        acc += est_lines(b, cw)
     for si, chunk in enumerate(chunks):
         s = slide()
         rect(s, 0, 0, PW, PH, BG)
@@ -353,7 +380,7 @@ def chapter_slides(no, title, catch, imgname):
         else:
             band(s, no, title)
             cy = 25
-        render_two_col(s, MG, cy, CW, PH - MG - cy, chunk)
+        render_cols(s, MG, cy, CW, PH - MG - cy, chunk)
 
 
 chdict = {c["no"]: c for c in data["chapters"]}
@@ -401,7 +428,7 @@ hero_full(data["images"]["story"], st["chapterLabel"], st["title"], "")
 s = slide()
 rect(s, 0, 0, PW, PH, BG)
 band(s, st["chapterLabel"], st["title"])
-tf = tbox(s, MG, 25, CW, PH - MG - 25, cols=2)
+tf = tbox(s, MG, 25, CW, PH - MG - 25, cols=NCOL)
 para(tf, st["lead"], size=11.5, bold=True, italic=True, color=NAVY2, first=True, sa=6)
 for t in st["paragraphs"]:
     para(tf, t, size=10.5, color=(NAVY2 if t.startswith("「") else INK), bold=t.startswith("「"), sa=5)
@@ -413,7 +440,7 @@ pf = data["preface"]
 s = slide()
 rect(s, 0, 0, PW, PH, BG)
 band(s, "はじめに", pf["title"])
-tf = tbox(s, MG, 25, CW, PH - MG - 25, cols=2, anchor=MSO_ANCHOR.MIDDLE)
+tf = tbox(s, MG, 25, CW, PH - MG - 25, cols=NCOL, anchor=MSO_ANCHOR.MIDDLE)
 for i, t in enumerate(pf["paragraphs"]):
     para(tf, t, size=12, color=INK, first=(i == 0), sa=8)
 
@@ -428,7 +455,7 @@ hero_full(data["images"]["walking"], wr["label"], wr["title"], wr["headline"])
 s = slide()
 rect(s, 0, 0, PW, PH, BG)
 band(s, wr["label"], wr["title"])
-tf = tbox(s, MG, 25, CW, PH - MG - 25, cols=2, anchor=MSO_ANCHOR.MIDDLE)
+tf = tbox(s, MG, 25, CW, PH - MG - 25, cols=NCOL, anchor=MSO_ANCHOR.MIDDLE)
 for i, t in enumerate(wr["body"]):
     para(tf, t, size=11.5, color=INK, first=(i == 0), sa=5)
 para(tf, wr["philosophyLabel"], size=11, bold=True, color=GREEN, sb=4, sa=1)
@@ -455,7 +482,7 @@ rect(s, 0, 0, 5, 52, WARM)
 htf = tbox(s, MG + 4, 12, CW - 8, 34, anchor=MSO_ANCHOR.MIDDLE)
 para(htf, pr["chapterLabel"], size=12, bold=True, color=WARM, first=True, sa=2)
 para(htf, pr["title"], size=24, bold=True, color=WHITE, sa=0)
-tf = tbox(s, MG, 57, CW, PH - MG - 57, cols=2)
+tf = tbox(s, MG, 57, CW, PH - MG - 57, cols=NCOL)
 for i, t in enumerate(pr["paragraphs"]):
     para(tf, t, size=11, first=(i == 0), sa=5)
 for p in pr["pledges"]:
