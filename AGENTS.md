@@ -1,6 +1,6 @@
 # darca
 
-一般社団法人 相模原ダルク（DARC）「ご家族のための回復支援ガイド」の**印刷用冊子**（A4 二つ折り／仕上がり A5・4ページ）。
+一般社団法人 相模原ダルク（DARC）「ご家族のための回復支援ガイド」の**印刷用冊子**（A5・全20ページ／家族会向け完全版）。依存症と相模原ダルクの解説を4章立てで収録。
 
 ## 技術スタック
 
@@ -19,13 +19,13 @@
 
 ## 冊子の構成
 
-- 出力物は **A4 横（297×210mm）2枚**。各シートを A5 パネル2つに面付けし、中央で二つ折りにすると 4ページ冊子になる。
-  - シート1（外面）: 左＝裏表紙(P4) ／ 右＝表紙(P1)
-  - シート2（中面）: 左＝夜11時の物語(P2) ／ 右＝ご家族にお願いしたいこと(P3)
-- 表示テキストはすべて `src/data/guide.ts` に集約。文言修正は基本ここを編集する。
-- 面付け・パネルの構造は `src/App.tsx`、印刷スタイルは `src/index.css`（`@page { size: A4 landscape }`、`.sheet` / `.panel`）。
-- アイコンは `src/components/Icons.tsx` のインライン SVG（画像アセットは未使用）。
-- パネル寸法は `:root` の `--panel-w`/`--panel-h`/`--pad` で調整可能。
+- 出力物は **A5 縦（148×210mm）× 全20ページ**。`@page { size: A5 portrait }`、各ページは `.page`（`page-break-after`）。
+  - 表紙 / はじめに / 目次 / 第一章（物語）/ 第二章（依存症）/ 第三章（相模原ダルク）/ 第四章（家族へのお願い）/ 回復した家族の声 / 裏表紙、の順。
+- 表示テキスト（章立て・本文・声・家族会情報など）はすべて `src/data/guide.ts` に集約。**文言修正は基本ここだけを編集する**。
+- ページ構造は `src/App.tsx`（1ページ = 1コンポーネント）、印刷/レイアウトは `src/index.css`。
+- アイコンは `src/components/Icons.tsx`、イラスト（夜の街 / 夜明けの道 / 輪になる仲間 など）は `src/components/Illustrations.tsx` のインライン SVG（画像アセットは未使用）。
+- ページ寸法は `:root` の `--page-w`/`--page-h`/`--pad` で調整可能。
+- **未確定情報**: 相模原ダルク固有の数値（設立年・料金・開催日・ダルクの一日 など）は一般値/プレースホルダ。`guide.ts` のコメント参照。事実確定後に差し替えること。
 
 ## Cursor Cloud specific instructions
 
@@ -35,5 +35,6 @@
   `google-chrome --headless=new --no-sandbox --disable-gpu --user-data-dir=/tmp/chrome-pdf-<uniq> --no-pdf-header-footer --print-to-pdf=/tmp/booklet.pdf http://localhost:5173/`
   - 既存 Chrome とプロファイル競合（`SingletonLock`）を避けるため `--user-data-dir` は毎回ユニークにする。
   - `--headless=new` はプロセスが終了せずコマンドがハングして見えることがあるが、`/tmp/booklet.pdf` は生成済みなので PID 指定で停止して `pdfinfo` / `pdftoppm` で検証すればよい。
-- ブラウザ印刷時の推奨設定: 用紙 A4／向き 横／余白 なし／背景のグラフィック オン／両面（長辺とじ）。
+- ブラウザ印刷時の推奨設定: 用紙 A5／余白 なし／背景のグラフィック オン（1ページ = A5 が20枚）。A4 用紙なら「1枚に2ページ」または冊子（ブックレット）印刷。
+- 各ページは A5 に収まる前提で文字サイズを調整済み。`guide.ts` の文章を大幅に増やすとページからあふれるので、PDF 化して各ページの見切れを必ず確認する。
 - dev サーバは tmux セッション `vite-dev-server` で起動している。動作確認は `curl -s localhost:5173/` で HTTP 200 を確認すればよい。

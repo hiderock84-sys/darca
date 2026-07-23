@@ -1,9 +1,17 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import App from './App'
-import { org, cover, familyRequest, story } from './data/guide'
+import {
+  org,
+  cover,
+  story,
+  familyRequest,
+  chapters,
+  toc,
+  voices,
+} from './data/guide'
 
-describe('回復支援ガイド 冊子', () => {
+describe('回復支援ガイド 全20ページ冊子', () => {
   it('表紙のタイトルと団体名を表示する', () => {
     render(<App />)
     expect(
@@ -12,18 +20,30 @@ describe('回復支援ガイド 冊子', () => {
     expect(screen.getAllByText(org.name).length).toBeGreaterThan(0)
   })
 
-  it('4パネル分の見出し（夜11時の物語／お願いしたいこと）を表示する', () => {
-    render(<App />)
-    expect(
-      screen.getByRole('heading', { level: 2, name: story.title }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { level: 2, name: familyRequest.title }),
-    ).toBeInTheDocument()
+  it('ページ（section）が20枚ある', () => {
+    const { container } = render(<App />)
+    expect(container.querySelectorAll('.page').length).toBe(20)
   })
 
-  it('やってはいけないこと／やっていただきたいことの項目を表示する', () => {
+  it('全4章の章扉タイトルを表示する', () => {
     render(<App />)
+    for (const c of Object.values(chapters)) {
+      expect(screen.getAllByText(c.title).length).toBeGreaterThan(0)
+    }
+  })
+
+  it('目次に全章が載っている', () => {
+    render(<App />)
+    for (const c of toc.chapters) {
+      expect(screen.getAllByText(c.no).length).toBeGreaterThan(0)
+    }
+  })
+
+  it('物語と、やること・やらないことの項目を表示する', () => {
+    render(<App />)
+    expect(
+      screen.getAllByRole('heading', { level: 2, name: story.title }).length,
+    ).toBeGreaterThan(0)
     for (const item of familyRequest.dont.items) {
       expect(screen.getAllByText(item).length).toBeGreaterThan(0)
     }
@@ -32,14 +52,11 @@ describe('回復支援ガイド 冊子', () => {
     }
   })
 
-  it('外面・中面の2シート構成である', () => {
+  it('回復した家族の声を表示する', () => {
     render(<App />)
-    expect(
-      screen.getByRole('region', { name: '外面（表紙・裏表紙）' }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('region', { name: '中面（本文）' }),
-    ).toBeInTheDocument()
+    for (const v of voices.items) {
+      expect(screen.getByText(v.text)).toBeInTheDocument()
+    }
   })
 
   it('電話番号への発信リンクを表示する', () => {

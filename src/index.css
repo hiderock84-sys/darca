@@ -14,10 +14,10 @@
   --dont: #b23a3a;
   --white: #ffffff;
 
-  /* 仕上がり A5（148.5 × 210mm）を1パネル、A4横（297 × 210mm）に2パネル面付け */
-  --panel-w: 148.5mm;
-  --panel-h: 210mm;
-  --pad: 10mm;
+  /* A5 portrait 148 × 210mm を1ページとする */
+  --page-w: 148mm;
+  --page-h: 210mm;
+  --pad: 12mm;
 
   --sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
     "Noto Sans CJK JP", "Noto Sans JP", system-ui, -apple-system, "Segoe UI",
@@ -32,7 +32,6 @@
 * {
   box-sizing: border-box;
 }
-
 html,
 body {
   margin: 0;
@@ -42,19 +41,18 @@ body {
 /* ===== 画面プレビュー ===== */
 @media screen {
   body {
-    background: #5b6472;
-    padding: 20px 16px 40px;
+    background: #545b68;
+    padding: 24px 12px 48px;
   }
   .print-hint {
-    max-width: 297mm;
-    margin: 0 auto 18px;
+    max-width: var(--page-w);
+    margin: 0 auto 22px;
     padding: 14px 20px;
     background: var(--white);
     border-radius: 12px;
-    color: var(--ink);
-    font-size: 13px;
-    line-height: 1.75;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    font-size: 12.5px;
+    line-height: 1.7;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   }
   .print-hint b {
     color: var(--navy-800);
@@ -72,76 +70,143 @@ body {
   .print-hint button:hover {
     background: var(--navy-700);
   }
-  .sheet {
-    margin: 0 auto 22px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-    background: #fff;
-  }
-  .sheet__label {
-    max-width: 297mm;
-    margin: 0 auto 7px;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-  }
-  .fold-line {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    border-left: 1px dashed rgba(255, 255, 255, 0.35);
-    pointer-events: none;
-    z-index: 5;
+  .page {
+    margin: 0 auto 20px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4);
   }
 }
 
 /* ===== 印刷 ===== */
 @page {
-  size: A4 landscape;
+  size: A5 portrait;
   margin: 0;
 }
 @media print {
-  .print-hint,
-  .sheet__label,
-  .fold-line {
+  .print-hint {
     display: none !important;
   }
-  .sheet {
+  .page {
     page-break-after: always;
     break-after: page;
   }
-  .sheet:last-of-type {
+  .page:last-of-type {
     page-break-after: auto;
     break-after: auto;
   }
 }
 
-/* ===== シート（A4横）とパネル（A5） ===== */
-.sheet {
+/* ===== ページ基本 ===== */
+.page {
   position: relative;
-  width: calc(var(--panel-w) * 2);
-  height: var(--panel-h);
-  display: flex;
-  overflow: hidden;
-}
-.panel {
-  position: relative;
-  width: var(--panel-w);
-  height: var(--panel-h);
+  width: var(--page-w);
+  height: var(--page-h);
   padding: var(--pad);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(180deg, var(--paper), var(--cream));
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
-.panel > * {
+.page > * {
   position: relative;
   z-index: 1;
 }
+.page--dark {
+  color: #fff;
+}
 
-/* ===== 共通パーツ ===== */
+/* ページ番号・柱（フッター） */
+.pg-foot {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: 6mm;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 6.5pt;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  z-index: 2;
+}
+.pg-foot__brand {
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--navy-700);
+}
+.pg-foot__no {
+  font-variant-numeric: tabular-nums;
+}
+.page--dark .pg-foot {
+  color: rgba(255, 255, 255, 0.7);
+}
+.page--dark .pg-foot__brand {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 見出し（本文ページ） */
+.head {
+  margin-bottom: 5mm;
+}
+.head__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 2mm;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--gold-deep);
+}
+.head__kicker::before {
+  content: "";
+  width: 8mm;
+  height: 0.4mm;
+  background: var(--gold);
+}
+.head__title {
+  font-family: var(--serif);
+  font-size: 17pt;
+  font-weight: 700;
+  color: var(--navy-800);
+  margin: 1.5mm 0 0;
+  letter-spacing: 0.03em;
+}
+.head__lead {
+  font-size: 8.4pt;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  margin: 2.5mm 0 0;
+}
+
+/* ===== 装飾 ===== */
+.corner {
+  position: absolute;
+  width: 12mm;
+  height: 12mm;
+  border: 0.4mm solid rgba(200, 162, 74, 0.6);
+  z-index: 2;
+}
+.corner--tl {
+  top: 5mm;
+  left: 5mm;
+  border-right: 0;
+  border-bottom: 0;
+}
+.corner--br {
+  bottom: 5mm;
+  right: 5mm;
+  border-left: 0;
+  border-top: 0;
+}
+.ornament {
+  display: block;
+  width: 32mm;
+  height: 3mm;
+  margin: 2.5mm auto;
+}
+
+/* ===== 共通：柱アイコン ===== */
 .brand {
   display: flex;
   align-items: baseline;
@@ -150,16 +215,15 @@ body {
 .brand__logo {
   font-weight: 800;
   letter-spacing: 0.18em;
-  font-size: 13pt;
+  font-size: 12pt;
 }
 .brand__name {
-  font-size: 7pt;
-  letter-spacing: 0.04em;
+  font-size: 6.5pt;
 }
-.panel--dark .brand__logo {
+.page--dark .brand__logo {
   color: #fff;
 }
-.panel--dark .brand__name {
+.page--dark .brand__name {
   color: rgba(255, 255, 255, 0.82);
 }
 
@@ -177,14 +241,14 @@ body {
   align-items: center;
   text-align: center;
   gap: 1.6mm;
-  padding: 3.4mm 1.6mm;
+  padding: 3mm 1.5mm;
   border: 0.3mm solid rgba(200, 162, 74, 0.55);
   border-radius: 3mm;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
 }
 .pillar__icon {
-  width: 9.5mm;
-  height: 9.5mm;
+  width: 9mm;
+  height: 9mm;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -193,8 +257,8 @@ body {
   border: 0.25mm solid rgba(228, 200, 119, 0.5);
 }
 .pillar__icon svg {
-  width: 5mm;
-  height: 5mm;
+  width: 4.8mm;
+  height: 4.8mm;
 }
 .pillar__title {
   font-weight: 700;
@@ -202,38 +266,18 @@ body {
   color: #fff;
 }
 .pillar__note {
-  font-size: 6.4pt;
+  font-size: 6.3pt;
   color: rgba(255, 255, 255, 0.82);
   line-height: 1.5;
 }
 
-/* ===== 装飾コーナー ===== */
-.corner {
-  position: absolute;
-  width: 14mm;
-  height: 14mm;
-  border: 0.4mm solid rgba(200, 162, 74, 0.6);
-  z-index: 2;
-}
-.corner--tl {
-  top: 5mm;
-  left: 5mm;
-  border-right: 0;
-  border-bottom: 0;
-}
-.corner--br {
-  bottom: 5mm;
-  right: 5mm;
-  border-left: 0;
-  border-top: 0;
-}
-
 /* ===== P1 表紙 ===== */
-.panel--cover {
+.page--cover {
   color: #fff;
   text-align: center;
+  justify-content: flex-start;
   background:
-    linear-gradient(180deg, rgba(8, 21, 44, 0.55) 0%, rgba(8, 21, 44, 0.8) 55%, rgba(8, 21, 44, 0.35) 100%),
+    linear-gradient(180deg, rgba(8, 21, 44, 0.5) 0%, rgba(8, 21, 44, 0.8) 55%, rgba(8, 21, 44, 0.35) 100%),
     radial-gradient(130% 90% at 65% 8%, #26426f 0%, var(--navy-900) 62%);
 }
 .night-scene {
@@ -242,32 +286,32 @@ body {
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 52%;
+  height: 46%;
   z-index: 0;
   opacity: 0.95;
 }
-.panel--cover .brand {
+.page--cover .brand {
   justify-content: center;
+}
+.cover__kicker {
+  margin: 4mm auto 0;
+  font-size: 7.5pt;
+  letter-spacing: 0.24em;
+  color: var(--gold-soft);
+  border: 0.3mm solid rgba(228, 200, 119, 0.6);
+  border-radius: 999px;
+  padding: 1.4mm 4mm;
+  display: inline-block;
 }
 .cover__eyebrow {
   letter-spacing: 0.32em;
   color: var(--gold-soft);
   font-size: 8.5pt;
-  margin: 7mm 0 2.5mm;
-}
-.cover__eyebrow::before,
-.cover__eyebrow::after {
-  content: "";
-  display: inline-block;
-  width: 7mm;
-  height: 0.3mm;
-  background: var(--gold);
-  vertical-align: middle;
-  margin: 0 2.5mm;
+  margin: 8mm 0 2.5mm;
 }
 .cover__title {
   font-family: var(--serif);
-  font-size: 30pt;
+  font-size: 32pt;
   font-weight: 700;
   letter-spacing: 0.08em;
   margin: 0;
@@ -276,82 +320,177 @@ body {
 .cover__subtitle {
   color: var(--gold-soft);
   font-size: 10.5pt;
-  margin: 3mm 0 6mm;
-  letter-spacing: 0.02em;
+  margin: 3mm 0 5mm;
 }
 .cover__lead {
   font-size: 8.6pt;
   line-height: 1.95;
-  margin: 0 4mm auto;
+  margin: 0 4mm;
 }
 .cover__lead p {
   margin: 1.4mm 0;
   color: rgba(255, 255, 255, 0.94);
   text-shadow: 0 0.5mm 3mm rgba(0, 0, 0, 0.55);
 }
-.panel--cover .pillars {
-  margin-top: 5mm;
+.page--cover .pillars {
+  margin-top: auto;
 }
 
-/* ===== 本文パネル 見出し ===== */
-.panel--light {
-  background:
-    linear-gradient(180deg, var(--paper), var(--cream));
+/* ===== P2 はじめに ===== */
+.intro__body {
+  margin: 0;
 }
-.p-head {
-  text-align: center;
-  margin-bottom: 4mm;
+.intro__body p {
+  font-size: 8.8pt;
+  line-height: 1.95;
+  margin: 0 0 3mm;
 }
-.p-num {
-  display: inline-flex;
-  align-items: center;
-  gap: 1.5mm;
-  font-size: 7pt;
+.intro__lead-first::first-letter {
+  font-family: var(--serif);
+  font-size: 20pt;
+  color: var(--gold-deep);
   font-weight: 700;
-  letter-spacing: 0.18em;
+  line-height: 1;
+}
+.intro__sign {
+  margin-top: auto;
+  text-align: right;
+  font-family: var(--serif);
+  font-size: 8.5pt;
+  color: var(--navy-800);
+}
+.intro__sign span {
+  display: block;
+  font-size: 6.5pt;
+  letter-spacing: 0.1em;
   color: var(--gold-deep);
   margin-bottom: 1mm;
 }
-.p-num::before,
-.p-num::after {
-  content: "";
-  width: 6mm;
-  height: 0.3mm;
-  background: var(--gold);
-}
-.p-title {
-  font-family: var(--serif);
-  font-size: 16pt;
-  font-weight: 700;
-  color: var(--navy-800);
-  margin: 0;
-  letter-spacing: 0.04em;
-}
-.p-title__underline {
-  display: block;
-  width: 22mm;
-  height: 0.7mm;
-  margin: 2mm auto 0;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-.p-lead {
-  font-size: 8.5pt;
-  color: var(--ink-soft);
+
+/* ===== P3 目次 ===== */
+.toc__sub {
+  font-size: 7pt;
+  letter-spacing: 0.3em;
+  color: var(--gold-deep);
   text-align: center;
-  margin: 2.5mm 0 3mm;
+  margin: 0 0 1mm;
+}
+.toc__list {
+  list-style: none;
+  padding: 0;
+  margin: 4mm 0 0;
+  display: grid;
+  gap: 3.5mm;
+}
+.toc__row {
+  display: flex;
+  gap: 3mm;
+  align-items: flex-start;
+}
+.toc__no {
+  flex: 0 0 auto;
+  font-family: var(--serif);
+  font-size: 9pt;
+  color: #fff;
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
+  border-radius: 1.5mm;
+  padding: 1mm 2mm;
+  min-width: 13mm;
+  text-align: center;
+}
+.toc__body h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 11pt;
+  color: var(--navy-800);
+}
+.toc__body .toc__note {
+  margin: 0.5mm 0 1mm;
+  font-size: 7pt;
+  color: var(--gold-deep);
+}
+.toc__body .toc__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1mm 2.5mm;
+  font-size: 7pt;
+  color: var(--ink-soft);
+}
+.toc__body .toc__items li::before {
+  content: "▸ ";
+  color: var(--gold);
 }
 
-/* ===== P2 夜11時の物語 ===== */
+/* ===== 章扉 ===== */
+.page--chapter {
+  color: #fff;
+  text-align: center;
+  justify-content: center;
+  gap: 4mm;
+}
+.chapter--night {
+  background: radial-gradient(120% 90% at 50% 20%, #24406f, var(--navy-900));
+}
+.chapter--brain {
+  background: radial-gradient(120% 90% at 50% 20%, #2b3a6b, #12142e);
+}
+.chapter--home {
+  background: radial-gradient(120% 90% at 50% 20%, #3a4a2f, #17240f);
+}
+.chapter--hands {
+  background: radial-gradient(120% 90% at 50% 20%, #6b3f4a, #2a1420);
+}
+.chapter__no {
+  font-family: var(--serif);
+  font-size: 46pt;
+  line-height: 1;
+  color: rgba(228, 200, 119, 0.28);
+  letter-spacing: 0.06em;
+}
+.chapter__label {
+  font-size: 9pt;
+  letter-spacing: 0.35em;
+  color: var(--gold-soft);
+}
+.chapter__title {
+  font-family: var(--serif);
+  font-size: 22pt;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+.chapter__subtitle {
+  font-size: 9.5pt;
+  color: rgba(255, 255, 255, 0.9);
+}
+.chapter__lead {
+  font-size: 8.4pt;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 100mm;
+  margin: 0 auto;
+}
+.chapter__art {
+  width: 34mm;
+  height: 34mm;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* ===== P5 物語 ===== */
 .story p {
-  font-size: 8pt;
-  line-height: 1.75;
-  margin: 0 0 2mm;
+  font-size: 8.6pt;
+  line-height: 1.85;
+  margin: 0 0 2.5mm;
 }
 .quotes {
   position: relative;
   list-style: none;
-  padding: 3mm 3.5mm 3mm 7mm;
-  margin: 2.5mm 0;
+  padding: 4mm 4mm 4mm 8mm;
+  margin: 3mm 0;
   background: var(--paper);
   border: 0.3mm solid rgba(200, 162, 74, 0.4);
   border-left: 1mm solid var(--gold);
@@ -361,137 +500,451 @@ body {
 .quotes::before {
   content: "\201C";
   position: absolute;
-  left: 2mm;
-  top: 0.5mm;
+  left: 2.5mm;
+  top: 1mm;
   font-family: var(--serif);
-  font-size: 20pt;
+  font-size: 24pt;
   color: var(--gold);
   opacity: 0.6;
 }
 .quotes li {
-  font-size: 8pt;
+  font-size: 9pt;
   font-weight: 700;
   color: var(--navy-800);
-  margin: 0.7mm 0;
+  margin: 1mm 0;
 }
-.cycle {
-  margin: 2.5mm 0;
-  padding: 3mm 3mm 2mm;
-  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
-  color: #fff;
-  border-radius: 2.5mm;
-  box-shadow: 0 1.5mm 4mm rgba(8, 21, 44, 0.25);
-}
-.cycle__title {
-  font-family: var(--serif);
-  font-size: 8.5pt;
-  font-weight: 700;
-  color: var(--gold-soft);
-  margin: 0 0 2mm;
-  text-align: center;
-  letter-spacing: 0.06em;
-}
-.cycle__loop {
-  display: block;
-  width: 82%;
-  height: 5mm;
-  margin: 0 auto -1mm;
-}
-.cycle__flow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2mm;
-  font-size: 6.8pt;
-}
-.cycle__flow .step {
-  background: rgba(255, 255, 255, 0.12);
-  border: 0.2mm solid rgba(228, 200, 119, 0.35);
-  padding: 1mm 2mm;
-  border-radius: 1.5mm;
-}
-.cycle__flow .arrow {
-  color: var(--gold-soft);
-  font-weight: 700;
-}
-.mini-cards {
+
+/* ===== P6 愛という迷い ===== */
+.dilemma {
   display: grid;
-  gap: 2mm;
-  margin-top: auto;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+  margin: 2mm 0 4mm;
 }
-.mini-card {
+.dilemma__col {
+  border-radius: 2.5mm;
+  padding: 3mm;
+  border: 0.3mm solid rgba(15, 34, 70, 0.1);
+}
+.dilemma__col--warm {
+  background: #fff6ea;
+  border-left: 0.9mm solid var(--gold);
+}
+.dilemma__col--cool {
+  background: #eef2f7;
+  border-left: 0.9mm solid var(--navy-700);
+}
+.dilemma__col h4 {
+  margin: 0 0 2mm;
+  font-size: 9pt;
+  color: var(--navy-800);
+}
+.dilemma__col ul {
+  margin: 0;
+  padding-left: 4mm;
+}
+.dilemma__col li {
+  font-size: 7.6pt;
+  line-height: 1.7;
+  margin: 0.6mm 0;
+}
+.pull {
+  font-family: var(--serif);
+  font-size: 9.5pt;
+  line-height: 1.9;
+  color: var(--navy-800);
+  text-align: center;
+  padding: 4mm;
+  background: rgba(200, 162, 74, 0.08);
+  border-top: 0.3mm solid var(--gold);
+  border-bottom: 0.3mm solid var(--gold);
+}
+
+/* ===== P8 依存症とは：ポイント ===== */
+.points {
+  display: grid;
+  gap: 3mm;
+  margin: 1mm 0 4mm;
+}
+.point {
   display: flex;
-  gap: 2.5mm;
+  gap: 3mm;
   background: var(--paper);
-  border-radius: 2mm;
-  padding: 2.4mm 3mm;
+  border-radius: 2.5mm;
+  padding: 3mm;
   border: 0.25mm solid rgba(15, 34, 70, 0.08);
   border-left: 0.9mm solid var(--navy-700);
   box-shadow: 0 1mm 2.5mm rgba(15, 34, 70, 0.05);
 }
-.mini-card__icon {
+.point__icon {
   flex: 0 0 auto;
-  width: 7mm;
-  height: 7mm;
+  width: 8mm;
+  height: 8mm;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: rgba(27, 51, 99, 0.08);
   color: var(--navy-700);
 }
-.mini-card__icon svg {
-  width: 4mm;
-  height: 4mm;
+.point__icon svg {
+  width: 4.5mm;
+  height: 4.5mm;
 }
-.mini-card h4 {
-  margin: 0 0 0.8mm;
-  font-size: 8.5pt;
+.point h4 {
+  margin: 0 0 1mm;
+  font-size: 9pt;
   color: var(--navy-800);
 }
-.mini-card p {
+.point p {
   margin: 0;
-  font-size: 7.1pt;
+  font-size: 7.8pt;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+.fact {
+  margin-top: auto;
+  font-size: 8.4pt;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--do);
+  background: rgba(47, 125, 79, 0.1);
+  border-radius: 2mm;
+  padding: 3mm;
+  font-weight: 700;
+}
+
+/* ===== P9 悪循環 ===== */
+.cycle-big {
+  list-style: none;
+  padding: 0;
+  margin: 3mm 0 4mm;
+  display: grid;
+  gap: 2mm;
+}
+.cycle-big li {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  background: var(--paper);
+  border-radius: 2mm;
+  padding: 2.4mm 3mm;
+  border: 0.25mm solid rgba(15, 34, 70, 0.08);
+  position: relative;
+}
+.cycle-big li:not(:last-child)::after {
+  content: "▼";
+  position: absolute;
+  left: 6mm;
+  bottom: -2.4mm;
+  font-size: 6pt;
+  color: var(--gold);
+  z-index: 2;
+}
+.cycle-big__no {
+  flex: 0 0 auto;
+  width: 6mm;
+  height: 6mm;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 7.5pt;
+  font-weight: 700;
+}
+.cycle-big b {
+  font-size: 8.4pt;
+  color: var(--navy-800);
+}
+.cycle-big small {
+  display: block;
+  font-size: 7pt;
+  color: var(--ink-soft);
+}
+.note-box {
+  margin-top: auto;
+  font-size: 8pt;
+  line-height: 1.7;
+  background: rgba(178, 58, 58, 0.07);
+  border-left: 0.9mm solid var(--dont);
+  border-radius: 2mm;
+  padding: 3mm;
+  color: var(--ink);
+}
+
+/* ===== P10 イネーブリング ===== */
+.blocks {
+  display: grid;
+  gap: 3mm;
+  margin: 1mm 0 3mm;
+}
+.block {
+  background: var(--paper);
+  border-radius: 2.5mm;
+  padding: 3mm;
+  border: 0.25mm solid rgba(15, 34, 70, 0.08);
+  box-shadow: 0 1mm 2.5mm rgba(15, 34, 70, 0.05);
+}
+.block h4 {
+  margin: 0 0 1.5mm;
+  font-family: var(--serif);
+  font-size: 10pt;
+  color: var(--navy-800);
+}
+.block p {
+  margin: 0;
+  font-size: 7.8pt;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.checklist {
+  margin-top: auto;
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
+  color: #fff;
+  border-radius: 2.5mm;
+  padding: 3mm 3.5mm;
+}
+.checklist h4 {
+  margin: 0 0 2mm;
+  font-size: 8.6pt;
+  color: var(--gold-soft);
+}
+.checklist ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.checklist li {
+  font-size: 7.6pt;
+  line-height: 1.6;
+  padding: 0.8mm 0 0.8mm 5mm;
+  position: relative;
+  border-bottom: 0.2mm solid rgba(255, 255, 255, 0.12);
+}
+.checklist li:last-child {
+  border-bottom: 0;
+}
+.checklist li::before {
+  content: "☑";
+  position: absolute;
+  left: 0;
+  color: var(--gold-soft);
+}
+
+/* ===== P12 理念 ===== */
+.philo__history {
+  font-size: 8.2pt;
+  line-height: 1.85;
+  margin: 0 0 3mm;
+}
+.creed {
+  display: grid;
+  gap: 2.5mm;
+  margin-bottom: 3mm;
+}
+.creed__item {
+  background: var(--paper);
+  border-radius: 2mm;
+  padding: 2.6mm 3mm;
+  border-left: 0.9mm solid var(--gold);
+}
+.creed__item b {
+  font-family: var(--serif);
+  font-size: 9pt;
+  color: var(--navy-800);
+}
+.creed__item p {
+  margin: 0.6mm 0 0;
+  font-size: 7.6pt;
   line-height: 1.6;
   color: var(--ink-soft);
 }
-.mini-card--accent {
-  border-left-color: var(--gold);
-  background: #fffaf0;
-}
-.mini-card--accent .mini-card__icon {
-  background: rgba(200, 162, 74, 0.16);
-  color: var(--gold-deep);
-}
-.mini-card--soft {
-  border-left-color: var(--do);
-}
-.mini-card--soft .mini-card__icon {
-  background: rgba(47, 125, 79, 0.13);
-  color: var(--do);
+.motto {
+  margin-top: auto;
+  font-family: var(--serif);
+  font-size: 9.5pt;
+  line-height: 1.85;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
+  border-radius: 2.5mm;
+  padding: 3.5mm;
 }
 
-/* ===== P3 ご家族にお願いしたいこと ===== */
+/* ===== P13 一日 ===== */
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 2mm 0 3mm;
+  display: grid;
+  gap: 1.6mm;
+}
+.timeline li {
+  display: grid;
+  grid-template-columns: 12mm 1fr;
+  gap: 3mm;
+  align-items: baseline;
+  padding: 1.8mm 0;
+  border-bottom: 0.2mm dashed rgba(15, 34, 70, 0.15);
+}
+.timeline__time {
+  font-family: var(--serif);
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+.timeline b {
+  font-size: 8.4pt;
+  color: var(--navy-800);
+}
+.timeline small {
+  display: block;
+  font-size: 7pt;
+  color: var(--ink-soft);
+}
+.three-pillars {
+  margin-top: auto;
+  background: rgba(200, 162, 74, 0.1);
+  border-radius: 2.5mm;
+  padding: 3mm;
+  text-align: center;
+}
+.three-pillars h4 {
+  margin: 0 0 2mm;
+  font-family: var(--serif);
+  font-size: 9pt;
+  color: var(--navy-800);
+}
+.three-pillars ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2mm;
+  flex-wrap: wrap;
+}
+.three-pillars li {
+  font-size: 7.6pt;
+  font-weight: 700;
+  color: var(--navy-700);
+  background: #fff;
+  border: 0.3mm solid var(--gold);
+  border-radius: 999px;
+  padding: 1mm 3mm;
+}
+
+/* ===== P14 ミーティング ===== */
+.rule-card {
+  text-align: center;
+  background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
+  color: #fff;
+  border-radius: 3mm;
+  padding: 4mm;
+  margin: 2mm 0 3mm;
+}
+.rule-card__head {
+  font-family: var(--serif);
+  font-size: 12pt;
+  color: var(--gold-soft);
+  margin: 0 0 2.5mm;
+  letter-spacing: 0.04em;
+}
+.rule-card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1.5mm;
+}
+.rule-card li {
+  font-size: 8pt;
+  line-height: 1.5;
+}
+.circle-art {
+  width: 32mm;
+  height: 32mm;
+  margin: 1mm auto 2mm;
+}
+.meeting-body p {
+  font-size: 8.2pt;
+  line-height: 1.85;
+  margin: 0 0 2mm;
+}
+.meeting-body p:last-child {
+  margin-top: auto;
+}
+
+/* ===== P15 回復 ===== */
+.steps4 {
+  list-style: none;
+  padding: 0;
+  margin: 2mm 0 3mm;
+  display: grid;
+  gap: 2.4mm;
+}
+.steps4 li {
+  display: flex;
+  gap: 3mm;
+  align-items: flex-start;
+}
+.steps4__no {
+  flex: 0 0 auto;
+  width: 7mm;
+  height: 7mm;
+  border-radius: 50%;
+  border: 0.4mm solid var(--gold);
+  color: var(--gold-deep);
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 8pt;
+}
+.steps4 b {
+  font-size: 8.6pt;
+  color: var(--navy-800);
+}
+.steps4 p {
+  margin: 0.4mm 0 0;
+  font-size: 7.8pt;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.today-box {
+  margin-top: auto;
+  font-family: var(--serif);
+  font-size: 9pt;
+  line-height: 1.85;
+  text-align: center;
+  color: var(--gold-deep);
+  background: rgba(200, 162, 74, 0.1);
+  border-radius: 2.5mm;
+  padding: 3.5mm;
+}
+
+/* ===== P17 やる・やらない ===== */
 .dodont {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5mm;
-  margin-bottom: 3mm;
+  gap: 3mm;
+  margin-top: 2mm;
 }
 .dodont__col {
   background: var(--paper);
   border-radius: 2.5mm;
-  padding: 0;
   overflow: hidden;
   border: 0.25mm solid rgba(15, 34, 70, 0.08);
   box-shadow: 0 1mm 3mm rgba(15, 34, 70, 0.06);
+  display: flex;
+  flex-direction: column;
 }
 .dodont__col h4 {
   display: flex;
   align-items: center;
   gap: 1.6mm;
   margin: 0;
-  padding: 1.8mm 2.5mm;
+  padding: 2mm 2.5mm;
   font-size: 8.6pt;
   color: #fff;
 }
@@ -519,15 +972,16 @@ body {
 }
 .dodont__col ul {
   list-style: none;
-  padding: 2mm 2.5mm 0;
-  margin: 0 0 1.5mm;
+  padding: 2.5mm 3mm 0;
+  margin: 0 0 2mm;
+  flex: 1;
 }
 .dodont__col li {
   display: flex;
-  gap: 1.4mm;
-  font-size: 7.2pt;
-  line-height: 1.5;
-  padding: 0.7mm 0;
+  gap: 1.6mm;
+  font-size: 7.8pt;
+  line-height: 1.55;
+  padding: 1mm 0;
   border-bottom: 0.2mm dashed rgba(15, 34, 70, 0.12);
 }
 .dodont__col li:last-child {
@@ -543,14 +997,12 @@ body {
   color: var(--do);
 }
 .dodont__note {
-  margin: 0 2.5mm 2.5mm;
-  padding: 1.6mm 2mm;
+  margin: 0 3mm 3mm;
+  padding: 2mm;
   border-radius: 1.5mm;
-  font-size: 7pt;
+  font-size: 7.4pt;
+  line-height: 1.5;
   font-weight: 700;
-  display: flex;
-  gap: 1.4mm;
-  align-items: flex-start;
 }
 .dodont__note--dont {
   background: rgba(178, 58, 58, 0.09);
@@ -561,17 +1013,18 @@ body {
   color: var(--do);
 }
 
+/* ===== P18 フロー＋家族会 ===== */
 .flow {
   background: var(--paper);
   border-radius: 2.5mm;
   padding: 3mm;
-  margin-bottom: 3mm;
+  margin: 2mm 0 3mm;
   border: 0.25mm solid rgba(15, 34, 70, 0.08);
   box-shadow: 0 1mm 3mm rgba(15, 34, 70, 0.06);
 }
 .flow h4 {
   margin: 0 0 2.5mm;
-  font-size: 8.6pt;
+  font-size: 8.8pt;
   color: var(--navy-800);
   text-align: center;
 }
@@ -587,7 +1040,7 @@ body {
   position: relative;
   background: linear-gradient(180deg, var(--cream), var(--cream-2));
   border-radius: 1.8mm;
-  padding: 2.2mm 1mm;
+  padding: 2.4mm 1mm;
   text-align: center;
 }
 .flow__step:not(:last-child)::after {
@@ -614,7 +1067,6 @@ body {
   place-items: center;
   font-size: 7.5pt;
   font-weight: 700;
-  box-shadow: 0 0.5mm 1.5mm rgba(8, 21, 44, 0.3);
 }
 .flow__step b {
   display: block;
@@ -624,77 +1076,122 @@ body {
 .flow__step small {
   font-size: 6pt;
   color: var(--ink-soft);
-  line-height: 1.4;
+  line-height: 1.35;
 }
-
-.meeting {
+.meeting-info {
   margin-top: auto;
   background: linear-gradient(160deg, var(--navy-700), var(--navy-800));
   color: #fff;
   border-radius: 2.5mm;
-  padding: 3mm;
-  box-shadow: 0 1.5mm 4mm rgba(8, 21, 44, 0.25);
+  padding: 3.5mm;
 }
-.meeting h4 {
+.meeting-info h4 {
   margin: 0 0 1.5mm;
   font-family: var(--serif);
-  font-size: 9.5pt;
+  font-size: 10pt;
   color: var(--gold-soft);
   text-align: center;
-  letter-spacing: 0.04em;
 }
-.meeting__benefits {
+.meeting-info .lead {
+  font-size: 7.6pt;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0 0 2.5mm;
+  color: rgba(255, 255, 255, 0.9);
+}
+.meeting-info__benefits {
   list-style: none;
   padding: 0;
-  margin: 0 0 2mm;
+  margin: 0 0 2.5mm;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.3mm;
+  gap: 1.4mm;
 }
-.meeting__benefits li {
-  font-size: 6.6pt;
-  padding: 0.7mm 2.2mm;
+.meeting-info__benefits li {
+  font-size: 7pt;
+  padding: 0.8mm 2.4mm;
   border: 0.2mm solid rgba(228, 200, 119, 0.55);
   border-radius: 999px;
   color: var(--gold-soft);
 }
-.meeting__info {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1mm 4mm;
-  margin: 0;
-  font-size: 7pt;
+.meeting-info__rows {
+  display: grid;
+  gap: 1mm;
+  max-width: 78mm;
+  margin: 0 auto;
+  font-size: 7.6pt;
 }
-.meeting__info div {
+.meeting-info__rows div {
   display: flex;
-  gap: 1.5mm;
+  justify-content: space-between;
+  border-bottom: 0.2mm solid rgba(255, 255, 255, 0.15);
+  padding: 0.6mm 0;
 }
-.meeting__info dt {
+.meeting-info__rows dt {
   color: var(--gold-soft);
   font-weight: 700;
 }
-.meeting__info dd {
+.meeting-info__rows dd {
   margin: 0;
 }
-.meeting__url {
-  display: block;
-  margin-top: 1.8mm;
-  padding-top: 1.8mm;
-  border-top: 0.2mm solid rgba(255, 255, 255, 0.16);
+
+/* ===== P19 声 ===== */
+.voices {
+  display: grid;
+  gap: 3mm;
+  margin: 2mm 0 3mm;
+}
+.voice {
+  position: relative;
+  background: var(--paper);
+  border-radius: 2.5mm;
+  padding: 3mm 3.5mm 3mm 8mm;
+  border: 0.25mm solid rgba(15, 34, 70, 0.08);
+  border-left: 0.9mm solid var(--gold);
+  box-shadow: 0 1mm 2.5mm rgba(15, 34, 70, 0.05);
+}
+.voice::before {
+  content: "\201C";
+  position: absolute;
+  left: 2.5mm;
+  top: 1.5mm;
+  font-family: var(--serif);
+  font-size: 20pt;
+  color: var(--gold);
+  opacity: 0.5;
+}
+.voice p {
+  margin: 0 0 1.5mm;
+  font-size: 8pt;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.voice cite {
+  font-style: normal;
+  font-size: 7pt;
+  color: var(--gold-deep);
+}
+.voices__closing {
+  margin-top: auto;
+  font-family: var(--serif);
+  font-size: 10pt;
+  line-height: 1.85;
   text-align: center;
-  font-size: 6.6pt;
-  color: #fff;
+  color: var(--navy-800);
+  padding: 3mm;
+  border-top: 0.3mm solid var(--gold);
+  border-bottom: 0.3mm solid var(--gold);
 }
 
-/* ===== P4 裏表紙 ===== */
-.panel--back {
+/* ===== P20 裏表紙 ===== */
+.page--back {
   color: #fff;
   text-align: center;
+  justify-content: flex-start;
   background:
-    linear-gradient(180deg, rgba(8, 21, 44, 0.35) 0%, rgba(8, 21, 44, 0.15) 40%, rgba(8, 21, 44, 0.75) 100%),
-    linear-gradient(180deg, #f6a94a 0%, #e08a45 26%, #7a4a6e 58%, var(--navy-900) 100%);
+    linear-gradient(180deg, rgba(8, 21, 44, 0.35) 0%, rgba(8, 21, 44, 0.15) 38%, rgba(8, 21, 44, 0.78) 100%),
+    linear-gradient(180deg, #f6a94a 0%, #e08a45 24%, #7a4a6e 56%, var(--navy-900) 100%);
 }
 .sunrise-road {
   position: absolute;
@@ -702,7 +1199,7 @@ body {
   right: 0;
   top: 0;
   width: 100%;
-  height: 46%;
+  height: 42%;
   z-index: 0;
   opacity: 0.95;
 }
@@ -716,7 +1213,7 @@ body {
 .back__message p {
   margin: 1.6mm 0;
 }
-.panel--back .pillars {
+.page--back .pillars {
   margin: 4mm 0;
 }
 .contact {
@@ -725,6 +1222,7 @@ body {
   border: 0.3mm solid rgba(228, 200, 119, 0.5);
   border-radius: 3mm;
   box-shadow: 0 2mm 6mm rgba(0, 0, 0, 0.3);
+  margin-bottom: 3mm;
 }
 .contact .brand {
   justify-content: center;

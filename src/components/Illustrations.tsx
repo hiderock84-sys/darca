@@ -127,6 +127,86 @@ export function SunriseRoad({ className }: { className?: string }) {
   )
 }
 
+export function CircleOfPeople({ className }: { className?: string }) {
+  const n = 8
+  const cx = 100
+  const cy = 100
+  const r = 62
+  const people = Array.from({ length: n }, (_, i) => {
+    const a = (Math.PI * 2 * i) / n - Math.PI / 2
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }
+  })
+  return (
+    <svg className={className} viewBox="0 0 200 200" aria-hidden="true">
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="none"
+        stroke="#c8a24a"
+        strokeWidth="1"
+        strokeDasharray="3 4"
+        opacity="0.5"
+      />
+      {people.map((p, i) => (
+        <g key={i} fill="#1b3363">
+          <circle cx={p.x} cy={p.y - 7} r="6.5" />
+          <path
+            d={`M${p.x - 8} ${p.y + 14} q8 -10 16 0 Z`}
+            fill="#1b3363"
+          />
+          <circle cx={p.x} cy={p.y + 2} r="9" fill="#1b3363" />
+        </g>
+      ))}
+      <circle cx={cx} cy={cy} r="9" fill="#c8a24a" opacity="0.9" />
+      <circle cx={cx} cy={cy} r="16" fill="#c8a24a" opacity="0.15" />
+    </svg>
+  )
+}
+
+export function PathToDawn({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 400 180"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id="pd-sun" cx="0.5" cy="0.2" r="0.7">
+          <stop offset="0" stopColor="#fff3d4" />
+          <stop offset="0.5" stopColor="#f6c56b" />
+          <stop offset="1" stopColor="#f6a94a" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="200" cy="36" rx="120" ry="70" fill="url(#pd-sun)" />
+      <circle cx="200" cy="34" r="20" fill="#fff2cf" />
+      <path
+        d="M0 180 C 120 150, 150 90, 200 60 C 250 90, 280 150, 400 180 Z"
+        fill="#2a2140"
+        opacity="0.9"
+      />
+      <path
+        d="M188 180 C 190 130, 196 90, 200 66 C 204 90, 210 130, 212 180 Z"
+        fill="#e4c877"
+        opacity="0.55"
+      />
+    </svg>
+  )
+}
+
+export function Ornament({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 120 12" aria-hidden="true">
+      <line x1="0" y1="6" x2="46" y2="6" stroke="#c8a24a" strokeWidth="0.8" />
+      <line x1="74" y1="6" x2="120" y2="6" stroke="#c8a24a" strokeWidth="0.8" />
+      <path d="M60 1 L64 6 L60 11 L56 6 Z" fill="#c8a24a" />
+      <circle cx="49" cy="6" r="1.4" fill="#c8a24a" />
+      <circle cx="71" cy="6" r="1.4" fill="#c8a24a" />
+    </svg>
+  )
+}
+
 export function CycleLoop({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 300 60" aria-hidden="true">
