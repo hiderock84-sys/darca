@@ -58,9 +58,20 @@ CW = PW - 2 * MG
 GAP = 8.0
 BLANK = prs.slide_layouts[6]
 
+# 第4引数 onepage で「1章1ページ」試作モード
+MODE = (sys.argv[4] if len(sys.argv) > 4 else "").lower()
+ONEPAGE = MODE in ("onepage", "1page", "one")
+
 
 def col_width():
     return CW if NCOL == 1 else (CW - GAP) / 2
+
+
+def blk(t, **k):
+    d = {"t": t, "size": 10.5, "bold": False, "color": INK,
+         "italic": False, "sb": 0, "sa": 4, "cpl": 24}
+    d.update(k)
+    return d
 
 
 def set_ea(run, name="Yu Gothic"):
@@ -305,18 +316,18 @@ def band(s, no, title):
     para(tf, f"{no}　{title}", size=13, bold=True, color=WHITE, first=True, sa=0)
 
 
-def render_blocks_to(tf, blocks):
+def render_blocks_to(tf, blocks, scale=1.0):
     for i, b in enumerate(blocks):
-        para(tf, b["t"], size=b.get("size", 10.5), bold=b.get("bold", False),
+        para(tf, b["t"], size=b.get("size", 10.5) * scale, bold=b.get("bold", False),
              color=b.get("color", INK), italic=b.get("italic", False),
-             sb=b.get("sb", 0), sa=b.get("sa", 4), first=(i == 0))
+             sb=b.get("sb", 0) * scale, sa=b.get("sa", 4) * scale, first=(i == 0))
 
 
-def render_cols(s, x, y, w, h, blocks):
+def render_cols(s, x, y, w, h, blocks, scale=1.0, anchor=MSO_ANCHOR.MIDDLE):
     """A4(縦)は1段組、横16:9は2段組で本文を流し込む。"""
     if NCOL == 1:
-        tf = tbox(s, x, y, w, h, anchor=MSO_ANCHOR.MIDDLE)
-        render_blocks_to(tf, blocks)
+        tf = tbox(s, x, y, w, h, anchor=anchor)
+        render_blocks_to(tf, blocks, scale)
         return
     gap = GAP
     cw = (w - gap) / 2
@@ -330,11 +341,62 @@ def render_cols(s, x, y, w, h, blocks):
             acc += est_lines(b, cw)
         else:
             right.append(b)
-    lt = tbox(s, x, y, cw, h, anchor=MSO_ANCHOR.MIDDLE)
-    render_blocks_to(lt, left)
+    lt = tbox(s, x, y, cw, h, anchor=anchor)
+    render_blocks_to(lt, left, scale)
     if right:
-        rt = tbox(s, x + cw + gap, y, cw, h, anchor=MSO_ANCHOR.MIDDLE)
-        render_blocks_to(rt, right)
+        rt = tbox(s, x + cw + gap, y, cw, h, anchor=anchor)
+        render_blocks_to(rt, right, scale)
+
+
+def block_height(b, cw, scale):
+    """1ブロックが占める高さ(mm)を、折り返し行・行間・段落前後の余白込みで見積もる。"""
+    size = b.get("size", 10.5) * scale
+    cpl = max(6, (cw - 4) / (size * 0.3528))
+    lines = max(1, math.ceil(len(b["t"]) / cpl))
+    if b.get("bold") and b.get("size", 10.5) >= 12:
+        lines += 1
+    lh = size * 1.16 * 0.3528  # 1行の高さ(mm)
+    gaps = (b.get("sa", 4) + b.get("sb", 0)) * scale * 0.3528
+    return lines * lh + gaps
+
+
+def fit_scale(blocks, usable_h, cw):
+    """本文が usable_h(mm) に収まる最大の文字倍率を探索する。"""
+    if not blocks:
+        return 1.0
+    target = usable_h * 0.95
+    s = 1.0
+    while s > 0.36:
+        total = sum(block_height(b, cw, s) for b in blocks) * 1.12 / NCOL
+        if total <= target:
+            return round(s, 3)
+        s -= 0.02
+    return 0.36
+
+
+def one_page(no, title, catch, imgname, blocks, header="photo"):
+    """1つの節・章を、写真ヘッダー(または帯)＋自動縮小の本文で1ページに収める。"""
+    s = slide()
+    rect(s, 0, 0, PW, PH, BG)
+    if header == "photo" and imgname:
+        H = 46
+        photo_cover(s, imgname, 0, 0, PW, H)
+        rect(s, 0, 0, PW, H, NAVY, alpha=46)
+        rect(s, 0, 0, 5, H, WARM)
+        htf = tbox(s, MG + 4, 7, CW - 8, H - 11, anchor=MSO_ANCHOR.MIDDLE)
+        para(htf, no, size=12, bold=True, color=WARM, first=True, sa=2)
+        para(htf, title, size=22, bold=True, color=WHITE, sa=2)
+        if catch:
+            para(htf, catch, size=12, bold=True, color=CREAM, sa=0)
+        cy = H + 5
+    else:
+        band(s, no, title)
+        cy = 25
+    cw = col_width()
+    usable_h = PH - MG - cy
+    scale = fit_scale(blocks, usable_h, cw)
+    render_cols(s, MG, cy, CW, usable_h, blocks, scale=scale, anchor=MSO_ANCHOR.TOP)
+    return s
 
 
 def chapter_slides(no, title, catch, imgname):
@@ -404,6 +466,85 @@ def hero_full(name, no, title, catch, *, center=False):
     if catch:
         para(tf, catch, size=15, bold=True, color=CREAM, sa=0, align=al)
     return s
+
+
+def build_one_page_deck():
+    # --- 表紙（全面写真） ---
+    cv = data["cover"]
+    s = slide()
+    photo_cover(s, data["images"]["cover"], 0, 0, PW, PH)
+    rect(s, 0, 0, PW, PH, NAVY, alpha=55)
+    rect(s, 0, 0, 6, PH, WARM)
+    tf = tbox(s, MG + 6, PH * 0.24, PW * 0.86, PH * 0.5)
+    para(tf, cv["category"], size=14, bold=True, color=CREAM, first=True, sa=8)
+    for line in cv["title"].split("\n"):
+        para(tf, line, size=34, bold=True, color=WHITE, sa=3)
+    para(tf, cv["subtitle"], size=13, color=RGBColor(0xEA, 0xF1, 0xF8), sb=8, sa=0)
+    tf2 = tbox(s, MG + 6, PH - 18, CW, 13)
+    para(tf2, data["org"]["name"], size=13, bold=True, color=WHITE, first=True, sa=0)
+
+    # --- 導入ストーリー ---
+    st = data["openingStory"]
+    sb = [blk(st["lead"], size=11, bold=True, italic=True, color=NAVY2, sa=6)]
+    for t in st["paragraphs"]:
+        q = t.startswith("「")
+        sb.append(blk(t, size=10.5, bold=q, color=NAVY2 if q else INK, sa=5))
+    for t in st["closing"]:
+        sb.append(blk(t, size=10.5, bold=True, color=NAVY2, sa=4))
+    one_page(st["chapterLabel"], st["title"], "", data["images"]["story"], sb)
+
+    # --- はじめに ---
+    pf = data["preface"]
+    pb = [blk(t, size=12, sa=8) for t in pf["paragraphs"]]
+    one_page("はじめに", pf["title"], "", None, pb, header="band")
+
+    # --- 第1〜11章（各1ページ） ---
+    for idx, ch in enumerate(data["chapters"]):
+        img = data["chapterImages"].get(ch["id"]) or FALLBACK[idx % len(FALLBACK)]
+        one_page(ch["no"], ch["title"], ch.get("catch", ""), img, blocks_of(ch))
+
+    # --- 私たちが伴走する理由 ---
+    wr = data["walkReason"]
+    wb = [blk(t, size=11.5, sa=5) for t in wr["body"]]
+    wb.append(blk(wr["philosophyLabel"], size=11, bold=True, color=GREEN, sb=4, sa=1))
+    wb.append(blk(wr["philosophy"], size=12.5, bold=True, color=NAVY2, sa=5))
+    wb += [blk(t, size=11, sa=5) for t in wr["body2"]]
+    wb += [blk(t, size=12, bold=True, color=NAVY2, sa=3) for t in wr["closing"]]
+    wb.append(blk(wr["tagline"] + "　" + wr["taglineSub"], size=15,
+                  bold=True, color=WARM_D, sb=5, sa=0))
+    one_page(wr["label"], wr["title"], wr["headline"], data["images"]["walking"], wb)
+
+    # --- 約束 ---
+    pr = data["promise"]
+    prb = [blk(t, size=11, sa=5) for t in pr["paragraphs"]]
+    prb += [blk(f'◆ {p["title"]}：{p["note"]}', size=11, bold=True, color=GREEN, sa=3)
+            for p in pr["pledges"]]
+    prb.append(blk(pr["finalMessage"], size=13.5, bold=True, color=NAVY2, sb=5, sa=2))
+    prb.append(blk(pr["signoff"], size=12, bold=True, color=NAVY2, sa=0))
+    one_page(pr["chapterLabel"], pr["title"], "", data["images"]["walking"], prb)
+
+    # --- お問い合わせ（裏表紙） ---
+    bc = data["backCover"]
+    s = slide()
+    rect(s, 0, 0, PW, PH, BG)
+    band(s, "CONTACT", "お問い合わせ")
+    tf = tbox(s, MG, 28, CW, PH - MG - 28, anchor=MSO_ANCHOR.MIDDLE)
+    para(tf, bc["headline"], size=17, bold=True, color=NAVY2, first=True, sa=6)
+    para(tf, bc["hotline"]["label"], size=12, bold=True, color=NAVY2, sa=1)
+    para(tf, bc["hotline"]["value"] + "（24時間）", size=22, bold=True, color=RED, sa=6)
+    para(tf, f'代表電話：{bc["rep"]["value"]}（9:00〜18:00）', size=13, bold=True, color=NAVY2, sa=6)
+    para(tf, bc["support"], size=12, sa=6)
+    para(tf, bc["eligibility"]["title"] + "：" + "／".join(bc["eligibility"]["items"]),
+         size=12, bold=True, color=GREEN, sa=6)
+    para(tf, f'{bc["siteLabel"]}：{bc["site"]}', size=11.5, color=BLUE, sa=3)
+    para(tf, data["org"]["name"], size=13, bold=True, color=NAVY2)
+
+
+if ONEPAGE:
+    build_one_page_deck()
+    prs.save(OUT)
+    print(f"PPTX generated (1章1ページ試作): {OUT}  ({len(prs.slides._sldIdLst)} slides)")
+    sys.exit(0)
 
 
 # =====================================================================
