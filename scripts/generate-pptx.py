@@ -399,6 +399,106 @@ def one_page(no, title, catch, imgname, blocks, header="photo"):
     return s
 
 
+# ---- 1章1ページ（充填・分割）用のヘルパー ----
+RECOVERY_POOL = [
+    "family-circle", "hands-support", "consult-hand", "walking-together",
+    "seminar", "staff-smile", "seedling-dawn", "calm-thread", "path-fork",
+    "boundary", "entrance-back", "facility",
+]
+FILLER_CAP = {
+    "family-circle": "同じ思いのご家族が集う、家族会のイメージ",
+    "hands-support": "ひとりで抱えず、支え合いながら",
+    "consult-hand": "家族相談は初回無料。まずはご連絡ください",
+    "walking-together": "回復の道を、ともに歩む",
+    "seminar": "相模原ダルクの家族会・家族セミナー",
+    "staff-smile": "回復を経験した当事者スタッフが伴走します",
+    "seedling-dawn": "回復は、少しずつ育っていく",
+    "calm-thread": "こころに、静かなつながりを",
+    "path-fork": "どの道に進むかは、家族の関わりが左右します",
+    "boundary": "境界線 ── お互いを尊重するための、しなやかな線",
+    "entrance-back": "相模原ダルク デイケアセンター",
+    "facility": "相模原ダルク デイケアセンター（ダルクビル）",
+}
+
+
+def content_height_mm(blocks, cw, scale):
+    return sum(block_height(b, cw, scale) for b in blocks) * 1.12 / NCOL
+
+
+def photo_header(s, no, title, catch, imgname, H=46):
+    if imgname:
+        photo_cover(s, imgname, 0, 0, PW, H)
+        rect(s, 0, 0, PW, H, NAVY, alpha=46)
+        rect(s, 0, 0, 5, H, WARM)
+        htf = tbox(s, MG + 4, 7, CW - 8, H - 11, anchor=MSO_ANCHOR.MIDDLE)
+        para(htf, no, size=12, bold=True, color=WARM, first=True, sa=2)
+        para(htf, title, size=22, bold=True, color=WHITE, sa=2)
+        if catch:
+            para(htf, catch, size=12, bold=True, color=CREAM, sa=0)
+        return H + 5
+    band(s, no, title)
+    return 25
+
+
+def photo_band(s, name, x, y, w, h, caption=None):
+    photo_cover(s, name, x, y, w, h)
+    if caption:
+        ch = 9
+        rect(s, x, y + h - ch, w, ch, NAVY, alpha=48)
+        ctf = tbox(s, x + 3, y + h - ch, w - 6, ch, anchor=MSO_ANCHOR.MIDDLE)
+        para(ctf, caption, size=8.5, color=WHITE, first=True, sa=0)
+
+
+def add_qr(s, x, y, size, label=None):
+    path = os.path.join(IMG_DIR, "qr-family.png")
+    if not os.path.exists(path):
+        return
+    rect(s, x - 2.5, y - 2.5, size + 5, size + 5, WHITE)
+    s.shapes.add_picture(path, Mm(x), Mm(y), width=Mm(size), height=Mm(size))
+    if label:
+        ltf = tbox(s, x - 6, y + size + 1.5, size + 12, 12)
+        para(ltf, label, size=9, bold=True, color=NAVY2,
+             align=PP_ALIGN.CENTER, first=True, sa=0)
+
+
+def chapter_page(no, title, catch, header_img, blocks, filler_img=None):
+    """1章を1ページに。短ければ画像で充填、多すぎれば2ページに分割する。"""
+    HEADER = 46
+    cw = col_width()
+    scale = fit_scale(blocks, PH - MG - (HEADER + 5), cw)
+    if scale < 0.7:  # 文章量が多い → 読みやすさ優先で2ページ
+        total = content_height_mm(blocks, cw, 0.95)
+        half, acc, split = total / 2, 0.0, 1
+        for idx, b in enumerate(blocks):
+            acc += block_height(b, cw, 0.95) * 1.12 / NCOL
+            if acc >= half:
+                split = idx + 1
+                break
+        for si, chunk in enumerate((blocks[:split], blocks[split:])):
+            s = slide()
+            rect(s, 0, 0, PW, PH, BG)
+            cy = photo_header(s, no, title, catch, header_img if si == 0 else None, HEADER)
+            uh = PH - MG - cy
+            sc = min(1.0, max(0.7, fit_scale(chunk, uh, cw)))
+            render_cols(s, MG, cy, CW, uh, chunk, scale=sc, anchor=MSO_ANCHOR.TOP)
+        return
+    # 1ページに収める
+    s = slide()
+    rect(s, 0, 0, PW, PH, BG)
+    cy = photo_header(s, no, title, catch, header_img, HEADER)
+    usable_h = PH - MG - cy
+    sc = min(1.0, scale)
+    render_cols(s, MG, cy, CW, usable_h, blocks, scale=sc, anchor=MSO_ANCHOR.TOP)
+    ch = content_height_mm(blocks, cw, sc)
+    remain = usable_h - ch
+    if filler_img and remain > 42:  # 大きく余る → 画像でがっちり埋める
+        top = cy + ch + 4
+        ih = PH - MG - top
+        if ih >= 36:
+            photo_band(s, filler_img, MG, top, CW, ih, caption=FILLER_CAP.get(filler_img))
+    return s
+
+
 def chapter_slides(no, title, catch, imgname):
     """写真ヘッダー付き1枚目＋（必要なら）続き。2段組で本文を流す。"""
     ch = chdict[no]
@@ -491,17 +591,24 @@ def build_one_page_deck():
         sb.append(blk(t, size=10.5, bold=q, color=NAVY2 if q else INK, sa=5))
     for t in st["closing"]:
         sb.append(blk(t, size=10.5, bold=True, color=NAVY2, sa=4))
-    one_page(st["chapterLabel"], st["title"], "", data["images"]["story"], sb)
+    chapter_page(st["chapterLabel"], st["title"], "", data["images"]["story"], sb,
+                 filler_img="hands-support")
 
     # --- はじめに ---
     pf = data["preface"]
     pb = [blk(t, size=12, sa=8) for t in pf["paragraphs"]]
-    one_page("はじめに", pf["title"], "", None, pb, header="band")
+    chapter_page("はじめに", pf["title"], "", None, pb, filler_img="family-circle")
 
-    # --- 第1〜11章（各1ページ） ---
+    # --- 第1〜11章（各1ページ。短い章は画像で充填、多い章は2ページ許容） ---
+    used = set()
     for idx, ch in enumerate(data["chapters"]):
-        img = data["chapterImages"].get(ch["id"]) or FALLBACK[idx % len(FALLBACK)]
-        one_page(ch["no"], ch["title"], ch.get("catch", ""), img, blocks_of(ch))
+        header = data["chapterImages"].get(ch["id"]) or FALLBACK[idx % len(FALLBACK)]
+        used.add(header)
+        filler = next((n for n in RECOVERY_POOL if n != header and n not in used), None)
+        if filler:
+            used.add(filler)
+        chapter_page(ch["no"], ch["title"], ch.get("catch", ""), header,
+                     blocks_of(ch), filler_img=filler)
 
     # --- 私たちが伴走する理由 ---
     wr = data["walkReason"]
@@ -512,7 +619,8 @@ def build_one_page_deck():
     wb += [blk(t, size=12, bold=True, color=NAVY2, sa=3) for t in wr["closing"]]
     wb.append(blk(wr["tagline"] + "　" + wr["taglineSub"], size=15,
                   bold=True, color=WARM_D, sb=5, sa=0))
-    one_page(wr["label"], wr["title"], wr["headline"], data["images"]["walking"], wb)
+    chapter_page(wr["label"], wr["title"], wr["headline"], data["images"]["walking"], wb,
+                 filler_img="staff-smile")
 
     # --- 約束 ---
     pr = data["promise"]
@@ -521,23 +629,40 @@ def build_one_page_deck():
             for p in pr["pledges"]]
     prb.append(blk(pr["finalMessage"], size=13.5, bold=True, color=NAVY2, sb=5, sa=2))
     prb.append(blk(pr["signoff"], size=12, bold=True, color=NAVY2, sa=0))
-    one_page(pr["chapterLabel"], pr["title"], "", data["images"]["walking"], prb)
+    chapter_page(pr["chapterLabel"], pr["title"], "", data["images"]["walking"], prb,
+                 filler_img="seedling-dawn")
 
-    # --- お問い合わせ（裏表紙） ---
+    # --- お問い合わせ（裏表紙）＝ 連絡先＋QR＋ダルクビル ---
     bc = data["backCover"]
     s = slide()
     rect(s, 0, 0, PW, PH, BG)
     band(s, "CONTACT", "お問い合わせ")
-    tf = tbox(s, MG, 28, CW, PH - MG - 28, anchor=MSO_ANCHOR.MIDDLE)
-    para(tf, bc["headline"], size=17, bold=True, color=NAVY2, first=True, sa=6)
-    para(tf, bc["hotline"]["label"], size=12, bold=True, color=NAVY2, sa=1)
-    para(tf, bc["hotline"]["value"] + "（24時間）", size=22, bold=True, color=RED, sa=6)
-    para(tf, f'代表電話：{bc["rep"]["value"]}（9:00〜18:00）', size=13, bold=True, color=NAVY2, sa=6)
-    para(tf, bc["support"], size=12, sa=6)
-    para(tf, bc["eligibility"]["title"] + "：" + "／".join(bc["eligibility"]["items"]),
-         size=12, bold=True, color=GREEN, sa=6)
-    para(tf, f'{bc["siteLabel"]}：{bc["site"]}', size=11.5, color=BLUE, sa=3)
-    para(tf, data["org"]["name"], size=13, bold=True, color=NAVY2)
+    # 左：連絡先
+    info_w = CW * 0.60
+    tf = tbox(s, MG, 30, info_w, 150, anchor=MSO_ANCHOR.TOP)
+    para(tf, bc["headline"], size=16, bold=True, color=NAVY2, first=True, sa=6)
+    para(tf, bc["hotline"]["label"], size=11, bold=True, color=NAVY2, sa=1)
+    para(tf, bc["hotline"]["value"] + "（24時間）", size=21, bold=True, color=RED, sa=6)
+    para(tf, f'代表電話：{bc["rep"]["value"]}', size=12.5, bold=True, color=NAVY2, sa=1)
+    para(tf, "（受付 9:00〜18:00）", size=10, color=GRAY, sa=6)
+    para(tf, bc["support"], size=11, sa=6)
+    para(tf, bc["eligibility"]["title"], size=12, bold=True, color=GREEN, sa=1)
+    for it in bc["eligibility"]["items"]:
+        para(tf, "・" + it, size=10.5, sa=1)
+    # 右：QRコード（家族ページ）
+    qr_size = 42
+    qx = PW - MG - qr_size - 2
+    add_qr(s, qx, 40, qr_size, label=bc["siteLabel"])
+    stf = tbox(s, qx - 8, 40 + qr_size + 13, qr_size + 16, 10)
+    para(stf, "スマホで読み取り", size=9, color=GRAY, align=PP_ALIGN.CENTER, first=True, sa=0)
+    # 下：ダルクビル（施設外観）
+    fb_h = 104
+    photo_band(s, "facility", MG, PH - MG - fb_h, CW, fb_h,
+               caption="相模原ダルク デイケアセンター（ダルクビル）")
+    # 発行者
+    itf = tbox(s, MG, PH - MG - fb_h - 11, CW, 10)
+    para(itf, data["org"]["name"] + "（DARC）", size=12, bold=True, color=NAVY2,
+         first=True, sa=0)
 
 
 if ONEPAGE:
