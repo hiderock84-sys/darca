@@ -14,22 +14,22 @@
   --blue-deep: #175a99;
   --blue-tint: #eaf3fb;
   --blue-tint-2: #dcebf8;
-  --gray-50: #f7f6f2; /* 温かみのあるライトグレー */
-  --gray-100: #eeece7;
-  --gray-line: #e3e0d9;
+  --gray-50: #f5f5f7; /* Apple ライトグレー */
+  --gray-100: #ececee;
+  --gray-line: #d2d2d7; /* Apple ディバイダー */
   --green: #2f9e6b; /* アクセントグリーン */
   --green-deep: #237a51;
-  --green-tint: #e8f5ee;
+  --green-tint: #eaf5ef;
   --red: #c0453f;
   --red-tint: #fbecea;
-  /* やさしい温かみのアクセント（陽だまりのような色） */
-  --warm: #d69a5c;
-  --warm-deep: #b87a3c;
-  --warm-tint: #f9f1e6;
-  --paper: #fdfcf9; /* 紙の白（ほんのり暖色） */
-  --ink: #26313c;
-  --ink-soft: #58636f;
-  --ink-mute: #8a8f93;
+  /* アクセント（控えめに使用） */
+  --warm: #c98a4a;
+  --warm-deep: #a86d33;
+  --warm-tint: #f6efe6;
+  --paper: #ffffff; /* 純白（ミニマル） */
+  --ink: #1d1d1f; /* ニアブラック */
+  --ink-soft: #515154;
+  --ink-mute: #86868b;
 
   /* --- Layout tokens --- */
   --sheet-w: 210mm;
@@ -56,7 +56,7 @@
 
 body {
   margin: 0;
-  background: #e7e3dc;
+  background: #e8e8ed;
   color: var(--ink);
 }
 
@@ -245,12 +245,12 @@ body {
   margin-bottom: 0;
 }
 .h3 {
-  font-size: 1.28rem;
-  color: var(--navy);
-  margin: 0 0 0.6rem;
-  padding-left: 0.8rem;
-  border-left: 4px solid var(--blue);
-  line-height: 1.42;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin: 0 0 0.7rem;
+  padding-left: 0;
+  border-left: none;
+  line-height: 1.38;
   font-weight: 800;
   letter-spacing: 0.01em;
 }
@@ -270,11 +270,14 @@ body {
 .hero img {
   display: block;
   width: 100%;
+  aspect-ratio: 2 / 1;
   height: auto;
+  object-fit: cover;
 }
 .hero--tall img,
 .hero--xtall img,
 .hero--story img {
+  aspect-ratio: 2 / 1;
   height: auto;
 }
 .hero--promise {
@@ -335,16 +338,20 @@ body {
 /* 章扉（写真背景＋文字重ね・アーバン） */
 .opener {
   position: relative;
-  min-height: 66mm;
+  min-height: 46mm;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   border-radius: 16px;
   overflow: hidden;
-  padding: 1.5rem 1.5rem 1.4rem;
+  padding: 1.4rem 1.4rem 1.3rem;
   margin: 0 0 1.1rem;
   background: linear-gradient(150deg, var(--navy-soft), var(--navy-deep));
   color: #fff;
+}
+/* 導入ストーリーの扉は写真を大きく使い、見出しを画像の上に重ねる */
+.opener--story {
+  min-height: 105mm;
 }
 .opener__bg {
   position: absolute;
@@ -358,8 +365,9 @@ body {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(13, 27, 52, 0.26) 0%,
-    rgba(13, 27, 52, 0.5) 52%,
+    rgba(13, 27, 52, 0.1) 0%,
+    rgba(13, 27, 52, 0.2) 42%,
+    rgba(13, 27, 52, 0.56) 64%,
     rgba(13, 27, 52, 0.84) 100%
   );
 }
@@ -428,11 +436,10 @@ body {
   grid-template-columns: repeat(3, 1fr);
 }
 .point {
-  background: #ffffff;
-  border: 1px solid var(--gray-line);
+  background: var(--gray-50);
+  border: none;
   border-radius: var(--radius);
-  padding: 0.9rem 1rem;
-  box-shadow: 0 4px 16px rgba(20, 30, 50, 0.05);
+  padding: 1rem 1.1rem;
 }
 .point__tag {
   display: inline-flex;
@@ -951,12 +958,18 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   padding: 22mm var(--pad-x) 20mm;
 }
 .cover__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.cover__logo {
+  width: 168px;
+  height: auto;
+  display: block;
 }
 .cover__brand-logo {
   font-size: 1.5rem;
@@ -980,8 +993,7 @@ body {
   border-radius: 999px;
 }
 .cover__center {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0;
 }
 .cover__category {
   display: inline-block;
@@ -1020,7 +1032,7 @@ body {
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
 }
 .cover__bottom {
-  margin-top: auto;
+  margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
   padding-top: 1.2rem;
 }
@@ -1111,6 +1123,71 @@ body {
   font-weight: 700;
   line-height: 1.9;
 }
+.walkreason__closing-line {
+  display: block;
+}
+.walkreason__tag {
+  position: relative;
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 1.8rem 0 0;
+  letter-spacing: 0.05em;
+  line-height: 1.35;
+  padding: 1.6rem 1.4rem 1.5rem;
+  border-radius: var(--radius-lg, 16px);
+  background:
+    radial-gradient(120% 90% at 50% 0%, #2a5488 0%, transparent 58%),
+    linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+  box-shadow: 0 10px 30px rgba(13, 27, 52, 0.22);
+  overflow: hidden;
+}
+.walkreason__tag::before {
+  content: '';
+  display: block;
+  width: 46px;
+  height: 4px;
+  margin: 0 auto 1rem;
+  border-radius: 999px;
+  background: var(--warm, #d69a5c);
+}
+.walkreason__tag-sub {
+  display: block;
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: #f2e7d6;
+  letter-spacing: 0.34em;
+  margin-top: 0.9rem;
+}
+
+/* 伴走メッセージ（私たちが伴走する理由）の締め：章題以外は枠を外し、
+   通常の本文として強調表示する */
+.sheet--message .preface__pledge {
+  background: none;
+  color: var(--navy);
+  border-radius: 0;
+  padding: 0.8rem 0 0;
+  margin-top: 1.3rem;
+  border-top: 2px solid var(--gray-line);
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.95;
+}
+.sheet--message .walkreason__tag {
+  background: none;
+  color: var(--navy);
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0.5rem 0 0;
+  margin-top: 1rem;
+}
+.sheet--message .walkreason__tag::before {
+  margin-bottom: 0.7rem;
+}
+.sheet--message .walkreason__tag-sub {
+  color: var(--warm-deep, #b06a2c);
+}
 
 /* ---- TOC ---- */
 .toc__head {
@@ -1142,14 +1219,14 @@ body {
 }
 .toc__intro-label {
   flex: none;
-  width: 7rem;
+  width: 4.8rem;
   font-size: 0.86rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--blue);
 }
 .toc__intro-title {
-  font-size: 1.04rem;
+  font-size: 1.0rem;
   color: var(--ink);
 }
 .toc__list {
@@ -1660,10 +1737,35 @@ body {
 }
 .back__site-row {
   margin-top: 1.2rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--gray-bg, #f4f6fa);
+  border: 1px solid var(--gray-line);
+  border-radius: var(--radius-lg, 14px);
+  padding: 0.9rem 1.1rem;
 }
-.back__site-row .back__site-label {
-  margin-right: 0.5rem;
+.back__qr {
+  width: 92px;
+  height: 92px;
+  flex: none;
+  border-radius: 8px;
+  background: #fff;
+  padding: 6px;
+  border: 1px solid var(--gray-line);
+}
+.back__site-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  min-width: 0;
+}
+.back__qr-note {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  margin-top: 0.35rem;
+  line-height: 1.6;
 }
 .back__lead {
   font-size: 1.5rem;
@@ -1734,6 +1836,13 @@ body {
 .back__issuer {
   margin-top: auto;
   text-align: center;
+}
+.back__issuer-logoimg {
+  display: block;
+  width: 210px;
+  max-width: 62%;
+  height: auto;
+  margin: 0 auto 0.8rem;
 }
 .back__issuer-logo {
   font-size: 1.5rem;
@@ -1912,7 +2021,7 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 10mm 0;
+    margin: 6mm 0;
   }
   @page fullbleed {
     margin: 0;
@@ -1938,59 +2047,140 @@ body {
     gap: 0;
   }
 
-  /* ---- 本文シートは連続フロー（固定高さ・強制改ページを解除） ---- */
+  /* ---- 各シート（章・セクション）は新しいページから開始し、内容量に応じて
+     自然に流す。章内の内容は連続フローで上から詰まり、下部の無駄な空白を防ぐ ---- */
+  /* 1シート＝1ページ（固定A4高さ）。内容を上から詰めたうえで、末尾の要素を
+     残り高さいっぱいに広げ、ページ下部の余白を完全になくす */
+  /* 本文シートは連続フローで流し込む。強制改ページをやめ、内容が各ページを
+     上から下まで自然に満たすようにする（隙間を作らない）。章は見出しバンドで区切る */
   .sheet {
     width: auto;
     height: auto;
     min-height: 0;
-    padding: 0 15mm;
+    padding: 0 7mm;
     margin: 0;
     box-shadow: none;
     overflow: visible;
     display: block;
     background: none;
+    break-before: auto;
   }
   .sheet__body {
     display: block;
   }
-  .sheet
-    + .sheet:not(.sheet--cover):not(.sheet--promise):not(.sheet--back) {
-    margin-top: 4mm;
+  /* 表紙・約束・裏表紙は本文欄を全面高さに広げ、内容を上下いっぱいに配置 */
+  .sheet--cover .sheet__body,
+  .sheet--promise .sheet__body,
+  .sheet--back .sheet__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
   }
+  /* 写真バンドは高さを抑え、ページ末での送り（＝直前の余白）を減らす */
+  .hero img {
+    aspect-ratio: auto;
+    height: 46mm;
+  }
+  /* 印刷時はブロック間隔・余白・行間を圧縮して密度を最大化（文字サイズは維持） */
+  .opener {
+    min-height: 40mm;
+    margin-bottom: 0.4rem;
+    padding: 0.7rem 1.1rem 0.6rem;
+  }
+  .opener--story {
+    min-height: 82mm;
+  }
+  .chapter-head {
+    margin-bottom: 0.4rem;
+    padding: 0.5rem 1rem 0.55rem;
+  }
+  .chapter-head__title {
+    margin: 0.32rem 0 0.3rem;
+    font-size: 2rem;
+  }
+  .chapter-head__rule {
+    margin-top: 0.4rem;
+  }
+  .lead {
+    margin: 0.35rem 0 0.4rem;
+    line-height: 1.58;
+  }
+  .body-p {
+    margin: 0 0 0.3rem;
+    line-height: 1.58;
+  }
+  .section-block {
+    margin: 0.4rem 0;
+  }
+  .h3 {
+    margin: 0.4rem 0 0.28rem;
+  }
+  .cycle,
+  .flow,
+  .checklist,
+  .examples,
+  .compare,
+  .kv,
+  .voices,
+  .dodont,
+  .dd-col,
+  .benefits,
+  .hero,
+  .callout,
+  .column,
+  .points {
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+  .cycle__step {
+    padding-top: 0.32rem;
+    padding-bottom: 0.32rem;
+  }
+  /* リスト項目・囲みの内側も詰める */
+  .checklist__items li,
+  .dd-list li,
+  .compare__list li,
+  .points__body,
+  .body-p + .body-p {
+    line-height: 1.6;
+  }
+  .column,
+  .callout {
+    padding: 0.85rem 1rem;
+  }
+  .point {
+    padding: 0.7rem 0.85rem;
+  }
+
   .sheet--story,
   .sheet--open {
     background: none;
-  }
-  .sheet--open .sheet__body {
-    display: block;
   }
   .chapter-open {
     padding: 0;
   }
 
-  /* ---- 分割されると困る塊はページ跨ぎを禁止 ---- */
+  /* ---- 図解・小カードなど「割れると困る最小単位」だけ分割禁止 ----
+     長いリストや箱（column/case/checklist/kv/dd-col/voices/compare/points）は
+     ページ跨ぎを許可し、下部の余白を最小化する ---- */
   figure,
   .hero,
   .point,
-  .column,
-  .case,
   .qa,
-  .checklist,
   .cycle,
   .cycle__step,
   .flow,
   .flow__step,
-  .callout,
-  .kv__row,
-  .benefit,
-  .compare,
-  .example-row,
-  .dd-col,
+  .kv,
   .voices,
-  .points,
+  .dodont,
+  .compare,
+  .column,
+  .checklist,
+  .benefit,
+  .example-row,
   .chapter-head,
-  .toc__row,
-  .preface__pledge,
   .qa-group__label {
     break-inside: avoid;
   }
@@ -2033,6 +2223,9 @@ body {
   }
   .sheet--promise {
     break-before: page;
+    background:
+      radial-gradient(110% 80% at 50% 0%, #2a5488 0%, transparent 55%),
+      linear-gradient(170deg, var(--navy) 0%, var(--navy-deep) 100%);
   }
   .sheet--back {
     break-before: page;
@@ -2047,6 +2240,13 @@ body {
   :root {
     --pad-x: 7mm;
     --pad-y: 8mm;
+  }
+  /* 画面（スマホ）では装飾のランニングヘッダーを隠してすっきり */
+  .runhead {
+    display: none;
+  }
+  .toc__intro-label {
+    width: 4.2rem;
   }
   .sheet {
     width: 100%;

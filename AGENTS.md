@@ -16,6 +16,11 @@
 - `npm run preview` — ビルド成果物のプレビュー
 - `npm run lint` — ESLint
 - `npm test` — Vitest（1 回実行）／`npm run test:watch` で監視
+- `npm run pdf` — 配布用 PDF を生成。内部で `build` → Vite preview 自動起動 → Puppeteer で A4 版を作成し、`scripts/impose-a3.py`（PyMuPDF）で **A3横（見開き）に2ページずつ組み付け**て `public/manual.pdf`（A3・18見開き）を出力。A4 版は `public/manual-a4.pdf` に保存。※ 組み付けに Python の `pymupdf` が必要（`pip install pymupdf`）。
+- `npm run qr` — 裏表紙の公式サイト QR コード（`src/assets/manual/qr-family.svg`）を再生成
+- `npm run docx` — **編集可能で完成版と同等クオリティ**の Word `public/manual.docx` を生成。`src/data/manual.ts` を JSON にダンプ（`scripts/dump-manual.ts`）し、`scripts/generate-docx-rich.py`（python-docx）で章見出しの色帯・POINTカード・囲み・Q&A・比較表・写真をネイティブ Word 要素で再現。Python の `python-docx` と `Pillow`（webp→jpg）が必要（`pip install python-docx Pillow`）。
+- `npm run docx:image` — PDF（`public/manual-a4.pdf`）の各ページを画像化し、見た目そのままの A4 Word `public/manual-print.docx` を生成（完全一致だが非編集）。`pymupdf` + `python-docx` を使用。※ 事前に `npm run pdf` が必要。
+- `npm run pptx` — **編集可能な PowerPoint** `public/manual.pptx` を生成（A4縦スライド・章見出し色帯・本文・箇条書き・Q&A・写真）。`manual.ts` を JSON にダンプし、`scripts/generate-pptx.py`（python-pptx + Pillow）で作成。`pip install python-pptx Pillow` が必要。
 
 ## コンテンツ構成
 
@@ -31,3 +36,4 @@
 - ESLint 10 は flat config 必須。`eslint-plugin-react-hooks` は `configs.flat.recommended` を使う（`configs['recommended-latest']` は plugins が配列形式で ESLint 10 では読み込めない）。
 - `tsc -b`（`npm run build`）は CSS を import しているため `src/vite-env.d.ts` の `/// <reference types="vite/client" />` が必須。削除すると型解決に失敗しビルドが落ちる。
 - dev サーバは tmux セッション `vite-dev-server` で起動している。動作確認は `curl -s localhost:5173/` で HTTP 200 を確認すればよい。
+- PDF 生成の `puppeteer` と QR 生成の `qrcode` は `devDependencies` に登録済み。`npm install` の postinstall で Puppeteer 用 Chrome（`~/.cache/puppeteer`）も自動取得されるため、手動での `npm i --no-save puppeteer` や `npx puppeteer browsers install` は不要。PDF は `npm run pdf` の 1 コマンドで生成できる（`--no-sandbox` 付きでヘッドレス起動）。

@@ -17,6 +17,7 @@ import {
   ch9,
   ch10,
   ch11,
+  walkReason,
   promise,
   backCover,
   spec,
@@ -92,18 +93,9 @@ function ChapterHead({
   title: string
   catch: string
 }) {
-  const num = no.replace(/[^0-9]/g, '')
   const accent = chapterAccent(no)
   return (
     <header className="chapter-head">
-      {num && (
-        <span
-          className="chapter-head__kicker"
-          style={accent ? { color: accent } : undefined}
-        >
-          CHAPTER {num.padStart(2, '0')}
-        </span>
-      )}
       <span className="chapter-head__no">
         <Icon name="compass" className="icon-inline" />
         {no}
@@ -190,7 +182,6 @@ function ChapterOpener({
   src: string
   alt: string
 }) {
-  const num = no.replace(/[^0-9]/g, '')
   const accent = chapterAccent(no)
   return (
     <header className="opener">
@@ -198,11 +189,6 @@ function ChapterOpener({
       <div className="opener__scrim" />
       {accent && <span className="opener__bar" style={{ background: accent }} />}
       <div className="opener__content">
-        {num && (
-          <span className="opener__kicker" style={{ color: accent }}>
-            CHAPTER {num.padStart(2, '0')}
-          </span>
-        )}
         <span className="opener__no">
           <Icon name="compass" className="icon-inline" />
           {no}
@@ -241,14 +227,15 @@ function ChapterHero({
 function CoverPage() {
   return (
     <Sheet className="sheet--cover" hideNo>
-      <img className="cover__bg" src={img.facility} alt="" aria-hidden="true" />
+      <img className="cover__bg" src={img.coverHero} alt="" aria-hidden="true" />
       <div className="cover__scrim" />
       <div className="cover">
         <div className="cover__top">
-          <div>
-            <div className="cover__brand-logo">{org.brand}</div>
-            <div className="cover__brand-sub">{org.subtitle}</div>
-          </div>
+          <img
+            className="cover__logo"
+            src={img.logoEnWhite}
+            alt="DARC SAGAMIHARA｜相模原ダルク"
+          />
           <span className="cover__edition">{cover.editionLabel}</span>
         </div>
 
@@ -283,14 +270,18 @@ function StoryPages() {
   return (
     <>
       <Sheet className="sheet--story" runhead="PROLOGUE" pageLabel="導入ストーリー">
-        <p className="story__kicker">{openingStory.chapterLabel}</p>
-        <h2 className="story__title">{openingStory.title}</h2>
-        <figure className="hero hero--story">
+        <header className="opener opener--story">
           <img
+            className="opener__bg"
             src={img.storyNight}
             alt="夜、玄関にともる暖かな灯りを外から静かに見たイメージ"
           />
-        </figure>
+          <div className="opener__scrim" />
+          <div className="opener__content">
+            <span className="opener__no">{openingStory.chapterLabel}</span>
+            <h2 className="opener__title">{openingStory.title}</h2>
+          </div>
+        </header>
         <p className="story__lead">{openingStory.lead}</p>
         <div className="story__body">{first.map(renderPara)}</div>
       </Sheet>
@@ -903,7 +894,7 @@ function Ch10Pages() {
   const flat: QaItem[] = ch10.groups.flatMap((g) =>
     g.items.map((it, i) => ({ q: it.q, a: it.a, cat: g.label, catStart: i === 0 })),
   )
-  const firstCount = 4
+  const firstCount = 5
   const perPage = 5
   const chunks: QaItem[][] = [flat.slice(0, firstCount)]
   for (let i = firstCount; i < flat.length; i += perPage)
@@ -1003,6 +994,9 @@ function Ch11Pages() {
             </div>
           ))}
         </div>
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch11.no}>
         <div className="flow">
           <p className="flow__title">家族会 当日の流れ</p>
           <ol className="flow__steps">
@@ -1027,15 +1021,18 @@ function Ch11Pages() {
             ※ 内容は回により変わることがあります。見学だけの参加も歓迎です。
           </p>
         </div>
-        <ChapterHero
-          src={img.facility}
-          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
-          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。送迎車もご用意しています。"
-        />
         <div className="callout">
           <Icon name="chat" />
           <span>{ch11.info.note}</span>
         </div>
+      </Sheet>
+
+      <Sheet runhead={rh} pageLabel={ch11.no}>
+        <ChapterHero
+          src={img.facility}
+          alt="家族会の会場となる相模原ダルク デイケアセンターの外観"
+          caption="家族会の会場 ── 相模原ダルク デイケアセンター（相模原市）。JR相模原駅から送迎車もご用意しています。"
+        />
         <ColumnBox
           data={{
             label: ch11.consult.label,
@@ -1043,11 +1040,6 @@ function Ch11Pages() {
             body: ch11.consult.body,
           }}
           green
-        />
-        <ChapterHero
-          src={img.staffSmile}
-          alt="相談を担当する、回復を経験した当事者スタッフの穏やかな笑顔"
-          caption="相談を担当するのは、依存症で苦しみ、回復を果たした当事者スタッフです。"
         />
       </Sheet>
     </>
@@ -1057,6 +1049,51 @@ function Ch11Pages() {
 /* =============================================================
    Closing
    ============================================================= */
+
+function WalkReasonPage() {
+  return (
+    <Sheet
+      className="sheet--message"
+      runhead={`${walkReason.label}\u3000${walkReason.title}`}
+      pageLabel="メッセージ"
+    >
+      <ChapterHead
+        no={walkReason.label}
+        title={walkReason.title}
+        catch={walkReason.headline}
+      />
+      {walkReason.body.map((p) => (
+        <p key={p} className="body-p">
+          {p}
+        </p>
+      ))}
+      <ColumnBox
+        data={{
+          label: walkReason.philosophyLabel,
+          title: walkReason.philosophy,
+          body: [],
+        }}
+        green
+      />
+      {walkReason.body2.map((p) => (
+        <p key={p} className="body-p">
+          {p}
+        </p>
+      ))}
+      <div className="preface__pledge">
+        {walkReason.closing.map((l) => (
+          <span key={l} className="walkreason__closing-line">
+            {l}
+          </span>
+        ))}
+      </div>
+      <p className="walkreason__tag">
+        {walkReason.tagline}
+        <span className="walkreason__tag-sub">{walkReason.taglineSub}</span>
+      </p>
+    </Sheet>
+  )
+}
 
 function PromisePage() {
   return (
@@ -1145,20 +1182,33 @@ function BackPage() {
         </div>
 
         <div className="back__site-row">
-          <span className="back__site-label">{backCover.siteLabel}</span>
-          <a
-            className="back__site"
-            href={backCover.site}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {backCover.site}
-          </a>
+          <img
+            className="back__qr"
+            src={img.qrFamily}
+            alt="公式ホームページ「ご家族の方へ」のQRコード"
+          />
+          <div className="back__site-text">
+            <span className="back__site-label">{backCover.siteLabel}</span>
+            <a
+              className="back__site"
+              href={backCover.site}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {backCover.site}
+            </a>
+            <span className="back__qr-note">
+              スマートフォンで読み取ると、公式サイトへアクセスできます
+            </span>
+          </div>
         </div>
 
         <div className="back__issuer">
-          <div className="back__issuer-logo">{backCover.brand}</div>
-          <p className="back__issuer-name">{backCover.issuer}</p>
+          <img
+            className="back__issuer-logoimg"
+            src={img.logoJa}
+            alt="一般社団法人 相模原ダルク"
+          />
           <p className="back__disclaimer">{backCover.disclaimer}</p>
         </div>
       </div>
@@ -1369,6 +1419,7 @@ function App() {
         <Ch9Pages />
         <Ch10Pages />
         <Ch11Pages />
+        <WalkReasonPage />
         <PromisePage />
         <BackPage />
         {showSpecAppendix && <SpecPages />}
